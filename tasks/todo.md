@@ -161,9 +161,11 @@ Verification: evidence and remaining limits in provider/media research; no claim
 - [x] Add a runnable Next startup page, FastAPI liveness endpoint, per-app environment examples, and committed dependency locks.
 - [x] Generate the OpenAPI snapshot and TypeScript types; configure lint, format, types, API smoke tests, package/build checks and CI.
 - [x] Initialize local Supabase configuration without provisioning a hosted project. Keep Alembic as the future application migration authority.
-- [ ] Finish local verification, create the private GitHub repository, and confirm its first CI run.
+- [x] Finish local verification, create the private GitHub repository, and confirm its first CI run. [Repository](https://github.com/sebasalonsogp/wine-journal); [successful initial CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34895334930).
 
 Verification: [development commands](../docs/development.md), browser smoke, generated-contract drift, and hosted CI. Local Supabase startup remains unverified until Docker is running; auth/persistence tests are part of P1b. No journal feature is marked implemented by this scaffold.
+
+Observed September 14, 2026: local lint/format/types passed, two API smoke tests passed, the Python wheel/source package and Next production build succeeded, generated contracts had no drift, and package audits reported no known vulnerabilities. The page returned HTTP 200 with no script errors or horizontal overflow at 320, 768, and 1440 pixels. Hosted CI passed both API and web jobs on Linux, including Node 24. See `docs/development.md` for upstream tooling warnings and limits of these checks.
 
 ### P1b: Sign in and reach an empty private journal
 
