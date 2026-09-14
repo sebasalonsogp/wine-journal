@@ -1,0 +1,15 @@
+{
+  "passed": [
+    "Browse first in both navigation layouts.",
+    "One occasion card per wine release, with its bottle cover.",
+    "One combined occasion album; duplicates omitted.",
+    "Wine photo highlights from its own entries and linked occasion albums.",
+    "Repeated entries in one occasion do not repeat its photos.",
+    "Repeated uploads in the same album do not make removal ineffective.",
+    "View all and return to the source occasion.",
+    "Unrelated releases and guests have no personal highlights.",
+    "Personal cover precedes catalog image; catalog image precedes placeholder.",
+    "Phone and desktop layout fit."
+  ],
+  "errors": []
+}

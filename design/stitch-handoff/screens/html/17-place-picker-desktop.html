@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wine Journal — Official or custom location</title><style>html,body{margin:0;padding:0;background:#f7f3eb}svg{vertical-align:middle}
+
+#wine-journal-v2{--wj-paper:#f7f3eb;--wj-card:#fffdf8;--wj-burgundy:#722c40;--wj-olive:#555e3f;--wj-brown:#795f4b;--wj-ink:#332c28;--wj-muted:#70665c;--wj-line:#ddd5c9;--wj-soft:#ebe6da;--wj-greenwash:#e9edde;font:400 15px/1.55 "Segoe UI",Arial,sans-serif;color:var(--wj-ink);width:100%;color-scheme:light}
+#wine-journal-v2 *{box-sizing:border-box}
+#wine-journal-v2 p,#wine-journal-v2 figcaption,#wine-journal-v2 .wj-note-paper,#wine-journal-v2 .wj-entry-title{overflow-wrap:anywhere}
+#wine-journal-v2 .wj-surface{background:var(--wj-paper);container-type:inline-size;border:1px solid var(--wj-line);border-radius:14px;overflow:clip}
+#wine-journal-v2.wj-phone .wj-surface{max-width:390px;margin:0 auto}
+#wine-journal-v2 button,#wine-journal-v2 input,#wine-journal-v2 select,#wine-journal-v2 textarea{font:inherit;color:inherit}
+#wine-journal-v2 button,#wine-journal-v2 a{touch-action:manipulation}
+#wine-journal-v2 button{cursor:pointer}
+#wine-journal-v2 button:disabled{cursor:default;opacity:.55}
+#wine-journal-v2 button,#wine-journal-v2 a,#wine-journal-v2 input,#wine-journal-v2 select,#wine-journal-v2 textarea{scroll-margin:24px}
+#wine-journal-v2 a{color:var(--wj-burgundy);text-underline-offset:3px}
+#wine-journal-v2 h1,#wine-journal-v2 h2,#wine-journal-v2 h3,#wine-journal-v2 p{margin:0}
+#wine-journal-v2 h1{font:400 40px/1.12 Georgia,serif;letter-spacing:-1.1px;color:var(--wj-burgundy);overflow-wrap:anywhere}
+#wine-journal-v2 h2{font:400 27px/1.25 Georgia,serif;letter-spacing:-.4px}
+#wine-journal-v2 h3{font:400 21px/1.28 Georgia,serif}
+#wine-journal-v2 .wj-topbar{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:19px 28px;border-bottom:1px solid var(--wj-line);background:var(--wj-card)}
+#wine-journal-v2 .wj-brand{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;min-height:44px;margin-right:auto;font:400 25px Georgia,serif;color:var(--wj-burgundy)}
+#wine-journal-v2 .wj-brand i,#wine-journal-v2 .wj-brand svg{color:var(--wj-olive)}
+#wine-journal-v2 .wj-nav{display:flex;gap:7px;align-items:center}
+#wine-journal-v2 .wj-nav button{min-height:44px;padding:9px 12px;border:0;border-radius:6px;background:none;white-space:nowrap}
+#wine-journal-v2 .wj-nav button[aria-current=page]{color:var(--wj-burgundy);background:var(--wj-paper);box-shadow:inset 0 -2px var(--wj-burgundy)}
+#wine-journal-v2 .wj-top-actions{display:flex;gap:9px;align-items:center}
+#wine-journal-v2 .wj-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 17px;border:1px solid var(--wj-line);border-radius:7px;background:var(--wj-card);text-decoration:none;line-height:1.35;font-weight:500}
+#wine-journal-v2 .wj-button.wj-primary{background:var(--wj-burgundy);border-color:var(--wj-burgundy);color:#fffdf8}
+#wine-journal-v2 .wj-button.wj-olive{background:var(--wj-olive);border-color:var(--wj-olive);color:#fffdf8}
+#wine-journal-v2 .wj-text-button{display:inline-flex;align-items:center;gap:6px;min-height:44px;border:0;padding:5px 0;background:none;color:var(--wj-burgundy);font-weight:500;text-align:left}
+#wine-journal-v2 .wj-account{padding:9px 12px}
+#wine-journal-v2 .wj-main{padding:30px 34px 36px;min-height:480px}
+#wine-journal-v2 .wj-page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin:0 0 26px}
+#wine-journal-v2 .wj-overline{color:var(--wj-olive);font-size:11px;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:9px;font-weight:500}
+#wine-journal-v2 .wj-subtitle{color:var(--wj-muted);margin-top:11px;max-width:590px}
+#wine-journal-v2 .wj-small{font-size:12px;color:var(--wj-muted)}
+#wine-journal-v2 .wj-muted{color:var(--wj-muted)}
+#wine-journal-v2 .wj-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#wine-journal-v2 .wj-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#wine-journal-v2 .wj-toolbar{display:flex;gap:12px;align-items:end;margin-bottom:24px;flex-wrap:wrap}
+#wine-journal-v2 .wj-toolbar .wj-search{flex:1 1 220px}
+#wine-journal-v2 .wj-label{display:block;font-size:12px;color:var(--wj-muted);margin-bottom:6px;font-weight:500}
+#wine-journal-v2 .wj-input{display:block;width:100%;min-height:44px;border:1px solid var(--wj-line);background:var(--wj-card);padding:10px 12px;border-radius:6px;font-size:16px}
+#wine-journal-v2 textarea.wj-input{min-height:116px;resize:vertical}
+#wine-journal-v2 .wj-search-wrap{display:flex;align-items:center;gap:9px;padding-left:12px;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v2 .wj-search-wrap input{border:0;background:transparent;min-width:0}
+#wine-journal-v2 .wj-search-wrap svg{flex:none;color:var(--wj-muted)}
+#wine-journal-v2 .wj-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
+#wine-journal-v2 .wj-wine-card{display:flex;flex-direction:column;text-align:left;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:9px;overflow:hidden;padding:0;min-width:0}
+#wine-journal-v2 .wj-art{display:flex;align-items:center;justify-content:center;min-height:170px;background:radial-gradient(ellipse at 48% 100%,#d8d1be 0,transparent 45%),linear-gradient(135deg,#ece9df,#f4f0e6);position:relative;overflow:hidden}
+#wine-journal-v2 .wj-art.wj-art-green{background:radial-gradient(ellipse at 48% 100%,#cdd1bf 0,transparent 45%),linear-gradient(135deg,#e2e7d6,#f0f0e5)}
+#wine-journal-v2 .wj-art.wj-art-rose{background:radial-gradient(ellipse at 48% 100%,#dbc7c2 0,transparent 45%),linear-gradient(135deg,#e9ded9,#f5eee9)}
+#wine-journal-v2 .wj-bottle{display:block;position:relative;width:51px;height:105px;margin-top:27px;border-radius:16px 16px 5px 5px;background:linear-gradient(90deg,#2a3025,#424c35 34%,#272e22 73%);box-shadow:9px 9px 15px #332c281a}
+#wine-journal-v2 .wj-bottle:before{content:"";position:absolute;bottom:94px;left:17px;width:17px;height:38px;border-radius:3px 3px 0 0;background:linear-gradient(var(--wj-burgundy) 0 40%,#313b27 41%)}
+#wine-journal-v2 .wj-bottle:after{content:"";position:absolute;left:6px;right:6px;top:36px;height:46px;background:#f4efe4;border-top:2px solid var(--wj-brown);border-bottom:2px solid var(--wj-brown)}
+#wine-journal-v2 .wj-bottle-label{position:absolute;z-index:1;top:41px;left:0;right:0;text-align:center;font:400 13px/1.4 Georgia,serif;color:#46382d}
+#wine-journal-v2 .wj-bottle-label small{display:block;font:400 11px/1.2 "Segoe UI",sans-serif}
+#wine-journal-v2 .wj-wine-card .wj-art{width:100%}
+#wine-journal-v2 .wj-card-content{display:flex;flex-direction:column;gap:6px;padding:17px 18px 16px;width:100%;flex:1}
+#wine-journal-v2 .wj-producer{font-size:12px;color:var(--wj-muted)}
+#wine-journal-v2 .wj-wine-name{font:400 23px/1.16 Georgia,serif;letter-spacing:-.3px}
+#wine-journal-v2 .wj-wine-sub{font-size:13px}
+#wine-journal-v2 .wj-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--wj-line);padding-top:12px;margin-top:9px;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v2 .wj-score{display:inline-flex;align-items:center;gap:5px;color:var(--wj-burgundy);white-space:nowrap;font-weight:500;font-size:14px}
+#wine-journal-v2 .wj-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:4px;background:var(--wj-greenwash);color:var(--wj-olive);font-size:12px;max-width:100%;overflow-wrap:anywhere}
+#wine-journal-v2 .wj-back{margin:-9px 0 17px}
+#wine-journal-v2 .wj-hero{display:grid;grid-template-columns:150px minmax(0,1fr);gap:26px;align-items:center;margin-bottom:27px}
+#wine-journal-v2 .wj-hero .wj-art{min-height:200px;border-radius:7px}
+#wine-journal-v2 .wj-hero h1{font-size:36px;margin:5px 0 10px}
+#wine-journal-v2 .wj-hero .wj-actions{margin-top:17px}
+#wine-journal-v2 .wj-two-col{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(230px,1fr);gap:27px;align-items:start}
+#wine-journal-v2 .wj-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;flex-wrap:wrap}
+#wine-journal-v2 .wj-panel{border:1px solid var(--wj-line);border-radius:8px;background:var(--wj-card);padding:21px}
+#wine-journal-v2 .wj-panel+.wj-panel{margin-top:17px}
+#wine-journal-v2 .wj-rating-value{font:400 38px/1.2 Georgia,serif;color:var(--wj-burgundy)}
+#wine-journal-v2 .wj-rule{border:0;border-top:1px solid var(--wj-line);margin:20px 0}
+#wine-journal-v2 .wj-entry{padding:19px 0;border-top:1px solid var(--wj-line)}
+#wine-journal-v2 .wj-entry .wj-entry-title{font-weight:500;font-size:16px}
+#wine-journal-v2 .wj-entry p{margin:9px 0 8px}
+#wine-journal-v2 .wj-entry-meta{display:flex;gap:10px;align-items:center;color:var(--wj-muted);font-size:12px;flex-wrap:wrap}
+#wine-journal-v2 .wj-specs{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin:17px 0 0}
+#wine-journal-v2 .wj-specs dt{color:var(--wj-muted);font-size:12px}
+#wine-journal-v2 .wj-specs dd{margin:2px 0 0;overflow-wrap:anywhere}
+#wine-journal-v2 .wj-form{max-width:680px;margin:0 auto}
+#wine-journal-v2 .wj-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:19px 0}
+#wine-journal-v2 .wj-fields>label,#wine-journal-v2 .wj-toolbar>label{min-width:0}
+#wine-journal-v2 .wj-field-full{grid-column:1/-1}
+#wine-journal-v2 .wj-selected-wine{display:flex;gap:13px;align-items:center;background:var(--wj-greenwash);padding:14px 17px;border-radius:7px;color:var(--wj-ink)}
+#wine-journal-v2 .wj-selected-wine svg{color:var(--wj-olive);flex:none}
+#wine-journal-v2 .wj-guide{background:var(--wj-greenwash);padding:18px;border-radius:7px;margin:0 0 20px}
+#wine-journal-v2 .wj-guide p{margin:8px 0}
+#wine-journal-v2 .wj-descriptors{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#wine-journal-v2 .wj-descriptors button{min-height:44px;padding:8px 13px;border:1px solid #b6bea5;border-radius:5px;background:var(--wj-card)}
+#wine-journal-v2 .wj-descriptors button[aria-pressed=true]{background:var(--wj-olive);border-color:var(--wj-olive);color:#fffdf8}
+#wine-journal-v2 details{margin:14px 0}
+#wine-journal-v2 summary{cursor:pointer;color:var(--wj-olive);min-height:44px;padding:10px 0;font-weight:500}
+#wine-journal-v2 .wj-form-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:25px;padding-top:22px;border-top:1px solid var(--wj-line);flex-wrap:wrap}
+#wine-journal-v2 .wj-privacy{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v2 .wj-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 25px}
+#wine-journal-v2 .wj-methods button{min-height:55px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v2 .wj-methods button[aria-pressed=true]{border-color:var(--wj-burgundy);color:var(--wj-burgundy);background:#f1e4e7}
+#wine-journal-v2 .wj-scan{min-height:180px;border:1px dashed var(--wj-brown);border-radius:8px;background:var(--wj-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
+#wine-journal-v2 .wj-result{display:flex;align-items:center;gap:15px;padding:15px 0;border-top:1px solid var(--wj-line)}
+#wine-journal-v2 .wj-result-info{flex:1;min-width:0}
+#wine-journal-v2 .wj-result h3{font-size:21px}
+#wine-journal-v2 .wj-empty{text-align:center;padding:48px 20px}
+#wine-journal-v2 .wj-empty p{max-width:440px;margin:13px auto 23px;color:var(--wj-muted)}
+#wine-journal-v2 .wj-banner{padding:12px 15px;border-radius:6px;background:var(--wj-greenwash);color:var(--wj-olive);margin-bottom:22px;display:flex;align-items:center;gap:9px}
+#wine-journal-v2 .wj-warning{padding:12px 14px;border-left:3px solid var(--wj-brown);background:var(--wj-soft);margin:14px 0;font-size:13px}
+#wine-journal-v2 .wj-error{color:var(--wj-burgundy);margin-top:12px}
+#wine-journal-v2 .wj-occasion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px}
+#wine-journal-v2 .wj-occasion-card{display:block;text-align:left;padding:0;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:8px;overflow:hidden}
+#wine-journal-v2 .wj-memory-scene{display:flex;align-items:center;justify-content:center;gap:16px;min-height:177px;background:#e7e3d4;padding:20px}
+#wine-journal-v2 .wj-memory-scene .wj-photo-frame{width:39%;background:#fffdf8;padding:8px 8px 19px;box-shadow:1px 3px 8px #43382b16;transform:rotate(-5deg)}
+#wine-journal-v2 .wj-memory-scene .wj-photo-frame+.wj-photo-frame{transform:rotate(6deg);margin-top:20px}
+#wine-journal-v2 .wj-photo-block{display:flex;align-items:center;justify-content:center;min-height:95px;background:linear-gradient(135deg,#d5cbbd,#b49e88);color:#594436;position:relative}
+#wine-journal-v2 .wj-photo-block.wj-photo-olive{background:linear-gradient(135deg,#d2d7bb,#949d77);color:#3d442e}
+#wine-journal-v2 .wj-occasion-body{display:block;padding:22px}
+#wine-journal-v2 .wj-occasion-body .wj-small{display:block;margin-bottom:7px}
+#wine-journal-v2 .wj-occasion-body .wj-wine-name{display:block}
+#wine-journal-v2 .wj-occasion-body .wj-muted{display:block;margin-top:10px}
+#wine-journal-v2 .wj-occasion-head{border-bottom:1px solid var(--wj-line);padding-bottom:25px;margin-bottom:25px}
+#wine-journal-v2 .wj-occasion-head h1{margin:9px 0 16px}
+#wine-journal-v2 .wj-memory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:19px 0}
+#wine-journal-v2 .wj-memory{margin:0;padding:8px 8px 12px;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:2px;min-width:0}
+#wine-journal-v2 .wj-memory:nth-child(3n+1){transform:rotate(-1deg)}
+#wine-journal-v2 .wj-memory:nth-child(3n+2){transform:rotate(1deg)}
+#wine-journal-v2 .wj-memory figcaption{font-size:12px;color:var(--wj-muted);padding:10px 4px 0;overflow-wrap:anywhere}
+#wine-journal-v2 .wj-memory .wj-photo-block{min-height:130px;flex-direction:column;gap:9px}
+#wine-journal-v2 .wj-note-paper{padding:22px;border-left:3px solid var(--wj-olive);background:var(--wj-card);margin:18px 0;color:var(--wj-ink)}
+#wine-journal-v2 .wj-occasion-wines{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#wine-journal-v2 .wj-occasion-wine{border:1px solid var(--wj-line);border-radius:7px;background:var(--wj-card);padding:17px}
+#wine-journal-v2 .wj-occasion-wine h3{margin:6px 0}
+#wine-journal-v2 .wj-upload{display:block;padding:15px;border:1px dashed var(--wj-brown);border-radius:6px;margin-top:17px;background:var(--wj-card);overflow-wrap:anywhere}
+#wine-journal-v2 .wj-upload input{display:block;max-width:100%;font-size:12px;margin-top:10px}
+#wine-journal-v2 .wj-check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-top:1px solid var(--wj-line);cursor:pointer}
+#wine-journal-v2 .wj-check-row input{width:19px;height:19px;flex:none;margin-top:4px;accent-color:var(--wj-burgundy)}
+#wine-journal-v2 .wj-check-row span{min-width:0}
+#wine-journal-v2 .wj-rating-history{list-style:none;padding:0;margin:15px 0}
+#wine-journal-v2 .wj-rating-history li{padding:13px 0;border-top:1px solid var(--wj-line);display:flex;justify-content:space-between;gap:14px}
+#wine-journal-v2 .wj-footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;border-top:1px solid var(--wj-line);margin-top:33px;padding-top:17px;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v2.wj-list .wj-grid{grid-template-columns:1fr}
+#wine-journal-v2.wj-list .wj-wine-card{display:grid;grid-template-columns:100px 1fr}
+#wine-journal-v2.wj-list .wj-wine-card .wj-art{min-height:145px}
+#wine-journal-v2.wj-list .wj-card-content{padding:16px 20px}
+#wine-journal-v2 .wj-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@container(max-width:780px){#wine-journal-v2 .wj-topbar{gap:12px;padding:15px 21px}#wine-journal-v2 .wj-brand{font-size:23px}#wine-journal-v2 .wj-nav{order:3;width:100%}#wine-journal-v2 .wj-nav button{flex:1}#wine-journal-v2 .wj-main{padding:25px}#wine-journal-v2 .wj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#wine-journal-v2 .wj-two-col{grid-template-columns:1fr}}
+@container(max-width:500px){#wine-journal-v2 .wj-topbar{padding:13px 16px}#wine-journal-v2 .wj-brand{font-size:21px;gap:6px}#wine-journal-v2 .wj-top-actions{gap:6px}#wine-journal-v2 .wj-top-actions .wj-button{padding:9px 10px}#wine-journal-v2 .wj-account span{display:none}#wine-journal-v2 .wj-main{padding:23px 18px}#wine-journal-v2 h1{font-size:34px}#wine-journal-v2 .wj-hero{grid-template-columns:90px minmax(0,1fr);gap:16px;align-items:start}#wine-journal-v2 .wj-hero .wj-art{min-height:170px}#wine-journal-v2 .wj-hero h1{font-size:28px}#wine-journal-v2 .wj-grid{gap:12px}#wine-journal-v2 .wj-card-content{padding:13px 12px}#wine-journal-v2 .wj-wine-name{font-size:21px}#wine-journal-v2 .wj-wine-card .wj-art{min-height:154px}#wine-journal-v2 .wj-card-bottom{align-items:flex-start;flex-direction:column;gap:5px}#wine-journal-v2 .wj-toolbar>label{flex:1 1 130px}#wine-journal-v2 .wj-methods{gap:6px}#wine-journal-v2 .wj-methods button{flex-direction:column;padding:10px 4px;font-size:13px}#wine-journal-v2 .wj-occasion-grid,#wine-journal-v2 .wj-occasion-wines{grid-template-columns:1fr}#wine-journal-v2 .wj-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#wine-journal-v2 .wj-memory .wj-photo-block{min-height:108px}#wine-journal-v2 .wj-occasion-head h1{font-size:35px}#wine-journal-v2 .wj-panel{padding:18px}#wine-journal-v2 .wj-fields{gap:14px 10px}#wine-journal-v2 .wj-result{align-items:flex-start}#wine-journal-v2 .wj-result .wj-button{padding:9px 10px}}
+#wine-journal-v2 .wj-nav{order:3;width:100%;gap:8px}
+#wine-journal-v2 .wj-nav button{flex:1;white-space:normal}
+#wine-journal-v2 .wj-account{min-width:44px}
+#wine-journal-v2 .wj-wine-name,#wine-journal-v2 h2,#wine-journal-v2 h3{overflow-wrap:anywhere}
+#wine-journal-v2 .wj-place-picker,#wine-journal-v2 .wj-inline-occasion{padding:18px;border:1px solid var(--wj-line);background:var(--wj-card);border-radius:8px;margin:10px 0 18px}
+#wine-journal-v2 .wj-place-result{display:flex;flex-direction:column;width:100%;text-align:left;gap:4px;border:0;border-top:1px solid var(--wj-line);padding:12px 0;min-height:54px;background:var(--wj-card)}
+#wine-journal-v2 .wj-cover-picker{display:grid;grid-template-columns:110px minmax(0,1fr);gap:19px;align-items:center;margin-bottom:23px}
+#wine-journal-v2 .wj-cover-preview{width:110px;height:145px;object-fit:contain;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v2 .wj-cover-empty{display:flex;align-items:center;justify-content:center;background:var(--wj-soft);color:var(--wj-olive)}
+#wine-journal-v2 .wj-cover-art img{width:100%;height:190px;object-fit:contain}
+#wine-journal-v2 .wj-staged-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 0;border-bottom:1px solid var(--wj-line);flex-wrap:wrap}
+#wine-journal-v2 .wj-staged-entry>div{min-width:0;overflow-wrap:anywhere}
+#wine-journal-v2 .wj-discover-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+#wine-journal-v2 .wj-discover-tabs button[aria-pressed=true]{background:var(--wj-olive);color:var(--wj-card);border-color:var(--wj-olive)}
+#wine-journal-v2 .wj-guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+#wine-journal-v2 .wj-guide-card{text-align:left;padding:24px;border:1px solid var(--wj-line);border-radius:8px;background:var(--wj-card);min-width:0}
+#wine-journal-v2 .wj-guide-card .wj-overline{display:flex;align-items:center;gap:8px}
+#wine-journal-v2 .wj-guide-card p{margin:12px 0;color:var(--wj-muted)}
+#wine-journal-v2 .wj-article{max-width:660px;margin:0 auto}
+#wine-journal-v2 .wj-article h2,#wine-journal-v2 .wj-article h3{margin:27px 0 12px}
+#wine-journal-v2 .wj-article p{margin:14px 0}
+#wine-journal-v2 .wj-article>a{display:inline-block;margin:15px 0}
+#wine-journal-v2 .wj-hero .wj-actions .wj-button{max-width:100%;white-space:normal}
+@container(max-width:500px){#wine-journal-v2 .wj-nav{display:grid;grid-template-columns:1fr 1fr;gap:4px}#wine-journal-v2 .wj-guide-grid{grid-template-columns:1fr}#wine-journal-v2 .wj-cover-picker{grid-template-columns:1fr}#wine-journal-v2 .wj-fields{grid-template-columns:1fr}#wine-journal-v2 .wj-nav button{padding:8px 10px}#wine-journal-v2 .wj-guide-card{padding:20px}#wine-journal-v2 .wj-inline-occasion,#wine-journal-v2 .wj-place-picker{padding:13px}#wine-journal-v2 .wj-discover-tabs{gap:6px}#wine-journal-v2 .wj-discover-tabs .wj-button{flex:1;padding:9px}}
+
+
+body{max-width:1024px;margin:0 auto}</style></head><body>
+<!-- Static design reference; interactions are in walkthrough.html. -->
+<div id="wine-journal-v2" aria-label="Wine Journal design" style="--wj-paper: #f7f3eb; --wj-card: #fffdf8; --wj-burgundy: #722c40; --wj-olive: #555e3f; --wj-brown: #795f4b;">
+  <div class="wj-surface">
+    <div id="wj-app"><header class="wj-topbar"><button type="button" class="wj-brand" data-a="library"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="wine" aria-hidden="true" class="lucide lucide-wine"><path d="M8 22h8"></path><path d="M7 10h10"></path><path d="M12 15v7"></path><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"></path></svg>Wine Journal</button><div class="wj-top-actions"><button type="button" class="wj-button wj-primary" data-a="find"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" aria-hidden="true" class="lucide lucide-plus"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Log wine</button><button type="button" class="wj-button wj-account" data-a="account" aria-label="Your account"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-round" aria-hidden="true" class="lucide lucide-user-round"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg><span>Account</span></button></div><nav class="wj-nav" aria-label="Main navigation"><button type="button" data-a="library" aria-current="page">My wines</button><button type="button" data-a="browse">Browse wines</button><button type="button" data-a="occasions">Occasions</button><button type="button" data-a="guides">Guides</button></nav></header><main class="wj-main"><div class="wj-back"><button type="button" class="wj-text-button" data-a="cancel-capture"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-left" aria-hidden="true" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Cancel entry</button></div><form class="wj-form" data-form="entry"><div class="wj-page-head"><div><div class="wj-overline">A new entry</div><h1>I tried this wine.</h1><p class="wj-subtitle">The wine and date are all you need.</p></div></div><div class="wj-selected-wine"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="wine" aria-hidden="true" class="lucide lucide-wine"><path d="M8 22h8"></path><path d="M7 10h10"></path><path d="M12 15v7"></path><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"></path></svg><div><div>Calculated Risk · Barrel Selection</div><div class="wj-small">Cabernet Sauvignon · 2023</div></div></div><label style="display:block;margin-top:20px"><span class="wj-label">Date tried</span><input class="wj-input" type="date" required="" data-draft="date" value="2026-09-14" style=""></label><details data-optional="entry" open=""><summary>Add details · optional</summary><label><span class="wj-label">Time · optional</span><input class="wj-input" type="time" data-draft="time" value="" style=""></label><div style="margin-top:18px"><div class="wj-location"><label><span class="wj-label">Location · optional</span><input class="wj-input" data-location="entry" value="" placeholder="Home, Alex’s house, a restaurant…" style=""></label><div class="wj-row"><span class="wj-small">Use any personal label.</span><button type="button" class="wj-text-button" data-a="place-open" data-ctx="entry"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" aria-hidden="true" class="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>Find a place</button></div><div class="wj-place-picker"><div class="wj-row"><h3>Find a place</h3><button type="button" class="wj-text-button" data-a="place-close">Close</button></div><label><span class="wj-label">Place name or town</span><input class="wj-input" data-place-query="" value="Bar Sol" placeholder="Try Bar Sol" style=""></label><p class="wj-small" style="margin:10px 0">Sample suggestions · Google Places connection planned</p><div id="wj-place-results"><button type="button" class="wj-place-result" data-a="place-select" data-id="sample:bar-sol-napa"><span>Bar Sol</span><span class="wj-small">Downtown Napa · sample place</span></button><button type="button" class="wj-place-result" data-a="place-select" data-id="sample:bar-sol-sonoma"><span>Bar Sol</span><span class="wj-small">Sonoma town centre · sample place</span></button></div></div></div></div><div style="margin-top:18px"><label><span class="wj-label">Occasion · optional</span><select class="wj-input" data-draft="occasionId"><option value="" selected="">No occasion</option><option value="o1">Dinner with Alex &amp; Sam</option></select></label><button type="button" class="wj-text-button" data-a="inline-new"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" aria-hidden="true" class="lucide lucide-plus"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Create new occasion</button></div><div style="margin-top:23px"><label><span class="wj-label">Personal notes · optional</span><textarea class="wj-input" data-draft="notes" placeholder="What stood out? What do you want to remember?" style=""></textarea></label><button type="button" class="wj-text-button" data-a="guide" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sprout" aria-hidden="true" class="lucide lucide-sprout"><path d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3"></path><path d="M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4"></path><path d="M5 21h14"></path></svg>Help me describe it</button></div><details><summary><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="images" aria-hidden="true" class="lucide lucide-images"><path d="m22 11-1.296-1.296a2.4 2.4 0 0 0-3.408 0L11 16"></path><path d="M4 8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2"></path><circle cx="13" cy="7" r="1" fill="currentColor"></circle><rect x="8" y="2" width="14" height="14" rx="2"></rect></svg> Photos &amp; videos · optional</summary><label class="wj-upload">Add photos or videos<input type="file" accept="image/*,video/*" multiple="" data-files="entry" style=""></label></details></details><div class="wj-form-foot"><span class="wj-privacy"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="lock-keyhole" aria-hidden="true" class="lucide lucide-lock-keyhole"><circle cx="12" cy="16" r="1"></circle><rect x="3" y="10" width="18" height="12" rx="2"></rect><path d="M7 10V7a5 5 0 0 1 10 0v3"></path></svg> Private to you</span><button class="wj-button wj-primary" type="submit">Save entry</button></div></form></main></div>
+  </div>
+</div>
+</body></html>

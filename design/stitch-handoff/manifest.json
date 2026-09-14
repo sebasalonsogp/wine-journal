@@ -1,0 +1,412 @@
+{
+  "project": "Wine Journal",
+  "exported": "2026-09-14",
+  "source": "Second UX walkthrough",
+  "source_sha256": "d1aaa36d70cb0132c7b6fac81e48d5a81355b27dd77cbce8533d71a017dd5353",
+  "design_sha256": "e42a81479ebbcefae38a55830487570d81cfe965b4c1c0c50751a0629bc24fb7",
+  "screen_states": 18,
+  "screen_images": 36,
+  "static_html_screens": 36,
+  "files": [
+    {
+      "path": "DESIGN.md",
+      "bytes": 13010,
+      "sha256": "e42a81479ebbcefae38a55830487570d81cfe965b4c1c0c50751a0629bc24fb7"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2812,
+      "sha256": "3f1dc4cec7ad8482a248de979289eeff34b64d0670f3e2f86baa87c12a58552a"
+    },
+    {
+      "path": "screen-index.html",
+      "bytes": 14840,
+      "sha256": "639c60efc08822476670fa52acf87bed3e294772d97661ca46db1f0e99f54d51"
+    },
+    {
+      "path": "SCREEN-MAP.md",
+      "bytes": 2436,
+      "sha256": "eca061958004ca42d2ae45acdbbed38abbcb6f0ffc7ac6903aa3f455d117c19b"
+    },
+    {
+      "path": "screens/desktop/01-my-wines.png",
+      "bytes": 177170,
+      "sha256": "7990ce7bd65aec8a5d55bf82d6b2e47ca340337564b9951720799e0ffa96e925"
+    },
+    {
+      "path": "screens/desktop/02-wine-record.png",
+      "bytes": 86615,
+      "sha256": "784333c2acfe2448af555f98b7cd2edb8ada2d60b77c1950d88dde2de71ece68"
+    },
+    {
+      "path": "screens/desktop/03-quick-entry.png",
+      "bytes": 34145,
+      "sha256": "b80d09246e50da58b9be88afc75dc6b74ffc1d1a4e7a830a399bc0148a8f67cb"
+    },
+    {
+      "path": "screens/desktop/04-entry-new-occasion.png",
+      "bytes": 83194,
+      "sha256": "33acfe6f2615d1860cd1e335ecb83f421417bd683297169133bc4b0f4b07be1f"
+    },
+    {
+      "path": "screens/desktop/05-find-barcode.png",
+      "bytes": 40375,
+      "sha256": "9bdecda0b6c46e2b74c1e134b2c844f44f8f258080cbd02d177a48a7f247ae45"
+    },
+    {
+      "path": "screens/desktop/06-photo-matches.png",
+      "bytes": 75740,
+      "sha256": "a51e9f8b90f97aad0c0c0b23bf3943f3da0d471d1af03b1c8bc3274d152a782d"
+    },
+    {
+      "path": "screens/desktop/07-manual-wine.png",
+      "bytes": 39553,
+      "sha256": "30adf8b877cee3a1c0048183a99cb2710d7450a24ad56973a83df34b72a4de22"
+    },
+    {
+      "path": "screens/desktop/08-create-occasion.png",
+      "bytes": 70529,
+      "sha256": "b3be084e9552f3e5a55e6dcb66048d9a017699eeef7db9d8141eb06e4c63b4d3"
+    },
+    {
+      "path": "screens/desktop/09-occasions.png",
+      "bytes": 58400,
+      "sha256": "dbeaa533449d6757ec5f37afc27a0736aeb20126986302cf7b82e6b74915044d"
+    },
+    {
+      "path": "screens/desktop/10-occasion-scrapbook.png",
+      "bytes": 178572,
+      "sha256": "17300e999971f327e4a79724fe7821b7a99643edc78837ebe365011461c715c6"
+    },
+    {
+      "path": "screens/desktop/11-browse-wines.png",
+      "bytes": 208463,
+      "sha256": "c89e010b9270ccb081fc647723685d669d2d329cadf1cce8faaabbcc387764e8"
+    },
+    {
+      "path": "screens/desktop/12-for-you.png",
+      "bytes": 70914,
+      "sha256": "a2b5c7fff7292e78626fcf6c617b761e5d87e581b1a03b53fbd7cfa9a8c35631"
+    },
+    {
+      "path": "screens/desktop/13-trending.png",
+      "bytes": 54864,
+      "sha256": "b6b2822b4c90b99118c84814b8a405f9250346d3d37ba4644b5556c89f49ce86"
+    },
+    {
+      "path": "screens/desktop/14-guides.png",
+      "bytes": 54801,
+      "sha256": "7a9af4e0b164c8bcfd59ac9db68b1406c4a5b5ce4f4e0ce152e4ae033bf20058"
+    },
+    {
+      "path": "screens/desktop/15-tasting-guide.png",
+      "bytes": 48609,
+      "sha256": "04b904984db70dac79bb42fd076708343fafbb297f23bceb60b0ee06f5298074"
+    },
+    {
+      "path": "screens/desktop/16-rating-history.png",
+      "bytes": 36819,
+      "sha256": "03c93259708f2655d9eb3b8154b41ffb5764d7be0d949dba13ec0bb292af74fc"
+    },
+    {
+      "path": "screens/desktop/17-place-picker.png",
+      "bytes": 74488,
+      "sha256": "b776ad8f7f4ee32090e0c9f1d4a0146f90b8b4e5b794f56f17835d7ce3d50c98"
+    },
+    {
+      "path": "screens/desktop/18-sign-in.png",
+      "bytes": 33850,
+      "sha256": "b78c2caaeaf90e7e8fb9109ac02e14e1fae4170625f4f6261632a848af921b08"
+    },
+    {
+      "path": "screens/html/01-my-wines-desktop.html",
+      "bytes": 29097,
+      "sha256": "667282106d803d431b5a1c9dc4b61da3227565911433d7ffb4de63700feca8ad"
+    },
+    {
+      "path": "screens/html/01-my-wines-mobile.html",
+      "bytes": 29096,
+      "sha256": "b664cc87dc59faafecbabc69d26a929be2a486f037b3a747fa4dd5543afe31b3"
+    },
+    {
+      "path": "screens/html/02-wine-record-desktop.html",
+      "bytes": 28734,
+      "sha256": "2f3b35f16401dc6b7b80154ccbfc59ee2d4d499345428cb19e7233164b04baec"
+    },
+    {
+      "path": "screens/html/02-wine-record-mobile.html",
+      "bytes": 28733,
+      "sha256": "09c6c378ddba9acddfe798202f574760e533491bc17846491a9e6b1360e93b0f"
+    },
+    {
+      "path": "screens/html/03-quick-entry-desktop.html",
+      "bytes": 28063,
+      "sha256": "6ae8b2a66adf0c2e2cb85a310a13fe2b4dbfa958f52f0b05b11b18840c453845"
+    },
+    {
+      "path": "screens/html/03-quick-entry-mobile.html",
+      "bytes": 28062,
+      "sha256": "8b59d3ce9dddb9ccabd7111d089ecfee9e0cbeeb0ab694f92c1feb940b80ccbd"
+    },
+    {
+      "path": "screens/html/04-entry-new-occasion-desktop.html",
+      "bytes": 29463,
+      "sha256": "b8da380b882717989e284f95a53d5b61afb6b4e7255750ffc96b27479fad1b43"
+    },
+    {
+      "path": "screens/html/04-entry-new-occasion-mobile.html",
+      "bytes": 29462,
+      "sha256": "cc1966d15d953b7f10f48b4cd8e78bec57116fd1f3b6eff2e3b8e90408f0f9f3"
+    },
+    {
+      "path": "screens/html/05-find-barcode-desktop.html",
+      "bytes": 25799,
+      "sha256": "6ffbdc219758ac16fd64f0385649c7c80ddf4307aba49c12f0617694d94b6c09"
+    },
+    {
+      "path": "screens/html/05-find-barcode-mobile.html",
+      "bytes": 25798,
+      "sha256": "153422a2e27105285027acbb9539dd736c80274b2b7f665aa356d5eb482ff643"
+    },
+    {
+      "path": "screens/html/06-photo-matches-desktop.html",
+      "bytes": 28623,
+      "sha256": "0c5d9cfe9280cd85d871be9ed0ea4f14bcea55235fbfcd73c3194356ff72298e"
+    },
+    {
+      "path": "screens/html/06-photo-matches-mobile.html",
+      "bytes": 28622,
+      "sha256": "41ad778da00b5a7af10297789162a470efd4d7c9d72e3bf8eefe2912ce2bc0e0"
+    },
+    {
+      "path": "screens/html/07-manual-wine-desktop.html",
+      "bytes": 25031,
+      "sha256": "db5adaf3c4df9b8f4aa7f2e58202b7e7fc25efb1e1356ba76fa00d403c426617"
+    },
+    {
+      "path": "screens/html/07-manual-wine-mobile.html",
+      "bytes": 25030,
+      "sha256": "b5a3defe8cff12f155e35066f90df8bf0f615b279c2f0bcf378ee00602207c63"
+    },
+    {
+      "path": "screens/html/08-create-occasion-desktop.html",
+      "bytes": 27499,
+      "sha256": "bfe5604f574747a1fe60264330dd1ff6abf8a4d6f7f6ed520d214b1a8e12da2e"
+    },
+    {
+      "path": "screens/html/08-create-occasion-mobile.html",
+      "bytes": 27498,
+      "sha256": "487987bfb2ce22296ef4d8b2acafd3edec81b6ac0da80f382868fa56fc0fce4d"
+    },
+    {
+      "path": "screens/html/09-occasions-desktop.html",
+      "bytes": 25366,
+      "sha256": "2a765b97d65892780459bd5ae09bc55c4c3bc4558e777fe63cd347fa288a4ec6"
+    },
+    {
+      "path": "screens/html/09-occasions-mobile.html",
+      "bytes": 25365,
+      "sha256": "2fe2eb98ac466862bbf8c2bfd8d212a5abdad7378630beac23317afe48bb47e1"
+    },
+    {
+      "path": "screens/html/10-occasion-scrapbook-desktop.html",
+      "bytes": 30583,
+      "sha256": "e40123618a4727c5a6d526c81018cc51617320dcdd8d1b50617e3cdd3039993d"
+    },
+    {
+      "path": "screens/html/10-occasion-scrapbook-mobile.html",
+      "bytes": 30582,
+      "sha256": "6ea3d5f78147c027b5ef3bdba3a82313266803e604c8630fa04b68470a9b4efb"
+    },
+    {
+      "path": "screens/html/11-browse-wines-desktop.html",
+      "bytes": 26734,
+      "sha256": "d0499d92ffcda78215d3874c00dccfe7846c03661c5d958c6d40a771621ad7ec"
+    },
+    {
+      "path": "screens/html/11-browse-wines-mobile.html",
+      "bytes": 26733,
+      "sha256": "198092895695562150514a47de238b164963cbf198bb32737c9e787bc0c9528f"
+    },
+    {
+      "path": "screens/html/12-for-you-desktop.html",
+      "bytes": 25594,
+      "sha256": "5703a0ab422436ee191f08efece8eec4204d0221e0b8afc48484435450c4f72a"
+    },
+    {
+      "path": "screens/html/12-for-you-mobile.html",
+      "bytes": 25593,
+      "sha256": "48e50a38e37c54182a910fc954ea88394b44058e70a0c82e8641c27e98f57700"
+    },
+    {
+      "path": "screens/html/13-trending-desktop.html",
+      "bytes": 25388,
+      "sha256": "9c4902a41d8f1eb15731a8fa73f2ef07bb59b0d9ccfd164605a8f6494ba45320"
+    },
+    {
+      "path": "screens/html/13-trending-mobile.html",
+      "bytes": 25387,
+      "sha256": "4a16ebf18c699ca591bd8ffa10347dce443157045962825297a9306233bacec1"
+    },
+    {
+      "path": "screens/html/14-guides-desktop.html",
+      "bytes": 27167,
+      "sha256": "4184f75baf1f4c9caccc153a9f7bcce0a85dc2370750bd25467056251836d45d"
+    },
+    {
+      "path": "screens/html/14-guides-mobile.html",
+      "bytes": 27166,
+      "sha256": "c69a68704bf2e5e09b324d751c141c38cd6e0954541f18fff99a5df14ee4f551"
+    },
+    {
+      "path": "screens/html/15-tasting-guide-desktop.html",
+      "bytes": 24117,
+      "sha256": "4e8098f722c8fddbd0f4ac4451082a32e6744c2af502c6df2f61122cb118761f"
+    },
+    {
+      "path": "screens/html/15-tasting-guide-mobile.html",
+      "bytes": 24116,
+      "sha256": "3a29fc3b78b44e0368bb8d5d1f26a215f3bfb0560e0350e4241e4a6db449c9f9"
+    },
+    {
+      "path": "screens/html/16-rating-history-desktop.html",
+      "bytes": 25767,
+      "sha256": "20ac7de46674d34846599ddf0ec581a7bd48dfdd77a846c301128c9f56d301c2"
+    },
+    {
+      "path": "screens/html/16-rating-history-mobile.html",
+      "bytes": 25766,
+      "sha256": "c6ad88b11e3e7d2d95d53e7522e13ee2625034a6630a768422b0d52e294ef9bc"
+    },
+    {
+      "path": "screens/html/17-place-picker-desktop.html",
+      "bytes": 28919,
+      "sha256": "a295bba0d3a639e4382327e6041d67975af59acf2a60ccd22050e7aa7e9ce1cb"
+    },
+    {
+      "path": "screens/html/17-place-picker-mobile.html",
+      "bytes": 28918,
+      "sha256": "3a7e992812004eecdd6caba1e2746474d99154b017fd5ebf0c1c431571c2b8d7"
+    },
+    {
+      "path": "screens/html/18-sign-in-desktop.html",
+      "bytes": 24544,
+      "sha256": "87252b39b3a2219fedc960d252ed85c23a52ebde5ca37a514a3bff475c85097d"
+    },
+    {
+      "path": "screens/html/18-sign-in-mobile.html",
+      "bytes": 24543,
+      "sha256": "96a5a1a6b6a16d763d05c67963a04fa0164248044df3512199ec8c6fccbc2631"
+    },
+    {
+      "path": "screens/mobile/01-my-wines.png",
+      "bytes": 111457,
+      "sha256": "59397146bc856f777d976a5c9e511fd48473f81c6b91e766e83b10dba42442a7"
+    },
+    {
+      "path": "screens/mobile/02-wine-record.png",
+      "bytes": 73309,
+      "sha256": "16a8ef744694c0e98518b214faa005b582285e6910a72475801a9e86ca22d8fc"
+    },
+    {
+      "path": "screens/mobile/03-quick-entry.png",
+      "bytes": 29843,
+      "sha256": "65ad1372203b991b7074bcb58fdc72f68f2196bea3440e69df938a2821eefa5a"
+    },
+    {
+      "path": "screens/mobile/04-entry-new-occasion.png",
+      "bytes": 76761,
+      "sha256": "cb9926d51d1f7b7e7d7034fc052c47cd7d123d8b21b92f2a82e60463ebe6c388"
+    },
+    {
+      "path": "screens/mobile/05-find-barcode.png",
+      "bytes": 35355,
+      "sha256": "65968040676e68e9a4880630cbb20ff8034f78978b927764adc38e5238345f59"
+    },
+    {
+      "path": "screens/mobile/06-photo-matches.png",
+      "bytes": 67821,
+      "sha256": "86883975fed7600df8077d084d62c757dfcf6864234943168c1085b371ff234a"
+    },
+    {
+      "path": "screens/mobile/07-manual-wine.png",
+      "bytes": 36995,
+      "sha256": "b591f7c5a9a273603f71505cac4bb091c3e9c9235422ef56dd20bff1626b84b0"
+    },
+    {
+      "path": "screens/mobile/08-create-occasion.png",
+      "bytes": 66149,
+      "sha256": "8bd8555150c6b794a7cc9d396b2bebfc5e424b628435b7f47b07039d32928c13"
+    },
+    {
+      "path": "screens/mobile/09-occasions.png",
+      "bytes": 47511,
+      "sha256": "3ad9d9e2c6c00361c52afed561c78ec5f6f597af91cfc9c4c9537afa51b9e45a"
+    },
+    {
+      "path": "screens/mobile/10-occasion-scrapbook.png",
+      "bytes": 123526,
+      "sha256": "8207f6b0b757a99a896678f70b8d6c4a1beb7f6ef01f4d7a6f7171dfba7ddebe"
+    },
+    {
+      "path": "screens/mobile/11-browse-wines.png",
+      "bytes": 127558,
+      "sha256": "057e367b528ad1d6689752be42fc34d261b5087df22d4e511eab4e235e5f7c81"
+    },
+    {
+      "path": "screens/mobile/12-for-you.png",
+      "bytes": 65389,
+      "sha256": "0f0b23380472053dfe9212555e6d9d2829a9803e36e4b3b4714191ee928e9e02"
+    },
+    {
+      "path": "screens/mobile/13-trending.png",
+      "bytes": 49377,
+      "sha256": "8d69d039b649a496f8f9aa4ce812d76589540ab17252cbd6d3d3e57d3eb1bdb5"
+    },
+    {
+      "path": "screens/mobile/14-guides.png",
+      "bytes": 59337,
+      "sha256": "7f9ba1bb4566a9064d75042bf974e7ab833a5dec3a47ed21628479929051d550"
+    },
+    {
+      "path": "screens/mobile/15-tasting-guide.png",
+      "bytes": 44246,
+      "sha256": "cf8c8496d00422a190a0a6a3ab1e4a650621c0cf38432b580b7a47b572ae77e1"
+    },
+    {
+      "path": "screens/mobile/16-rating-history.png",
+      "bytes": 32290,
+      "sha256": "6d7e76199eba02cb16d49cd6d2da8c17d4fc302528c3f218831536927774065d"
+    },
+    {
+      "path": "screens/mobile/17-place-picker.png",
+      "bytes": 66858,
+      "sha256": "b1144b55de270b7138f9228ca35c76196f60cd55fd0b5f3db019788ad447e6bd"
+    },
+    {
+      "path": "screens/mobile/18-sign-in.png",
+      "bytes": 29969,
+      "sha256": "961f22141d8b5732673460d696f127afd16735edde54e98db19d565413dc953d"
+    },
+    {
+      "path": "screens.json",
+      "bytes": 10529,
+      "sha256": "98f6a26361e271435db59ce78e4f08ffd830c66b570fdb1f47f5952a882b0213"
+    },
+    {
+      "path": "STITCH-PROMPT.md",
+      "bytes": 2390,
+      "sha256": "9fd1b31b8bb7aedbd2bac03ee03e94ecda4db7ec4ef41cfdf68b65a05350dff1"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "bytes": 3290,
+      "sha256": "90b2ceb1913802e35cbf863e56812642a4f93298c539941988d87cb399ea239d"
+    },
+    {
+      "path": "walkthrough.html",
+      "bytes": 473890,
+      "sha256": "8bada63fef7d7d0d43d85009f3554850a64666e95e3dff2c4a255abb3632452b"
+    }
+  ]
+}

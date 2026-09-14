@@ -1,0 +1,8 @@
+{
+  "passed": [
+    "Sandboxed iframe: Enter save, button save, rating update without extra entries.",
+    "Phone + List design option fits."
+  ],
+  "errors": [],
+  "optionalRemoteHelpers": "blocked; local icons supplied for inspection"
+}

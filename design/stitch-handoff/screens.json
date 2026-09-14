@@ -1,0 +1,362 @@
+[
+  {
+    "id": "01-my-wines",
+    "title": "My wines",
+    "note": "Primary private journal",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1244,
+    "image": "screens/desktop/01-my-wines.png",
+    "html": "screens/html/01-my-wines-desktop.html"
+  },
+  {
+    "id": "02-wine-record",
+    "title": "Wine record",
+    "note": "One release, repeated encounters, current rating",
+    "device": "desktop",
+    "width": 1024,
+    "height": 978,
+    "image": "screens/desktop/02-wine-record.png",
+    "html": "screens/html/02-wine-record-desktop.html"
+  },
+  {
+    "id": "03-quick-entry",
+    "title": "Quick entry",
+    "note": "Wine and consumed date only",
+    "device": "desktop",
+    "width": 1024,
+    "height": 712,
+    "image": "screens/desktop/03-quick-entry.png",
+    "html": "screens/html/03-quick-entry-desktop.html"
+  },
+  {
+    "id": "04-entry-new-occasion",
+    "title": "Entry with new occasion",
+    "note": "Create an occasion inline; preserve the entry",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1697,
+    "image": "screens/desktop/04-entry-new-occasion.png",
+    "html": "screens/html/04-entry-new-occasion-desktop.html"
+  },
+  {
+    "id": "05-find-barcode",
+    "title": "Barcode lookup",
+    "note": "Simulated capture; search/manual fallback",
+    "device": "desktop",
+    "width": 1024,
+    "height": 726,
+    "image": "screens/desktop/05-find-barcode.png",
+    "html": "screens/html/05-find-barcode-desktop.html"
+  },
+  {
+    "id": "06-photo-matches",
+    "title": "Photo match candidates",
+    "note": "Simulated recognition; distinguish releases",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1236,
+    "image": "screens/desktop/06-photo-matches.png",
+    "html": "screens/html/06-photo-matches-desktop.html"
+  },
+  {
+    "id": "07-manual-wine",
+    "title": "Manual wine and cover",
+    "note": "Personal identity and optional cover image",
+    "device": "desktop",
+    "width": 1024,
+    "height": 825,
+    "image": "screens/desktop/07-manual-wine.png",
+    "html": "screens/html/07-manual-wine-desktop.html"
+  },
+  {
+    "id": "08-create-occasion",
+    "title": "Create occasion with new wine",
+    "note": "Return from wine capture to the unsaved occasion",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1223,
+    "image": "screens/desktop/08-create-occasion.png",
+    "html": "screens/html/08-create-occasion-desktop.html"
+  },
+  {
+    "id": "09-occasions",
+    "title": "Occasions",
+    "note": "Secondary view of deliberate gatherings",
+    "device": "desktop",
+    "width": 1024,
+    "height": 730,
+    "image": "screens/desktop/09-occasions.png",
+    "html": "screens/html/09-occasions-desktop.html"
+  },
+  {
+    "id": "10-occasion-scrapbook",
+    "title": "Occasion scrapbook",
+    "note": "Several wines, notes, and memories",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1489,
+    "image": "screens/desktop/10-occasion-scrapbook.png",
+    "html": "screens/html/10-occasion-scrapbook-desktop.html"
+  },
+  {
+    "id": "11-browse-wines",
+    "title": "Browse wines",
+    "note": "Catalog exploration; MVP proposal",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1212,
+    "image": "screens/desktop/11-browse-wines.png",
+    "html": "screens/html/11-browse-wines-desktop.html"
+  },
+  {
+    "id": "12-for-you",
+    "title": "For you",
+    "note": "Future personalized-discovery concept",
+    "device": "desktop",
+    "width": 1024,
+    "height": 792,
+    "image": "screens/desktop/12-for-you.png",
+    "html": "screens/html/12-for-you-desktop.html"
+  },
+  {
+    "id": "13-trending",
+    "title": "Trending",
+    "note": "Future public-community concept; invented scores",
+    "device": "desktop",
+    "width": 1024,
+    "height": 797,
+    "image": "screens/desktop/13-trending.png",
+    "html": "screens/html/13-trending-desktop.html"
+  },
+  {
+    "id": "14-guides",
+    "title": "Wine guides",
+    "note": "Curated learning; MVP proposal",
+    "device": "desktop",
+    "width": 1024,
+    "height": 769,
+    "image": "screens/desktop/14-guides.png",
+    "html": "screens/html/14-guides-desktop.html"
+  },
+  {
+    "id": "15-tasting-guide",
+    "title": "Tasting guide",
+    "note": "Optional beginner learning",
+    "device": "desktop",
+    "width": 1024,
+    "height": 702,
+    "image": "screens/desktop/15-tasting-guide.png",
+    "html": "screens/html/15-tasting-guide-desktop.html"
+  },
+  {
+    "id": "16-rating-history",
+    "title": "Rating history",
+    "note": "Current opinion independent of encounters",
+    "device": "desktop",
+    "width": 1024,
+    "height": 797,
+    "image": "screens/desktop/16-rating-history.png",
+    "html": "screens/html/16-rating-history-desktop.html"
+  },
+  {
+    "id": "17-place-picker",
+    "title": "Official or custom location",
+    "note": "Sample places; custom label always valid",
+    "device": "desktop",
+    "width": 1024,
+    "height": 1659,
+    "image": "screens/desktop/17-place-picker.png",
+    "html": "screens/html/17-place-picker-desktop.html"
+  },
+  {
+    "id": "18-sign-in",
+    "title": "Sign in to save",
+    "note": "Simulated account transition preserving the entry",
+    "device": "desktop",
+    "width": 1024,
+    "height": 678,
+    "image": "screens/desktop/18-sign-in.png",
+    "html": "screens/html/18-sign-in-desktop.html"
+  },
+  {
+    "id": "01-my-wines",
+    "title": "My wines",
+    "note": "Primary private journal",
+    "device": "mobile",
+    "width": 390,
+    "height": 1440,
+    "image": "screens/mobile/01-my-wines.png",
+    "html": "screens/html/01-my-wines-mobile.html"
+  },
+  {
+    "id": "02-wine-record",
+    "title": "Wine record",
+    "note": "One release, repeated encounters, current rating",
+    "device": "mobile",
+    "width": 390,
+    "height": 1455,
+    "image": "screens/mobile/02-wine-record.png",
+    "html": "screens/html/02-wine-record-mobile.html"
+  },
+  {
+    "id": "03-quick-entry",
+    "title": "Quick entry",
+    "note": "Wine and consumed date only",
+    "device": "mobile",
+    "width": 390,
+    "height": 713,
+    "image": "screens/mobile/03-quick-entry.png",
+    "html": "screens/html/03-quick-entry-mobile.html"
+  },
+  {
+    "id": "04-entry-new-occasion",
+    "title": "Entry with new occasion",
+    "note": "Create an occasion inline; preserve the entry",
+    "device": "mobile",
+    "width": 390,
+    "height": 1792,
+    "image": "screens/mobile/04-entry-new-occasion.png",
+    "html": "screens/html/04-entry-new-occasion-mobile.html"
+  },
+  {
+    "id": "05-find-barcode",
+    "title": "Barcode lookup",
+    "note": "Simulated capture; search/manual fallback",
+    "device": "mobile",
+    "width": 390,
+    "height": 769,
+    "image": "screens/mobile/05-find-barcode.png",
+    "html": "screens/html/05-find-barcode-mobile.html"
+  },
+  {
+    "id": "06-photo-matches",
+    "title": "Photo match candidates",
+    "note": "Simulated recognition; distinguish releases",
+    "device": "mobile",
+    "width": 390,
+    "height": 1279,
+    "image": "screens/mobile/06-photo-matches.png",
+    "html": "screens/html/06-photo-matches-mobile.html"
+  },
+  {
+    "id": "07-manual-wine",
+    "title": "Manual wine and cover",
+    "note": "Personal identity and optional cover image",
+    "device": "mobile",
+    "width": 390,
+    "height": 1082,
+    "image": "screens/mobile/07-manual-wine.png",
+    "html": "screens/html/07-manual-wine-mobile.html"
+  },
+  {
+    "id": "08-create-occasion",
+    "title": "Create occasion with new wine",
+    "note": "Return from wine capture to the unsaved occasion",
+    "device": "mobile",
+    "width": 390,
+    "height": 1466,
+    "image": "screens/mobile/08-create-occasion.png",
+    "html": "screens/html/08-create-occasion-mobile.html"
+  },
+  {
+    "id": "09-occasions",
+    "title": "Occasions",
+    "note": "Secondary view of deliberate gatherings",
+    "device": "mobile",
+    "width": 390,
+    "height": 789,
+    "image": "screens/mobile/09-occasions.png",
+    "html": "screens/html/09-occasions-mobile.html"
+  },
+  {
+    "id": "10-occasion-scrapbook",
+    "title": "Occasion scrapbook",
+    "note": "Several wines, notes, and memories",
+    "device": "mobile",
+    "width": 390,
+    "height": 1958,
+    "image": "screens/mobile/10-occasion-scrapbook.png",
+    "html": "screens/html/10-occasion-scrapbook-mobile.html"
+  },
+  {
+    "id": "11-browse-wines",
+    "title": "Browse wines",
+    "note": "Catalog exploration; MVP proposal",
+    "device": "mobile",
+    "width": 390,
+    "height": 1649,
+    "image": "screens/mobile/11-browse-wines.png",
+    "html": "screens/html/11-browse-wines-mobile.html"
+  },
+  {
+    "id": "12-for-you",
+    "title": "For you",
+    "note": "Future personalized-discovery concept",
+    "device": "mobile",
+    "width": 390,
+    "height": 1194,
+    "image": "screens/mobile/12-for-you.png",
+    "html": "screens/html/12-for-you-mobile.html"
+  },
+  {
+    "id": "13-trending",
+    "title": "Trending",
+    "note": "Future public-community concept; invented scores",
+    "device": "mobile",
+    "width": 390,
+    "height": 919,
+    "image": "screens/mobile/13-trending.png",
+    "html": "screens/html/13-trending-mobile.html"
+  },
+  {
+    "id": "14-guides",
+    "title": "Wine guides",
+    "note": "Curated learning; MVP proposal",
+    "device": "mobile",
+    "width": 390,
+    "height": 1237,
+    "image": "screens/mobile/14-guides.png",
+    "html": "screens/html/14-guides-mobile.html"
+  },
+  {
+    "id": "15-tasting-guide",
+    "title": "Tasting guide",
+    "note": "Optional beginner learning",
+    "device": "mobile",
+    "width": 390,
+    "height": 811,
+    "image": "screens/mobile/15-tasting-guide.png",
+    "html": "screens/html/15-tasting-guide-mobile.html"
+  },
+  {
+    "id": "16-rating-history",
+    "title": "Rating history",
+    "note": "Current opinion independent of encounters",
+    "device": "mobile",
+    "width": 390,
+    "height": 792,
+    "image": "screens/mobile/16-rating-history.png",
+    "html": "screens/html/16-rating-history-mobile.html"
+  },
+  {
+    "id": "17-place-picker",
+    "title": "Official or custom location",
+    "note": "Sample places; custom label always valid",
+    "device": "mobile",
+    "width": 390,
+    "height": 1651,
+    "image": "screens/mobile/17-place-picker.png",
+    "html": "screens/html/17-place-picker-mobile.html"
+  },
+  {
+    "id": "18-sign-in",
+    "title": "Sign in to save",
+    "note": "Simulated account transition preserving the entry",
+    "device": "mobile",
+    "width": 390,
+    "height": 679,
+    "image": "screens/mobile/18-sign-in.png",
+    "html": "screens/html/18-sign-in-mobile.html"
+  }
+]

@@ -1,0 +1,210 @@
+/* Product tokens and responsive layouts refined from the imported Stitch screens. */
+#wine-journal-v3 .wj-surface{border:0;border-radius:0}
+#wine-journal-v3 ::selection{color:var(--wj-card);background:var(--wj-burgundy)}
+#wine-journal-v3 input,#wine-journal-v3 textarea{caret-color:var(--wj-burgundy)}
+#wine-journal-v3 input::placeholder,#wine-journal-v3 textarea::placeholder{color:var(--wj-muted);opacity:1}
+#wine-journal-v3 .wj-topbar{flex-wrap:nowrap;gap:20px;padding:18px 30px;border-bottom:0;box-shadow:0 2px 6px #332c2808}
+#wine-journal-v3 .wj-brand{font-size:24px;flex-shrink:0;gap:12px;margin-right:auto}
+#wine-journal-v3 .wj-brand-mark{display:flex;align-items:center;justify-content:center;width:42px;height:44px;border-radius:13px;background:var(--wj-greenwash)}
+#wine-journal-v3 .wj-brand-mark svg{width:21px;height:25px}
+#wine-journal-v3 .wj-nav{order:initial;width:auto;background:#f7f5ed;border-radius:16px;padding:4px;gap:0;flex-wrap:nowrap}
+#wine-journal-v3 .wj-nav button{font:400 14px Georgia,serif;min-height:40px;padding:10px 12px;border-radius:12px;flex:0 0 auto;white-space:nowrap}
+#wine-journal-v3 .wj-nav button[aria-current=page]{box-shadow:none;background:var(--wj-greenwash);color:var(--wj-olive)}
+#wine-journal-v3 .wj-top-actions{order:initial;margin-left:auto;gap:9px}
+#wine-journal-v3 .wj-account{border:0;background:transparent;padding:8px}
+#wine-journal-v3 .wj-account span{display:none}
+#wine-journal-v3 .wj-main{padding:34px;min-height:450px}
+#wine-journal-v3 .wj-page-head{margin-bottom:28px}
+#wine-journal-v3 .wj-serif-subtitle{font-family:Georgia,serif;font-size:17px}
+#wine-journal-v3 .wj-count{background:var(--wj-soft);color:var(--wj-ink);padding:6px 15px;border-radius:20px;font-size:13px}
+#wine-journal-v3 .wj-toolbar{background:var(--wj-card);border-radius:12px;padding:18px;display:grid;grid-template-columns:minmax(0,2fr) minmax(100px,1fr) minmax(130px,1fr);gap:16px;margin-bottom:24px}
+#wine-journal-v3 .wj-toolbar .wj-input,#wine-journal-v3 .wj-search-wrap{background:var(--wj-paper);border-color:transparent}
+#wine-journal-v3 .wj-toolbar .wj-search-wrap input{background:transparent}
+#wine-journal-v3 .wj-toolbar label{min-width:0}
+#wine-journal-v3 .wj-grid{gap:20px}
+#wine-journal-v3 .wj-wine-card{border:0;border-radius:12px;box-shadow:0 2px 3px #332c2805}
+#wine-journal-v3 .wj-card-content{padding:20px;gap:7px}
+#wine-journal-v3 .wj-producer{font:400 12px/1.5 Georgia,serif;color:var(--wj-brown);letter-spacing:.5px}
+#wine-journal-v3 .wj-wine-name{font-size:24px;line-height:1.2;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-art{min-height:210px;background:#ece9df}
+#wine-journal-v3 .wj-art.wj-art-green{background:#e9edde}
+#wine-journal-v3 .wj-art.wj-art-rose{background:#f1e7e5}
+#wine-journal-v3 .wj-bottle{transform:scale(1.14)}
+#wine-journal-v3 .wj-card-bottom{margin-top:10px;gap:8px;flex-wrap:wrap}
+#wine-journal-v3 .wj-card-bottom .wj-score{font-size:19px;font-family:Georgia,serif}
+#wine-journal-v3 .wj-add-card{min-height:260px;border:1px dashed var(--wj-line);border-radius:12px;background:transparent;padding:25px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--wj-muted);text-align:center}
+#wine-journal-v3 .wj-add-card>.wj-wine-name{color:var(--wj-ink);font-size:24px}
+#wine-journal-v3 .wj-add-card>svg{width:28px;height:28px;color:var(--wj-olive)}
+#wine-journal-v3 .wj-wine-card:hover,#wine-journal-v3 .wj-add-card:hover{box-shadow:0 4px 15px #332c2814}
+#wine-journal-v3 .wj-button:hover{filter:brightness(.96)}
+#wine-journal-v3 .wj-text-button:hover{text-decoration:underline;text-underline-offset:4px}
+#wine-journal-v3 .wj-record-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);grid-template-areas:'hero rating' 'history specs';gap:24px;align-items:start}
+#wine-journal-v3 .wj-record-hero{grid-area:hero;display:grid;grid-template-columns:125px minmax(0,1fr);gap:24px;padding:24px;background:var(--wj-card);border-radius:12px;margin:0}
+#wine-journal-v3 .wj-record-hero h1{font-size:34px;line-height:1.13}
+#wine-journal-v3 .wj-record-hero .wj-art{min-height:230px;border-radius:6px}
+#wine-journal-v3 .wj-record-hero .wj-release{margin:12px 0 7px;font-size:14px}
+#wine-journal-v3 .wj-record-hero .wj-actions{gap:5px;margin-top:18px}
+#wine-journal-v3 .wj-panel{border:0;border-radius:12px;padding:24px;box-shadow:0 2px 3px #332c2805}
+#wine-journal-v3 .wj-panel+.wj-panel{margin:0}
+#wine-journal-v3 .wj-record-rating{grid-area:rating}
+#wine-journal-v3 .wj-record-history{grid-area:history}
+#wine-journal-v3 .wj-record-specs{grid-area:specs}
+#wine-journal-v3 .wj-record-grid h2{font-size:24px}
+#wine-journal-v3 .wj-rating-display{display:flex;align-items:baseline;gap:10px;margin:17px 0 10px;color:var(--wj-burgundy)}
+#wine-journal-v3 .wj-rating-display svg{align-self:center}
+#wine-journal-v3 .wj-rating-value{font-size:42px}
+#wine-journal-v3 .wj-rating-help{margin:16px 0 20px}
+#wine-journal-v3 .wj-entry{padding:18px 0 22px}
+#wine-journal-v3 .wj-entry:first-of-type{border-top:0}
+#wine-journal-v3 .wj-entry:last-child{padding-bottom:0}
+#wine-journal-v3 .wj-entry-note{font-family:Georgia,serif;line-height:1.65;margin:16px 0!important;white-space:pre-wrap}
+#wine-journal-v3 .wj-entry-meta{font-size:13px;gap:12px}
+#wine-journal-v3 .wj-entry-meta span{display:inline-flex;align-items:center;gap:4px}
+#wine-journal-v3 .wj-entry [data-a=occasion]{background:#f1e4e7;padding:6px 12px;border-radius:10px;font-size:13px}
+#wine-journal-v3 .wj-record-specs .wj-specs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}
+#wine-journal-v3 .wj-record-specs .wj-specs>div{display:block}
+#wine-journal-v3 .wj-record-specs dd{margin-top:5px;font-family:Georgia,serif;font-size:17px}
+#wine-journal-v3 .wj-producer-link{display:inline-flex;align-items:center;gap:5px;min-height:44px}
+#wine-journal-v3 .wj-availability{margin-top:14px}
+#wine-journal-v3 .wj-form{max-width:650px}
+#wine-journal-v3 .wj-form>label{display:block}
+#wine-journal-v3 .wj-input{border-color:#c7bfb2;border-radius:8px}
+#wine-journal-v3 .wj-selected-wine{background:var(--wj-greenwash);border:0;border-radius:10px;padding:18px;align-items:center}
+#wine-journal-v3 .wj-selected-wine>div>div:first-child{font:400 19px/1.4 Georgia,serif}
+#wine-journal-v3 .wj-date-field,#wine-journal-v3 .wj-quick-note{margin-top:22px}
+#wine-journal-v3 .wj-quick-note textarea{min-height:86px}
+#wine-journal-v3 .wj-field-space{margin-top:22px}
+#wine-journal-v3 .wj-context{margin-top:12px}
+#wine-journal-v3 .wj-form details{border:0;border-top:1px solid var(--wj-line);border-radius:0;background:none;padding:0;margin-top:18px}
+#wine-journal-v3 .wj-form details>summary{padding:18px 0;cursor:pointer;min-height:54px}
+#wine-journal-v3 .wj-form details>summary .wj-small{display:inline;margin-left:7px}
+#wine-journal-v3 .wj-form-foot{padding-top:22px;margin-top:26px;border-top:1px solid var(--wj-line)}
+#wine-journal-v3 .wj-inline-occasion{border:1px solid var(--wj-line);background:var(--wj-card);border-radius:12px;padding:20px}
+#wine-journal-v3 .wj-inline-occasion .wj-row{margin-bottom:18px}
+#wine-journal-v3 .wj-inline-occasion h2{font-size:24px}
+#wine-journal-v3 .wj-form h2{font-size:24px}
+#wine-journal-v3 .wj-history-heading{margin-top:32px}
+#wine-journal-v3 .wj-rating-history{list-style:none;padding:0;background:var(--wj-card);border-radius:12px}
+#wine-journal-v3 .wj-rating-history li{padding:18px 20px;gap:16px;flex-wrap:wrap}
+#wine-journal-v3 .wj-banner{border:0;background:var(--wj-greenwash);border-radius:10px;color:var(--wj-olive)}
+#wine-journal-v3 .wj-occasion-head{margin-bottom:26px}
+#wine-journal-v3 .wj-occasion-head .wj-row+.wj-row{margin-top:16px}
+#wine-journal-v3 .wj-note-paper{background:var(--wj-card);border:0;border-radius:4px;padding:24px 30px;margin:0 0 32px;box-shadow:0 4px 10px #332c280a;font:italic 21px/1.65 Georgia,serif;transform:rotate(-.35deg)}
+#wine-journal-v3 .wj-note-paper:before{display:none}
+#wine-journal-v3 .wj-occasion-wine{border:0;background:var(--wj-card);border-radius:12px;padding:22px}
+#wine-journal-v3 .wj-occasion-wine h3{margin-top:8px}
+#wine-journal-v3 .wj-occasion-wine>.wj-small{margin-top:6px}
+#wine-journal-v3 .wj-memory-grid{gap:22px;margin:22px 0}
+#wine-journal-v3 .wj-memory{margin:0;background:var(--wj-card);padding:10px 10px 15px;box-shadow:0 5px 12px #332c2814;border:0;border-radius:3px;transform:rotate(-1deg)}
+#wine-journal-v3 .wj-memory:nth-child(even){transform:rotate(1deg)}
+#wine-journal-v3 .wj-memory figcaption{font:400 17px/1.45 Georgia,serif;padding:12px 3px 0}
+#wine-journal-v3 .wj-memory .wj-text-button{font-size:12px;min-height:44px;margin-left:3px}
+#wine-journal-v3 .wj-photo-block{height:180px;background:#ebe6da}
+#wine-journal-v3 .wj-photo-block.wj-photo-olive{background:var(--wj-greenwash);color:var(--wj-olive)}
+#wine-journal-v3 .wj-media-preview{width:100%;height:190px;object-fit:cover;display:block;background:var(--wj-soft);border-radius:2px}
+#wine-journal-v3 video.wj-media-preview{object-fit:contain}
+#wine-journal-v3 .wj-memories-section{margin-top:34px}
+#wine-journal-v3 .wj-entry-memories{margin-top:22px}
+#wine-journal-v3 .wj-occasion-wine-heading{display:grid;grid-template-columns:86px minmax(0,1fr);gap:18px;align-items:center}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-art{min-height:140px;border-radius:6px}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-bottle{transform:scale(.75)}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-cover-art img{height:140px;object-fit:contain}
+#wine-journal-v3 .wj-occasion-wine-heading h3{overflow-wrap:anywhere}
+#wine-journal-v3 .wj-occasion-wine-heading>.wj-art+div{min-width:0}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-small{margin-top:8px}
+#wine-journal-v3 .wj-occasion-entry+.wj-occasion-entry{border-top:1px solid var(--wj-line);padding-top:15px;margin-top:12px}
+#wine-journal-v3 .wj-memory-origin{font-size:12px;color:var(--wj-muted);padding:8px 3px 0;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-memory-open{display:block;padding:0;border:0;width:100%;background:var(--wj-soft);text-align:inherit}
+#wine-journal-v3 .wj-memory>.wj-text-button{max-width:100%;overflow-wrap:anywhere;white-space:normal}
+#wine-journal-v3 .wj-wine-highlights>.wj-section-head{margin-bottom:0}
+#wine-journal-v3 .wj-wine-highlights .wj-memory-grid{align-items:start}
+#wine-journal-v3 .wj-wine-highlights .wj-memory:nth-child(3n){transform:rotate(-.4deg)}
+#wine-journal-v3 .wj-upload{background:var(--wj-card);border:1px dashed var(--wj-line);border-radius:8px;padding:16px;margin:18px 0 10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-upload input{min-width:0;max-width:100%;font-size:13px}
+#wine-journal-v3 .wj-mobile-nav{display:none}
+#wine-journal-v3 .wj-preview-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 34px;border-top:1px solid var(--wj-line);color:var(--wj-muted);font-size:12px}
+#wine-journal-v3 .wj-page-head .wj-overline{display:none}
+#wine-journal-v3 .wj-guide-grid{gap:24px}
+#wine-journal-v3 .wj-guide-card{border:0;border-radius:12px;background:var(--wj-card)}
+#wine-journal-v3.wj-list .wj-add-card{min-height:160px}
+@container (max-width:900px){
+ #wine-journal-v3 .wj-topbar{flex-wrap:wrap;gap:10px;padding:16px 24px}
+ #wine-journal-v3 .wj-nav{order:3;justify-content:center;width:100%;margin-top:6px}
+ #wine-journal-v3 .wj-record-grid{grid-template-columns:minmax(0,1.4fr) minmax(225px,1fr);gap:20px}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:95px minmax(0,1fr);padding:20px;gap:18px}
+ #wine-journal-v3 .wj-record-hero h1{font-size:30px}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:215px}
+ #wine-journal-v3 .wj-record-hero .wj-release{font-size:13px}
+}
+@container (max-width:700px){
+ #wine-journal-v3 .wj-record-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:'hero' 'rating' 'history' 'specs'}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:120px minmax(0,1fr)}
+ #wine-journal-v3 .wj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #wine-journal-v3 .wj-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (max-width:540px){
+ #wine-journal-v3 .wj-topbar{padding:12px 18px;flex-wrap:nowrap}
+ #wine-journal-v3 .wj-brand{font-size:22px;gap:9px}
+ #wine-journal-v3 .wj-brand-mark{width:32px;height:38px;border-radius:9px}
+ #wine-journal-v3 .wj-nav{display:none}
+ #wine-journal-v3 .wj-top-actions>.wj-primary{padding:10px 12px;font-size:13px}
+ #wine-journal-v3 .wj-top-actions>.wj-primary svg{display:none}
+ #wine-journal-v3 .wj-account{padding:6px;min-width:44px}
+ #wine-journal-v3 .wj-main{padding:26px 18px 32px}
+ #wine-journal-v3 h1{font-size:34px}
+ #wine-journal-v3 .wj-page-head{gap:14px;margin-bottom:22px}
+ #wine-journal-v3 .wj-toolbar{padding:0;background:none;grid-template-columns:1fr 1fr;gap:14px}
+ #wine-journal-v3 .wj-toolbar .wj-search{grid-column:1/-1}
+ #wine-journal-v3 .wj-toolbar .wj-input,#wine-journal-v3 .wj-search-wrap{background:var(--wj-card)}
+ #wine-journal-v3 .wj-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+ #wine-journal-v3 .wj-wine-card{display:grid;grid-template-columns:minmax(0,1fr) 84px;align-items:start;padding:18px;gap:12px;position:relative}
+ #wine-journal-v3 .wj-wine-card .wj-art{grid-column:2;grid-row:1;min-height:135px;border-radius:5px;width:84px;overflow:hidden}
+ #wine-journal-v3 .wj-wine-card .wj-bottle{transform:scale(.7);margin-top:20px}
+ #wine-journal-v3 .wj-card-content{grid-column:1;grid-row:1;padding:0;gap:7px;display:flex}
+ #wine-journal-v3 .wj-wine-name{font-size:23px;line-height:1.24}
+ #wine-journal-v3 .wj-producer{font-size:12px;line-height:1.5}
+ #wine-journal-v3 .wj-wine-sub{font-size:13px;line-height:1.5}
+ #wine-journal-v3 .wj-card-bottom{border:0;gap:6px;margin-top:4px;padding-top:0;align-items:start;flex-direction:column}
+ #wine-journal-v3 .wj-card-bottom .wj-score{font-size:17px}
+ #wine-journal-v3 .wj-add-card{min-height:185px;gap:12px}
+ #wine-journal-v3 .wj-add-card>svg{display:none}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:90px minmax(0,1fr);padding:18px;gap:15px}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:185px}
+ #wine-journal-v3 .wj-record-hero .wj-bottle{transform:scale(.88)}
+ #wine-journal-v3 .wj-record-hero h1{font-size:28px}
+ #wine-journal-v3 .wj-record-hero .wj-actions{gap:0}
+ #wine-journal-v3 .wj-record-hero .wj-primary{padding:10px;font-size:13px}
+ #wine-journal-v3 .wj-record-hero .wj-text-button{font-size:13px}
+ #wine-journal-v3 .wj-panel{padding:20px}
+ #wine-journal-v3 .wj-rating-display{margin:10px 0}
+ #wine-journal-v3 .wj-record-rating h2{font-size:22px}
+ #wine-journal-v3 .wj-record-rating>.wj-text-button{margin-top:5px}
+ #wine-journal-v3 .wj-entry .wj-row{gap:4px}
+ #wine-journal-v3 .wj-form details>summary .wj-small{display:block;margin:5px 0 0 17px}
+ #wine-journal-v3 .wj-form-foot{gap:12px}
+ #wine-journal-v3 .wj-form-foot>.wj-primary{width:100%}
+ #wine-journal-v3 .wj-inline-occasion{padding:16px}
+ #wine-journal-v3 .wj-note-paper{font-size:20px;padding:22px}
+ #wine-journal-v3 .wj-memory-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+ #wine-journal-v3 .wj-media-preview,#wine-journal-v3 .wj-photo-block{height:230px}
+ #wine-journal-v3 .wj-mobile-nav{display:flex;justify-content:space-around;padding:10px 8px;background:var(--wj-card);border-top:1px solid var(--wj-line)}
+ #wine-journal-v3 .wj-mobile-nav button{display:flex;align-items:center;justify-content:center;gap:7px;flex-direction:column;font-size:12px;min-height:52px;min-width:60px;background:none;border:0;color:var(--wj-muted);border-radius:9px;padding:6px}
+ #wine-journal-v3 .wj-mobile-nav button[aria-current=page]{color:var(--wj-burgundy);background:#f1e4e7}
+ #wine-journal-v3 .wj-preview-footer{padding:14px 18px;justify-content:center;font-size:11px}
+ #wine-journal-v3 .wj-footer{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+ #wine-journal-v3 .wj-footer>span{display:inline-flex;align-items:center;gap:6px;margin:0}
+ #wine-journal-v3.wj-list .wj-wine-card{grid-template-columns:minmax(0,1fr) 84px}
+ #wine-journal-v3.wj-list .wj-card-content{padding:0}
+ #wine-journal-v3.wj-list .wj-wine-card .wj-art{min-height:135px}
+}
+@container (max-width:355px){
+ #wine-journal-v3 .wj-topbar{padding:12px;gap:6px}
+ #wine-journal-v3 .wj-brand{font-size:18px;gap:6px}
+ #wine-journal-v3 .wj-brand-mark{width:24px}
+ #wine-journal-v3 .wj-top-actions{gap:4px}
+ #wine-journal-v3 .wj-top-actions>.wj-primary{padding:10px 8px}
+ #wine-journal-v3 .wj-record-hero{display:block}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:150px;margin-bottom:18px}
+ #wine-journal-v3 .wj-record-hero h1{font-size:31px}
+}
+@media(prefers-reduced-motion:no-preference){#wine-journal-v3 .wj-wine-card,#wine-journal-v3 .wj-add-card{transition:box-shadow .18s ease-out}}

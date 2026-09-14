@@ -1,0 +1,515 @@
+{
+  "source": "stitch_wine_journal_mvp_design_system.zip",
+  "source_bytes": 5413363,
+  "source_sha256": "fc6cd69104cb14c838845862bb6286a629cccb0d3917a6e65687fe2cccbe9f19",
+  "files": [
+    {
+      "path": "01_my_wines.png/screen.png",
+      "bytes": 179416,
+      "sha256": "e534230e73714476494bca2cf6934651ede793b0c3143abe14192b251b6207f2"
+    },
+    {
+      "path": "design.md",
+      "bytes": 13010,
+      "sha256": "e42a81479ebbcefae38a55830487570d81cfe965b4c1c0c50751a0629bc24fb7"
+    },
+    {
+      "path": "stitch_prompt.md",
+      "bytes": 2390,
+      "sha256": "9fd1b31b8bb7aedbd2bac03ee03e94ecda4db7ec4ef41cfdf68b65a05350dff1"
+    },
+    {
+      "path": "03_quick_entry.png/screen.png",
+      "bytes": 38510,
+      "sha256": "6bed805d0bedfd66360bd424066e6ea4b6664edc1de37a5ad07bcf65fea7b968"
+    },
+    {
+      "path": "16_rating_history.png/screen.png",
+      "bytes": 41279,
+      "sha256": "00ff87436385eb5830f24f358c2853f9754efcc748c9a00037e3fce8e9dd1eb6"
+    },
+    {
+      "path": "14_guides.png/screen.png",
+      "bytes": 60787,
+      "sha256": "d51e84426c0728a13cdd255f1895d613ac7e1eec6ffd3f6e73db0fe79ff6a181"
+    },
+    {
+      "path": "screen_map.md",
+      "bytes": 2436,
+      "sha256": "eca061958004ca42d2ae45acdbbed38abbcb6f0ffc7ac6903aa3f455d117c19b"
+    },
+    {
+      "path": "09_occasions.png/screen.png",
+      "bytes": 62404,
+      "sha256": "3dad19c4ba7b49ee7a50e53c308f729be9c50186842b5f8ea252aef1944e7c45"
+    },
+    {
+      "path": "07_manual_wine.png/screen.png",
+      "bytes": 44811,
+      "sha256": "9b48b9c6ffb4c96a5902f64928d77e45e587c56a6a4601081d0796bd2e82d385"
+    },
+    {
+      "path": "02_wine_record.png/screen.png",
+      "bytes": 93612,
+      "sha256": "d3955d2910782f1c33c72daee8832e3fd19959879b2b0cf0c2087c174b3a8bea"
+    },
+    {
+      "path": "10_occasion_scrapbook.png/screen.png",
+      "bytes": 182070,
+      "sha256": "8a184dead8069a89ce94891f94501adf97731331cf0278f77d42102aaac50a85"
+    },
+    {
+      "path": "13_trending.png/screen.png",
+      "bytes": 60763,
+      "sha256": "eb7bb86266977cfb20550631bf42a916605c9d2241be18fdb236f384eb6b2fa1"
+    },
+    {
+      "path": "11_browse_wines.png/screen.png",
+      "bytes": 208702,
+      "sha256": "b0c5a5baae373da90a1d0f5fd61964fd11e197da893e7ebc057eb37bdd0f87a5"
+    },
+    {
+      "path": "17_place_picker.png/screen.png",
+      "bytes": 145612,
+      "sha256": "b227a43f9a989d2682cc63a2e9da2b57b27d77617753462ada56fe6fda8c9924"
+    },
+    {
+      "path": "15_tasting_guide.png/screen.png",
+      "bytes": 53338,
+      "sha256": "48a167ea5384adc3018668cc15ceb32bc2e161232f4513b05b5ac55c1a798180"
+    },
+    {
+      "path": "05_find_barcode.png/screen.png",
+      "bytes": 45194,
+      "sha256": "956d7ef83f2cad63503d39fcdaf82de8380d096999018487414d63e926f54537"
+    },
+    {
+      "path": "08_create_occasion.png/screen.png",
+      "bytes": 77130,
+      "sha256": "766bbb04bbdaa5d9725223e38b890dfdfeb48626978dfba75a4614cc9b23f737"
+    },
+    {
+      "path": "12_for_you.png/screen.png",
+      "bytes": 77941,
+      "sha256": "fa732684bee5afa4b59b334b960a8df238e3d92100b88fa4194c79ff8d2343d8"
+    },
+    {
+      "path": "06_photo_matches.png/screen.png",
+      "bytes": 82132,
+      "sha256": "9952561f4d6257b704266f06622ad6af071fd478275cd8de5fad755f1a2bc1b0"
+    },
+    {
+      "path": "04_entry_new_occasion.png/screen.png",
+      "bytes": 157568,
+      "sha256": "417e23fb7b1c9f8970a7eea624e5a76a1db37436e2766b3daad9d1363363095d"
+    },
+    {
+      "path": "18_sign_in.png/screen.png",
+      "bytes": 38137,
+      "sha256": "a850987594805501b48fe11caa6c27531d6426469ce7cc8e649b316d4a4812d6"
+    },
+    {
+      "path": "my_wines/code.html",
+      "bytes": 27878,
+      "sha256": "b60a403a0ac2537720306ed68b10a302a69a034f7967e1be75b411a802a45751"
+    },
+    {
+      "path": "my_wines/screen.png",
+      "bytes": 263535,
+      "sha256": "c5bd2d6fb06c4f6e93f4a221c551f38fb7223038480b9a7dcf5d021b930297b1"
+    },
+    {
+      "path": "wine_record/code.html",
+      "bytes": 16827,
+      "sha256": "6ed491dea5b2cb6f2537fa8e48711aaaa8a53b7a0ebba84b6a6d71ea5be1825c"
+    },
+    {
+      "path": "wine_record/screen.png",
+      "bytes": 158289,
+      "sha256": "5ef6a5ecea219ff6b549a7a082f611a7ac76be90e8bad9578d2b055f2fb7c976"
+    },
+    {
+      "path": "create_occasion/code.html",
+      "bytes": 21992,
+      "sha256": "ea3e42b9c3db9beee94c2bc08e381b6f8f8664131608f11c2be5c8ff9cf02331"
+    },
+    {
+      "path": "create_occasion/screen.png",
+      "bytes": 173574,
+      "sha256": "701b9fed1a49bed24b208e74965b95ac71d470e7f1a3ae87610251742e8099b3"
+    },
+    {
+      "path": "occasion_scrapbook/code.html",
+      "bytes": 21695,
+      "sha256": "700391a2e32d3a704541d7e52d3ecd34349c4411f6d1230ca7c5c6950fe32756"
+    },
+    {
+      "path": "occasion_scrapbook/screen.png",
+      "bytes": 314274,
+      "sha256": "4dd080d1e788f0dda6edb3c1045c5e03cfc013453c612ac2a0ca462dd921244c"
+    },
+    {
+      "path": "barcode_lookup/code.html",
+      "bytes": 14338,
+      "sha256": "694a3a1bfa1dfb366381341420e9babe286ded376b7e957fd81792d202bf851d"
+    },
+    {
+      "path": "barcode_lookup/screen.png",
+      "bytes": 154104,
+      "sha256": "b7a31c6f0012968985427fd93d1465fa86ef269f9eb451fe1cc221b685ce6353"
+    },
+    {
+      "path": "photo_match_candidates/code.html",
+      "bytes": 18703,
+      "sha256": "fe6a243c247ff9277b3411fd903f913b2fc9b22fad51b894c3f5bff14f880caf"
+    },
+    {
+      "path": "photo_match_candidates/screen.png",
+      "bytes": 199233,
+      "sha256": "59e638a908fc6f2e9a173bd9d1765259f6122c23c639d334d7fdf210099c5258"
+    },
+    {
+      "path": "add_wine_manually/code.html",
+      "bytes": 20321,
+      "sha256": "55cf179ac7e0d53870dcc43e7af27360e5434dde620206b538a01d60af54ebc8"
+    },
+    {
+      "path": "add_wine_manually/screen.png",
+      "bytes": 183599,
+      "sha256": "20a9594fca23199ccd1592bb8eb141c1bbbcad495c6f0d930771f7805ff8aada"
+    },
+    {
+      "path": "wine_guides/code.html",
+      "bytes": 23842,
+      "sha256": "9672f7b5cd10297e3290577cb6e6ada4d1955052130a4235c6b13bbc183c13af"
+    },
+    {
+      "path": "wine_guides/screen.png",
+      "bytes": 190857,
+      "sha256": "14c194bbac572cc557c693dc9efe82505aa51e20ba60afbd8132f37aabdcdde9"
+    },
+    {
+      "path": "browse_wines/code.html",
+      "bytes": 26871,
+      "sha256": "05e8b55254b79abeaa0b74b1de9e5a0ee55da9ee1e82d246b4ed1797af43154c"
+    },
+    {
+      "path": "browse_wines/screen.png",
+      "bytes": 231493,
+      "sha256": "a860dfcb49d6e0e92207c6c9d3a0fe068a873b50bac556d1edc48d015ac1f59a"
+    },
+    {
+      "path": "my_wines_desktop/code.html",
+      "bytes": 23988,
+      "sha256": "02d31b4d301117679e37209d9cce8422aa18a52ac1090b5743895dd52fa8f5bc"
+    },
+    {
+      "path": "my_wines_desktop/screen.png",
+      "bytes": 326143,
+      "sha256": "1890ba86e23e55cd7c3578a9578eae6a0216471b46f79728fd905f0561edc989"
+    },
+    {
+      "path": "wine_record_desktop/code.html",
+      "bytes": 22853,
+      "sha256": "c8684272af04f0a2878dbc0af19ec2395c11f0e718af2b999d55dd486c417eea"
+    },
+    {
+      "path": "wine_record_desktop/screen.png",
+      "bytes": 474871,
+      "sha256": "c6316a6cca229cea8464dba2f557064e5f574d655af7f7df1615a355e7e73f0c"
+    },
+    {
+      "path": "occasion_scrapbook_desktop/code.html",
+      "bytes": 24231,
+      "sha256": "f2a3d3f3c0f72f7c3907f0350d6d575317123006f322970c8c0d2ddc687e1fce"
+    },
+    {
+      "path": "occasion_scrapbook_desktop/screen.png",
+      "bytes": 640592,
+      "sha256": "5dfccfb1e97c185d5d11a7569733b58d8449781ca8c8cc1d1fa5060b71c60763"
+    },
+    {
+      "path": "log_wine_entry_place_picker_desktop/code.html",
+      "bytes": 23312,
+      "sha256": "6bf1b3bfbd4dab2054c40de379f114f1b4df69a2f2bae81e4c7302e323d1ae82"
+    },
+    {
+      "path": "log_wine_entry_place_picker_desktop/screen.png",
+      "bytes": 261109,
+      "sha256": "17aa12dc12be6ebc596907db337b14fb79ce73714a2ae9bebf1f74da08c51e78"
+    },
+    {
+      "path": "rating_history_desktop/code.html",
+      "bytes": 17402,
+      "sha256": "ee879e8b3be7268a609c3ad558838d55a6db4d240dad68b1da4baf1721355c1b"
+    },
+    {
+      "path": "rating_history_desktop/screen.png",
+      "bytes": 235358,
+      "sha256": "9a453ae43ca55733658426e813b613a4f4cf8cb0ce727d6b4c017d13f3848a7e"
+    },
+    {
+      "path": "wine_journal/DESIGN.md",
+      "bytes": 5359,
+      "sha256": "12f566179035f2c98e10d181c56bc2f5fc666feff88eb0d117b3d4323807f2ad"
+    }
+  ],
+  "screens": [
+    {
+      "id": "01_my_wines.png",
+      "image": "01_my_wines.png/screen.png",
+      "width": 1024,
+      "height": 1244,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "02_wine_record.png",
+      "image": "02_wine_record.png/screen.png",
+      "width": 1024,
+      "height": 978,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "03_quick_entry.png",
+      "image": "03_quick_entry.png/screen.png",
+      "width": 1024,
+      "height": 712,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "04_entry_new_occasion.png",
+      "image": "04_entry_new_occasion.png/screen.png",
+      "width": 965,
+      "height": 1600,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "05_find_barcode.png",
+      "image": "05_find_barcode.png/screen.png",
+      "width": 1024,
+      "height": 726,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "06_photo_matches.png",
+      "image": "06_photo_matches.png/screen.png",
+      "width": 1024,
+      "height": 1236,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "07_manual_wine.png",
+      "image": "07_manual_wine.png/screen.png",
+      "width": 1024,
+      "height": 825,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "08_create_occasion.png",
+      "image": "08_create_occasion.png/screen.png",
+      "width": 1024,
+      "height": 1223,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "09_occasions.png",
+      "image": "09_occasions.png/screen.png",
+      "width": 1024,
+      "height": 730,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "10_occasion_scrapbook.png",
+      "image": "10_occasion_scrapbook.png/screen.png",
+      "width": 1024,
+      "height": 1489,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "11_browse_wines.png",
+      "image": "11_browse_wines.png/screen.png",
+      "width": 1024,
+      "height": 1212,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "12_for_you.png",
+      "image": "12_for_you.png/screen.png",
+      "width": 1024,
+      "height": 792,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "13_trending.png",
+      "image": "13_trending.png/screen.png",
+      "width": 1024,
+      "height": 797,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "14_guides.png",
+      "image": "14_guides.png/screen.png",
+      "width": 1024,
+      "height": 769,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "15_tasting_guide.png",
+      "image": "15_tasting_guide.png/screen.png",
+      "width": 1024,
+      "height": 702,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "16_rating_history.png",
+      "image": "16_rating_history.png/screen.png",
+      "width": 1024,
+      "height": 797,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "17_place_picker.png",
+      "image": "17_place_picker.png/screen.png",
+      "width": 988,
+      "height": 1600,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "18_sign_in.png",
+      "image": "18_sign_in.png/screen.png",
+      "width": 1024,
+      "height": 678,
+      "code": null,
+      "kind": "reference"
+    },
+    {
+      "id": "add_wine_manually",
+      "image": "add_wine_manually/screen.png",
+      "width": 489,
+      "height": 1600,
+      "code": "add_wine_manually/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "barcode_lookup",
+      "image": "barcode_lookup/screen.png",
+      "width": 706,
+      "height": 1600,
+      "code": "barcode_lookup/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "browse_wines",
+      "image": "browse_wines/screen.png",
+      "width": 341,
+      "height": 1600,
+      "code": "browse_wines/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "create_occasion",
+      "image": "create_occasion/screen.png",
+      "width": 360,
+      "height": 1600,
+      "code": "create_occasion/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "log_wine_entry_place_picker_desktop",
+      "image": "log_wine_entry_place_picker_desktop/screen.png",
+      "width": 1081,
+      "height": 1600,
+      "code": "log_wine_entry_place_picker_desktop/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "my_wines",
+      "image": "my_wines/screen.png",
+      "width": 423,
+      "height": 1600,
+      "code": "my_wines/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "my_wines_desktop",
+      "image": "my_wines_desktop/screen.png",
+      "width": 1445,
+      "height": 1600,
+      "code": "my_wines_desktop/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "occasion_scrapbook",
+      "image": "occasion_scrapbook/screen.png",
+      "width": 343,
+      "height": 1600,
+      "code": "occasion_scrapbook/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "occasion_scrapbook_desktop",
+      "image": "occasion_scrapbook_desktop/screen.png",
+      "width": 1133,
+      "height": 1600,
+      "code": "occasion_scrapbook_desktop/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "photo_match_candidates",
+      "image": "photo_match_candidates/screen.png",
+      "width": 425,
+      "height": 1600,
+      "code": "photo_match_candidates/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "rating_history_desktop",
+      "image": "rating_history_desktop/screen.png",
+      "width": 1600,
+      "height": 1476,
+      "code": "rating_history_desktop/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "wine_guides",
+      "image": "wine_guides/screen.png",
+      "width": 344,
+      "height": 1600,
+      "code": "wine_guides/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "wine_record",
+      "image": "wine_record/screen.png",
+      "width": 380,
+      "height": 1600,
+      "code": "wine_record/code.html",
+      "kind": "generated"
+    },
+    {
+      "id": "wine_record_desktop",
+      "image": "wine_record_desktop/screen.png",
+      "width": 1600,
+      "height": 1532,
+      "code": "wine_record_desktop/code.html",
+      "kind": "generated"
+    }
+  ]
+}

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Serif:wght@100..900&family=Segoe+UI:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-high": "#f3e6df", "surface-container-lowest": "#ffffff", "surface-tint": "#92465a", "on-primary-container": "#f496ac", "on-secondary-fixed-variant": "#414a2d", "olive-wash": "#e9edde", "secondary": "#596243", "on-surface": "#201a17", "error": "#ba1a1a", "branch-brown": "#795f4b", "on-background": "#201a17", "on-tertiary": "#ffffff", "surface-variant": "#ede0da", "burgundy-wash": "#f1e4e7", "primary-fixed-dim": "#ffb1c2", "on-secondary-fixed": "#171e06", "background": "#fff8f5", "inverse-surface": "#362f2b", "on-primary": "#ffffff", "on-error": "#ffffff", "primary": "#56162a", "on-surface-variant": "#534346", "surface-container-highest": "#ede0da", "on-secondary-container": "#5f6848", "secondary-fixed-dim": "#c1cba5", "outline-variant": "#d8c1c4", "tertiary-container": "#563f2d", "on-secondary": "#ffffff", "warm-white": "#fffdf8", "on-error-container": "#93000a", "wine-burgundy": "#722c40", "on-tertiary-container": "#cbab93", "tertiary-fixed-dim": "#e1c0a8", "outline": "#857275", "on-primary-fixed": "#3d0318", "secondary-container": "#dde7bf", "surface-container": "#f9ebe5", "surface-bright": "#fff8f5", "muted-ink": "#70665c", "error-container": "#ffdad6", "cream-paper": "#f7f3eb", "surface-dim": "#e4d8d1", "primary-container": "#722c40", "on-tertiary-fixed": "#291808", "primary-fixed": "#ffd9df", "surface-container-low": "#fef1eb", "secondary-fixed": "#dde7bf", "parchment-line": "#ddd5c9", "tertiary-fixed": "#ffdcc3", "inverse-on-surface": "#fbeee8", "on-tertiary-fixed-variant": "#594230", "warm-ink": "#332c28", "on-primary-fixed-variant": "#762f43", "inverse-primary": "#ffb1c2", "tertiary": "#3d2919", "grape-leaf-olive": "#555e3f", "warm-stone": "#ebe6da", "surface": "#fff8f5" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-sm": "0.75rem", "space-lg": "1.1875rem", "section-gap": "24px", "space-xl": "1.5rem", "space-md": "1rem", "compact-gap": "12px", "page-padding-desktop": "34px", "space-xs": "0.5rem", "page-padding-mobile": "18px", "margin": "2.125rem", "control-gap": "8px", "gutter-mobile": "0.75rem", "margin-mobile": "1.125rem", "card-gap": "19px", "field-gap": "16px", "gutter": "1.1875rem" }, fontFamily: { "display-lg": ["Georgia"], "body-sm": ["Inter"], "body-base": ["Segoe UI"], "label": ["Segoe UI"], "overline": ["Segoe UI"], "display-lg-mobile": ["Noto Serif"], "title-sm": ["Georgia"], "input": ["Segoe UI"], "headline-md": ["Georgia"] }, fontSize: { "display-lg": ["40px", { lineHeight: "44.8px", letterSpacing: "-1.1px", fontWeight: "400" }], "body-sm": ["13px", { lineHeight: "19.5px", fontWeight: "400" }], "body-base": ["15px", { lineHeight: "23.25px", fontWeight: "400" }], "label": ["12px", { lineHeight: "16px", fontWeight: "500" }], "overline": ["11px", { lineHeight: "14px", letterSpacing: "1.8px", fontWeight: "500" }], "display-lg-mobile": ["32px", { lineHeight: "38px", letterSpacing: "-0.8px", fontWeight: "400" }], "title-sm": ["21px", { lineHeight: "26.88px", fontWeight: "400" }], "input": ["16px", { lineHeight: "24px", fontWeight: "400" }], "headline-md": ["27px", { lineHeight: "33.75px", letterSpacing: "-0.4px", fontWeight: "400" }] } } } };</script></head><body class="bg-cream-paper font-body-base text-warm-ink flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-warm-white/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-page-padding-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><div class="w-11 h-11 flex items-center justify-center rounded-xl bg-burgundy-wash text-wine-burgundy"><span class="material-symbols-outlined text-[24px]">wine_bar</span></div><div class="flex flex-col"><span class="font-title-sm text-title-sm text-wine-burgundy tracking-tight">Wine Journal</span><span class="font-overline text-overline uppercase text-muted-ink">Cellar Notebook</span></div></div><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 bg-cream-paper pb-28"><div class="flex flex-col w-full">
+<!-- Reference Visual (Collapsible Notebook Snapshot) -->
+<div class="px-page-padding-mobile pt-space-md">
+<div class="bg-warm-stone/50 rounded-xl p-space-xs flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-grape-leaf-olive text-[18px]">auto_stories</span>
+<span class="font-overline text-overline uppercase tracking-wider text-muted-ink">Editorial Blueprint Mode</span>
+</div>
+<button class="text-wine-burgundy font-label text-label hover:underline flex items-center gap-1" id="toggleWireframeBtn">
+<span>View Sketch</span>
+<span class="material-symbols-outlined text-[14px]">unfold_more</span>
+</button>
+</div>
+<div class="hidden mt-space-xs overflow-hidden rounded-xl bg-warm-white p-space-xs shadow-md" id="wireframeContainer">
+<img alt="Cellar Notebook Wireframe Layout" class="w-full h-auto rounded-lg object-contain max-h-72" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS1BmFnyffPBE_GcKWd07_29bGKGQGbaNuprtRhwoqevheuuAv8yZBdzgAb6KRS5G_9VSpKSMQhh1kSHxgzlrTRSfINnBpFGPnZ4gDynwSsVA07N6SjVAu7lbRnTWQUJC1FSOLShE48XCZGv4FsjM0iDz8hnaQQIab3WUnlsuHsIwpEgn79j-1_tJMHlCVATjtnpRBjf5g6xxiiSVRWCSzJ1NhuJNLaANf6F5vdBZ6yThO4ZddH0jxltqWEmnS4zjjVok"/>
+</div>
+</div>
+<!-- Editorial Top Section Header -->
+<header class="px-page-padding-mobile pt-space-lg pb-space-sm">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="w-1.5 h-1.5 rounded-full bg-wine-burgundy"></span>
+<span class="font-overline text-overline uppercase text-grape-leaf-olive tracking-widest">Your Personal Collection</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-warm-ink font-normal tracking-tight">My wines</h1>
+<span class="font-label text-label px-2 py-0.5 rounded-full bg-olive-wash text-grape-leaf-olive font-medium">4 wines · 5 entries</span>
+</div>
+<p class="font-body-base text-body-base text-muted-ink mt-1 italic">Wines you’ve tried. Moments worth keeping.</p>
+</header>
+<!-- Search & Filter Controls -->
+<section class="px-page-padding-mobile py-space-xs space-y-space-xs">
+<!-- Search Bar -->
+<div class="relative flex items-center w-full">
+<div class="absolute left-3 flex items-center pointer-events-none text-muted-ink">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-warm-white text-warm-ink font-input text-input pl-10 pr-10 py-2.5 rounded-xl shadow-sm placeholder:text-muted-ink/70 focus:outline-none focus:bg-warm-white" id="wineSearch" placeholder="Search your wines (Name, producer, vintage...)" type="text"/>
+<button class="hidden absolute right-3 text-muted-ink hover:text-wine-burgundy" id="clearSearch">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Filter & Sort Strip -->
+<div class="flex items-center justify-between gap-space-xs pt-1 overflow-x-auto no-scrollbar">
+<div class="flex items-center gap-1.5 flex-nowrap">
+<button class="filter-pill active px-3 py-1 rounded-full text-label font-label bg-olive-wash text-grape-leaf-olive flex items-center gap-1 shrink-0 transition-all">
+<span>All Types</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="filter-pill px-3 py-1 rounded-full text-label font-label bg-warm-white text-muted-ink hover:text-warm-ink hover:bg-surface-container shrink-0 transition-all">
+<span>Red (4)</span>
+</button>
+<button class="filter-pill px-3 py-1 rounded-full text-label font-label bg-warm-white text-muted-ink hover:text-warm-ink hover:bg-surface-container shrink-0 transition-all">
+<span>White (0)</span>
+</button>
+<button class="filter-pill px-3 py-1 rounded-full text-label font-label bg-warm-white text-muted-ink hover:text-warm-ink hover:bg-surface-container shrink-0 transition-all">
+<span>Sparkling (0)</span>
+</button>
+</div>
+<div class="flex items-center shrink-0">
+<button class="px-2.5 py-1 rounded-full bg-burgundy-wash text-wine-burgundy text-label font-label flex items-center gap-1 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[15px]">swap_vert</span>
+<span class="whitespace-nowrap">Recently tried</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Wine Cards Collection Feed -->
+<main class="px-page-padding-mobile pt-space-sm space-y-space-md" id="wineCardsContainer">
+<!-- Card 1 -->
+<article class="wine-card bg-warm-white rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-sm transition-all hover:shadow-md" data-name="Barrel Selection 2023" data-producer="Calculated Risk" data-vintage="2023">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-overline text-overline uppercase tracking-wider text-branch-brown">Cabernet Sauvignon · Napa Valley</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-wine-burgundy font-normal leading-snug truncate">Calculated Risk</h2>
+<p class="font-title-sm text-title-sm text-warm-ink font-normal mt-0.5">Barrel Selection 2023</p>
+</div>
+<!-- Bottle Vignette / Visual Placeholder -->
+<div class="w-14 h-24 rounded-lg bg-warm-stone flex items-center justify-center shrink-0 relative overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover object-center" data-alt="Close up studio portrait of an artisanal California Cabernet Sauvignon wine bottle with textured cream paper label, deep wine red capsule, warm vintage cellar illumination, soft shadows on warm stone surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwYPneeZ9HH1cnDrT61tN9_DOfAEeCNl4L1RiZmynQZsby189VEsD1fRbPXwLPA2s0D1t9noPpdpfS8ZY5A0MbqN-Vk2eCcc5nmXgG9C9JEu6ywqROK31NE4bS8DC37rmFt69g_TFAceAVzG6MAM62I3ITuRPk7Ttb_m7e5DvhM7HQxuD3rwcwrC4RFO5vfRnQ3f4VUHFgCQJWvwWp9osWzl7C89rJClupz1Qt3v2A4xb5qUYlZHkHBA"/>
+<span class="absolute bottom-1 right-1 px-1 rounded bg-warm-ink/80 text-warm-white font-overline text-[9px]">2023</span>
+</div>
+</div>
+<!-- Tasting Notes Snippet & Rating Matrix -->
+<div class="bg-surface-container-low rounded-lg p-space-xs flex items-center justify-between">
+<div class="flex items-center gap-1">
+<div class="flex text-wine-burgundy">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<span class="font-label text-label font-bold text-wine-burgundy ml-1">4.5</span>
+</div>
+<div class="flex items-center gap-1 text-muted-ink">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span class="font-body-sm text-body-sm">Tried 12 Sept 2026</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Dark Plum</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">French Oak</span>
+<span class="px-2 py-0.5 rounded bg-olive-wash text-grape-leaf-olive font-body-sm text-[11px]">Cellar Pick</span>
+</div>
+<button class="text-wine-burgundy flex items-center justify-center p-1 rounded-full hover:bg-burgundy-wash transition-colors" title="View Journal Entry">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="wine-card bg-warm-white rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-sm transition-all hover:shadow-md" data-name="Sonoma County Reserve 2023" data-producer="Calculated Risk" data-vintage="2023">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-overline text-overline uppercase tracking-wider text-branch-brown">Cabernet Sauvignon · Sonoma County</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-wine-burgundy font-normal leading-snug truncate">Calculated Risk</h2>
+<p class="font-title-sm text-title-sm text-warm-ink font-normal mt-0.5">Sonoma County Reserve 2023</p>
+</div>
+<div class="w-14 h-24 rounded-lg bg-warm-stone flex items-center justify-center shrink-0 relative overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover object-center" data-alt="Elegant Sonoma Reserve red wine bottle neck and label resting diagonally against antique reclaimed wood with warm daylight, high detail aesthetic paper texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7_Is3ly0wQp8CHV-OK0x_k92Ze9waBjd5uPy3qd-YP6t3P9z9KDV5KiMi-2CRtSc_W4w-UW3Zbuo02XmQjuf1Sgq8x9iDLpnu6Ko_Rc2KqrmTZ3oX817SE76p9C8l9Gt9BTj3R4SYHNqQaMIOBvY3SSN3bVT_FkSCpjLNiSgBbRnVb69e-0hpnBexZryDVBpPGrhbGh9cpEJFG9fcc1Un3KJEh-CqAjTnfiaOsPL_JPKF7px2OWB4kA"/>
+<span class="absolute bottom-1 right-1 px-1 rounded bg-warm-ink/80 text-warm-white font-overline text-[9px]">2023</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-xs flex items-center justify-between">
+<div class="flex items-center gap-1">
+<div class="flex text-wine-burgundy">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-muted-ink/40">star</span>
+</div>
+<span class="font-label text-label font-bold text-wine-burgundy ml-1">4.0</span>
+</div>
+<div class="flex items-center gap-1 text-muted-ink">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span class="font-body-sm text-body-sm">Tried 12 Sept 2026</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Blackberry</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Cedar</span>
+<span class="px-2 py-0.5 rounded bg-burgundy-wash text-wine-burgundy font-body-sm text-[11px]">Dinner with Leo</span>
+</div>
+<button class="text-wine-burgundy flex items-center justify-center p-1 rounded-full hover:bg-burgundy-wash transition-colors" title="View Journal Entry">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Card 3 (Unrated vintage bottle) -->
+<article class="wine-card bg-warm-white rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-sm transition-all hover:shadow-md" data-name="Barrel Selection 2024" data-producer="Calculated Risk" data-vintage="2024">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-overline text-overline uppercase tracking-wider text-branch-brown">Cabernet Sauvignon · Napa Valley</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-wine-burgundy font-normal leading-snug truncate">Calculated Risk</h2>
+<p class="font-title-sm text-title-sm text-warm-ink font-normal mt-0.5">Barrel Selection 2024</p>
+</div>
+<div class="w-14 h-24 rounded-lg bg-warm-stone flex items-center justify-center shrink-0 relative overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover object-center" data-alt="Vintage Napa Valley red wine bottle preview in soft chiaroscuro cellar lighting, matte dark glass, cream parchment wine label typography detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbEVpzRnIoPrgGVdXLdg-gy5pLsfO0MHXpvPylPAIMl8eAWzPF9jzHc_XEikqQ4eJUmq0NkR7zO1XXciYoJhbKEaz5ZDD1UMc-y6pyTwEuITP-lVYbivCad9K_vIE5k_0kR5o93NqFcT5NvqPweRFm10Y29DpICuiPQfqDeLjv2tuP0qw3oXWrdZRepZd3W2Da2XFYC0CCv-syrkwyOb_c420ggJts-fkL_Ryzid04bctwnUFw3RO6AA"/>
+<span class="absolute bottom-1 right-1 px-1 rounded bg-warm-ink/80 text-warm-white font-overline text-[9px]">2024</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-xs flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-muted-ink text-[16px]">edit_note</span>
+<span class="font-label text-label text-muted-ink italic">Not rated yet</span>
+</div>
+<div class="flex items-center gap-1 text-muted-ink">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span class="font-body-sm text-body-sm">Tried 11 Sept 2026</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-olive-wash text-grape-leaf-olive font-body-sm text-[11px]">Youthful</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Aerated 40m</span>
+</div>
+<button class="px-2.5 py-1 rounded-full bg-burgundy-wash text-wine-burgundy font-label text-label hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span>Add Score</span>
+<span class="material-symbols-outlined text-[14px]">grade</span>
+</button>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="wine-card bg-warm-white rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-sm transition-all hover:shadow-md" data-name="Howell Mountain 2023" data-producer="Calculated Risk" data-vintage="2023">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-overline text-overline uppercase tracking-wider text-branch-brown">Cabernet Sauvignon · Howell Mountain</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-wine-burgundy font-normal leading-snug truncate">Calculated Risk</h2>
+<p class="font-title-sm text-title-sm text-warm-ink font-normal mt-0.5">Howell Mountain 2023</p>
+</div>
+<div class="w-14 h-24 rounded-lg bg-warm-stone flex items-center justify-center shrink-0 relative overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover object-center" data-alt="High mountain terroir red wine bottle with volcanic stone background and warm sunlight ray highlighting the label texture and deep burgundy wax seal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCabLV2pV3FHkFUdFl9-2hyNQlDbU3LqcZYxTgdOcWUZL1JBWCZOze0r6ogrZo7SD_GpLT9PeaiEDQ1OOntk6HNj8Y-Uk8EsCODbPvHiUaathIvDAg-gFdsSNzfJ5XfwHL5f2YRqS_ZMqeV_qznO2BU0pGcoSaBL9cL3V7GEKdt2Bd4-k6WizsNDjmi3ncGg_capGvxzhCTpFkAfso7gTi71mlMt6nXmKV6mmzOqu2LlmfkXhjfsGONg"/>
+<span class="absolute bottom-1 right-1 px-1 rounded bg-warm-ink/80 text-warm-white font-overline text-[9px]">2023</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-xs flex items-center justify-between">
+<div class="flex items-center gap-1">
+<div class="flex text-wine-burgundy">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<span class="font-label text-label font-bold text-wine-burgundy ml-1">4.5</span>
+</div>
+<div class="flex items-center gap-1 text-muted-ink">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span class="font-body-sm text-body-sm">Tried 4 Jun 2026</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Minerality</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-warm-ink font-body-sm text-[11px]">Graphite</span>
+<span class="px-2 py-0.5 rounded bg-olive-wash text-grape-leaf-olive font-body-sm text-[11px]">Reserve Cellar</span>
+</div>
+<button class="text-wine-burgundy flex items-center justify-center p-1 rounded-full hover:bg-burgundy-wash transition-colors" title="View Journal Entry">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Empty Search Feedback State (Hidden by default) -->
+<div class="hidden px-page-padding-mobile py-space-xl flex-col items-center text-center" id="noResultsNotice">
+<div class="w-16 h-16 rounded-full bg-burgundy-wash flex items-center justify-center text-wine-burgundy mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">wine_bar</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-warm-ink mb-1">No matching bottles found</h3>
+<p class="font-body-sm text-body-sm text-muted-ink max-w-xs">Check for producer typos or clear the search query to show all vintage logs.</p>
+</div>
+<!-- Warm Journal Privacy Footer Note -->
+<footer class="px-page-padding-mobile pt-space-xl pb-space-lg flex flex-col items-center text-center">
+<div class="flex items-center gap-space-xs text-muted-ink mb-1">
+<span class="material-symbols-outlined text-[16px] text-wine-burgundy">lock</span>
+<span class="font-label text-label font-medium text-warm-ink">Your journal is private</span>
+</div>
+<p class="font-body-sm text-body-sm text-muted-ink italic">Every vintage keeps its own story.</p>
+<div class="w-12 h-0.5 bg-warm-stone rounded-full mt-space-sm"></div>
+</footer>
+</div>
+<script>
+  // Wireframe preview toggle logic
+  const toggleBtn = document.getElementById('toggleWireframeBtn');
+  const wireframeContainer = document.getElementById('wireframeContainer');
+  if (toggleBtn && wireframeContainer) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = wireframeContainer.classList.contains('hidden');
+      if (isHidden) {
+        wireframeContainer.classList.remove('hidden');
+        toggleBtn.querySelector('span:first-child').textContent = 'Hide Sketch';
+      } else {
+        wireframeContainer.classList.add('hidden');
+        toggleBtn.querySelector('span:first-child').textContent = 'View Sketch';
+      }
+    });
+  }
+
+  // Interactive search filter
+  const searchInput = document.getElementById('wineSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  const cards = document.querySelectorAll('.wine-card');
+  const noResults = document.getElementById('noResultsNotice');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase().trim();
+      let matches = 0;
+
+      if (term.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      cards.forEach(card => {
+        const textContent = card.innerText.toLowerCase();
+        if (textContent.includes(term)) {
+          card.classList.remove('hidden');
+          matches++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (matches === 0 && term.length > 0) {
+        noResults.classList.remove('hidden');
+        noResults.classList.add('flex');
+      } else {
+        noResults.classList.add('hidden');
+        noResults.classList.remove('flex');
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    });
+  }
+
+  // Filter pills visual activation
+  const filterPills = document.querySelectorAll('.filter-pill');
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach(p => {
+        p.classList.remove('bg-olive-wash', 'text-grape-leaf-olive');
+        p.classList.add('bg-warm-white', 'text-muted-ink');
+      });
+      pill.classList.remove('bg-warm-white', 'text-muted-ink');
+      pill.classList.add('bg-olive-wash', 'text-grape-leaf-olive');
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-warm-white/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(51,44,40,0.05)]" data-active-classes="text-wine-burgundy font-medium"><div class="flex items-center justify-around h-20 px-space-xs relative"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs transition-colors text-wine-burgundy font-medium" data-path="my-wines" href="#"><span class="material-symbols-outlined text-[22px]">book_2</span><span class="font-label text-label mt-1">My Wines</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-muted-ink hover:text-wine-burgundy transition-colors" data-path="browse-wines" href="#"><span class="material-symbols-outlined text-[22px]">explore</span><span class="font-label text-label mt-1">Browse</span></a><div class="flex items-center justify-center -mt-6"><a class="w-14 h-14 rounded-full bg-wine-burgundy text-warm-white flex items-center justify-center shadow-[0_4px_14px_rgba(114,44,64,0.3)] hover:bg-primary transition-all active:scale-95" data-path="log-wine" href="#"><span class="material-symbols-outlined text-[26px]">add</span></a></div><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-muted-ink hover:text-wine-burgundy transition-colors" data-path="occasions" href="#"><span class="material-symbols-outlined text-[22px]">photo_album</span><span class="font-label text-label mt-1">Occasions</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-muted-ink hover:text-wine-burgundy transition-colors" data-path="guides" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-label text-label mt-1">Guides</span></a></div></nav></body></html>

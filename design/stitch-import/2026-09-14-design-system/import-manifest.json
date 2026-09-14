@@ -1,0 +1,29 @@
+{
+  "source": "stitch_wine_journal_mvp_design_system.zip",
+  "sha256": "7226f0dd39b36fd07ef0bab3e74967f0a9ee75481961faa31cc2e60e5022b7a6",
+  "files": [
+    {
+      "name": "screen.png",
+      "bytes": 182070,
+      "width": 1024,
+      "height": 1489
+    }
+  ],
+  "html_files": 0,
+  "design_documents": 0,
+  "comparison": {
+    "imported_sha256": "8a184dead8069a89ce94891f94501adf97731331cf0278f77d42102aaac50a85",
+    "original_exists": true,
+    "original_sha256": "17300e999971f327e4a79724fe7821b7a99643edc78837ebe365011461c715c6",
+    "byte_identical": false,
+    "imported_size": [
+      1024,
+      1489
+    ],
+    "original_size": [
+      1024,
+      1489
+    ],
+    "pixel_identical": true
+  }
+}

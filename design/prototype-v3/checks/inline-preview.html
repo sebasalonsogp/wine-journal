@@ -1,0 +1,2100 @@
+<!doctype html>
+<html lang="en" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Wine Journal Connected Walkthrough</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Wine Journal Connected Walkthrough" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Wine Journal Connected Walkthrough&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled=&quot;true&quot;]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled=&quot;true&quot;] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed=&quot;true&quot;],
+  [aria-selected=&quot;true&quot;],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type=&quot;file&quot;]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type=&quot;color&quot;] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type=&quot;date&quot;],
+    [type=&quot;datetime-local&quot;],
+    [type=&quot;month&quot;],
+    [type=&quot;time&quot;],
+    [type=&quot;week&quot;]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: &quot;&quot;;
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;wine-journal-v3&quot; aria-label=&quot;Wine Journal design&quot;&gt;
+  &lt;div class=&quot;wj-surface&quot;&gt;
+    &lt;div id=&quot;wj-app&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;style&gt;
+#wine-journal-v3{--wj-paper:#f7f3eb;--wj-card:#fffdf8;--wj-burgundy:#722c40;--wj-olive:#555e3f;--wj-brown:#795f4b;--wj-ink:#332c28;--wj-muted:#70665c;--wj-line:#ddd5c9;--wj-soft:#ebe6da;--wj-greenwash:#e9edde;font:400 15px/1.55 &quot;Segoe UI&quot;,Arial,sans-serif;color:var(--wj-ink);width:100%;color-scheme:light}
+#wine-journal-v3 *{box-sizing:border-box}
+#wine-journal-v3 p,#wine-journal-v3 figcaption,#wine-journal-v3 .wj-note-paper,#wine-journal-v3 .wj-entry-title{overflow-wrap:anywhere}
+#wine-journal-v3 .wj-surface{background:var(--wj-paper);container-type:inline-size;border:1px solid var(--wj-line);border-radius:14px;overflow:clip}
+#wine-journal-v3.wj-phone .wj-surface{max-width:390px;margin:0 auto}
+#wine-journal-v3 button,#wine-journal-v3 input,#wine-journal-v3 select,#wine-journal-v3 textarea{font:inherit;color:inherit}
+#wine-journal-v3 button,#wine-journal-v3 a{touch-action:manipulation}
+#wine-journal-v3 button{cursor:pointer}
+#wine-journal-v3 button:disabled{cursor:default;opacity:.55}
+#wine-journal-v3 button,#wine-journal-v3 a,#wine-journal-v3 input,#wine-journal-v3 select,#wine-journal-v3 textarea{scroll-margin:24px}
+#wine-journal-v3 a{color:var(--wj-burgundy);text-underline-offset:3px}
+#wine-journal-v3 h1,#wine-journal-v3 h2,#wine-journal-v3 h3,#wine-journal-v3 p{margin:0}
+#wine-journal-v3 h1{font:400 40px/1.12 Georgia,serif;letter-spacing:-1.1px;color:var(--wj-burgundy);overflow-wrap:anywhere}
+#wine-journal-v3 h2{font:400 27px/1.25 Georgia,serif;letter-spacing:-.4px}
+#wine-journal-v3 h3{font:400 21px/1.28 Georgia,serif}
+#wine-journal-v3 .wj-topbar{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:19px 28px;border-bottom:1px solid var(--wj-line);background:var(--wj-card)}
+#wine-journal-v3 .wj-brand{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;min-height:44px;margin-right:auto;font:400 25px Georgia,serif;color:var(--wj-burgundy)}
+#wine-journal-v3 .wj-brand i,#wine-journal-v3 .wj-brand svg{color:var(--wj-olive)}
+#wine-journal-v3 .wj-nav{display:flex;gap:7px;align-items:center}
+#wine-journal-v3 .wj-nav button{min-height:44px;padding:9px 12px;border:0;border-radius:6px;background:none;white-space:nowrap}
+#wine-journal-v3 .wj-nav button[aria-current=page]{color:var(--wj-burgundy);background:var(--wj-paper);box-shadow:inset 0 -2px var(--wj-burgundy)}
+#wine-journal-v3 .wj-top-actions{display:flex;gap:9px;align-items:center}
+#wine-journal-v3 .wj-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 17px;border:1px solid var(--wj-line);border-radius:7px;background:var(--wj-card);text-decoration:none;line-height:1.35;font-weight:500}
+#wine-journal-v3 .wj-button.wj-primary{background:var(--wj-burgundy);border-color:var(--wj-burgundy);color:#fffdf8}
+#wine-journal-v3 .wj-button.wj-olive{background:var(--wj-olive);border-color:var(--wj-olive);color:#fffdf8}
+#wine-journal-v3 .wj-text-button{display:inline-flex;align-items:center;gap:6px;min-height:44px;border:0;padding:5px 0;background:none;color:var(--wj-burgundy);font-weight:500;text-align:left}
+#wine-journal-v3 .wj-account{padding:9px 12px}
+#wine-journal-v3 .wj-main{padding:30px 34px 36px;min-height:480px}
+#wine-journal-v3 .wj-page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin:0 0 26px}
+#wine-journal-v3 .wj-overline{color:var(--wj-olive);font-size:11px;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:9px;font-weight:500}
+#wine-journal-v3 .wj-subtitle{color:var(--wj-muted);margin-top:11px;max-width:590px}
+#wine-journal-v3 .wj-small{font-size:12px;color:var(--wj-muted)}
+#wine-journal-v3 .wj-muted{color:var(--wj-muted)}
+#wine-journal-v3 .wj-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#wine-journal-v3 .wj-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#wine-journal-v3 .wj-toolbar{display:flex;gap:12px;align-items:end;margin-bottom:24px;flex-wrap:wrap}
+#wine-journal-v3 .wj-toolbar .wj-search{flex:1 1 220px}
+#wine-journal-v3 .wj-label{display:block;font-size:12px;color:var(--wj-muted);margin-bottom:6px;font-weight:500}
+#wine-journal-v3 .wj-input{display:block;width:100%;min-height:44px;border:1px solid var(--wj-line);background:var(--wj-card);padding:10px 12px;border-radius:6px;font-size:16px}
+#wine-journal-v3 textarea.wj-input{min-height:116px;resize:vertical}
+#wine-journal-v3 .wj-search-wrap{display:flex;align-items:center;gap:9px;padding-left:12px;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v3 .wj-search-wrap input{border:0;background:transparent;min-width:0}
+#wine-journal-v3 .wj-search-wrap svg{flex:none;color:var(--wj-muted)}
+#wine-journal-v3 .wj-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
+#wine-journal-v3 .wj-wine-card{display:flex;flex-direction:column;text-align:left;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:9px;overflow:hidden;padding:0;min-width:0}
+#wine-journal-v3 .wj-art{display:flex;align-items:center;justify-content:center;min-height:170px;background:radial-gradient(ellipse at 48% 100%,#d8d1be 0,transparent 45%),linear-gradient(135deg,#ece9df,#f4f0e6);position:relative;overflow:hidden}
+#wine-journal-v3 .wj-art.wj-art-green{background:radial-gradient(ellipse at 48% 100%,#cdd1bf 0,transparent 45%),linear-gradient(135deg,#e2e7d6,#f0f0e5)}
+#wine-journal-v3 .wj-art.wj-art-rose{background:radial-gradient(ellipse at 48% 100%,#dbc7c2 0,transparent 45%),linear-gradient(135deg,#e9ded9,#f5eee9)}
+#wine-journal-v3 .wj-bottle{display:block;position:relative;width:51px;height:105px;margin-top:27px;border-radius:16px 16px 5px 5px;background:linear-gradient(90deg,#2a3025,#424c35 34%,#272e22 73%);box-shadow:9px 9px 15px #332c281a}
+#wine-journal-v3 .wj-bottle:before{content:&quot;&quot;;position:absolute;bottom:94px;left:17px;width:17px;height:38px;border-radius:3px 3px 0 0;background:linear-gradient(var(--wj-burgundy) 0 40%,#313b27 41%)}
+#wine-journal-v3 .wj-bottle:after{content:&quot;&quot;;position:absolute;left:6px;right:6px;top:36px;height:46px;background:#f4efe4;border-top:2px solid var(--wj-brown);border-bottom:2px solid var(--wj-brown)}
+#wine-journal-v3 .wj-bottle-label{position:absolute;z-index:1;top:41px;left:0;right:0;text-align:center;font:400 13px/1.4 Georgia,serif;color:#46382d}
+#wine-journal-v3 .wj-bottle-label small{display:block;font:400 11px/1.2 &quot;Segoe UI&quot;,sans-serif}
+#wine-journal-v3 .wj-wine-card .wj-art{width:100%}
+#wine-journal-v3 .wj-card-content{display:flex;flex-direction:column;gap:6px;padding:17px 18px 16px;width:100%;flex:1}
+#wine-journal-v3 .wj-producer{font-size:12px;color:var(--wj-muted)}
+#wine-journal-v3 .wj-wine-name{font:400 23px/1.16 Georgia,serif;letter-spacing:-.3px}
+#wine-journal-v3 .wj-wine-sub{font-size:13px}
+#wine-journal-v3 .wj-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--wj-line);padding-top:12px;margin-top:9px;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v3 .wj-score{display:inline-flex;align-items:center;gap:5px;color:var(--wj-burgundy);white-space:nowrap;font-weight:500;font-size:14px}
+#wine-journal-v3 .wj-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:4px;background:var(--wj-greenwash);color:var(--wj-olive);font-size:12px;max-width:100%;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-back{margin:-9px 0 17px}
+#wine-journal-v3 .wj-hero{display:grid;grid-template-columns:150px minmax(0,1fr);gap:26px;align-items:center;margin-bottom:27px}
+#wine-journal-v3 .wj-hero .wj-art{min-height:200px;border-radius:7px}
+#wine-journal-v3 .wj-hero h1{font-size:36px;margin:5px 0 10px}
+#wine-journal-v3 .wj-hero .wj-actions{margin-top:17px}
+#wine-journal-v3 .wj-two-col{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(230px,1fr);gap:27px;align-items:start}
+#wine-journal-v3 .wj-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;flex-wrap:wrap}
+#wine-journal-v3 .wj-panel{border:1px solid var(--wj-line);border-radius:8px;background:var(--wj-card);padding:21px}
+#wine-journal-v3 .wj-panel+.wj-panel{margin-top:17px}
+#wine-journal-v3 .wj-rating-value{font:400 38px/1.2 Georgia,serif;color:var(--wj-burgundy)}
+#wine-journal-v3 .wj-rule{border:0;border-top:1px solid var(--wj-line);margin:20px 0}
+#wine-journal-v3 .wj-entry{padding:19px 0;border-top:1px solid var(--wj-line)}
+#wine-journal-v3 .wj-entry .wj-entry-title{font-weight:500;font-size:16px}
+#wine-journal-v3 .wj-entry p{margin:9px 0 8px}
+#wine-journal-v3 .wj-entry-meta{display:flex;gap:10px;align-items:center;color:var(--wj-muted);font-size:12px;flex-wrap:wrap}
+#wine-journal-v3 .wj-specs{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin:17px 0 0}
+#wine-journal-v3 .wj-specs dt{color:var(--wj-muted);font-size:12px}
+#wine-journal-v3 .wj-specs dd{margin:2px 0 0;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-form{max-width:680px;margin:0 auto}
+#wine-journal-v3 .wj-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:19px 0}
+#wine-journal-v3 .wj-fields&gt;label,#wine-journal-v3 .wj-toolbar&gt;label{min-width:0}
+#wine-journal-v3 .wj-field-full{grid-column:1/-1}
+#wine-journal-v3 .wj-selected-wine{display:flex;gap:13px;align-items:center;background:var(--wj-greenwash);padding:14px 17px;border-radius:7px;color:var(--wj-ink)}
+#wine-journal-v3 .wj-selected-wine svg{color:var(--wj-olive);flex:none}
+#wine-journal-v3 .wj-guide{background:var(--wj-greenwash);padding:18px;border-radius:7px;margin:0 0 20px}
+#wine-journal-v3 .wj-guide p{margin:8px 0}
+#wine-journal-v3 .wj-descriptors{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#wine-journal-v3 .wj-descriptors button{min-height:44px;padding:8px 13px;border:1px solid #b6bea5;border-radius:5px;background:var(--wj-card)}
+#wine-journal-v3 .wj-descriptors button[aria-pressed=true]{background:var(--wj-olive);border-color:var(--wj-olive);color:#fffdf8}
+#wine-journal-v3 details{margin:14px 0}
+#wine-journal-v3 summary{cursor:pointer;color:var(--wj-olive);min-height:44px;padding:10px 0;font-weight:500}
+#wine-journal-v3 .wj-form-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:25px;padding-top:22px;border-top:1px solid var(--wj-line);flex-wrap:wrap}
+#wine-journal-v3 .wj-privacy{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v3 .wj-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 25px}
+#wine-journal-v3 .wj-methods button{min-height:55px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v3 .wj-methods button[aria-pressed=true]{border-color:var(--wj-burgundy);color:var(--wj-burgundy);background:#f1e4e7}
+#wine-journal-v3 .wj-scan{min-height:180px;border:1px dashed var(--wj-brown);border-radius:8px;background:var(--wj-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
+#wine-journal-v3 .wj-result{display:flex;align-items:center;gap:15px;padding:15px 0;border-top:1px solid var(--wj-line)}
+#wine-journal-v3 .wj-result-info{flex:1;min-width:0}
+#wine-journal-v3 .wj-result h3{font-size:21px}
+#wine-journal-v3 .wj-empty{text-align:center;padding:48px 20px}
+#wine-journal-v3 .wj-empty p{max-width:440px;margin:13px auto 23px;color:var(--wj-muted)}
+#wine-journal-v3 .wj-banner{padding:12px 15px;border-radius:6px;background:var(--wj-greenwash);color:var(--wj-olive);margin-bottom:22px;display:flex;align-items:center;gap:9px}
+#wine-journal-v3 .wj-warning{padding:12px 14px;border-left:3px solid var(--wj-brown);background:var(--wj-soft);margin:14px 0;font-size:13px}
+#wine-journal-v3 .wj-error{color:var(--wj-burgundy);margin-top:12px}
+#wine-journal-v3 .wj-occasion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px}
+#wine-journal-v3 .wj-occasion-card{display:block;text-align:left;padding:0;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:8px;overflow:hidden}
+#wine-journal-v3 .wj-memory-scene{display:flex;align-items:center;justify-content:center;gap:16px;min-height:177px;background:#e7e3d4;padding:20px}
+#wine-journal-v3 .wj-memory-scene .wj-photo-frame{width:39%;background:#fffdf8;padding:8px 8px 19px;box-shadow:1px 3px 8px #43382b16;transform:rotate(-5deg)}
+#wine-journal-v3 .wj-memory-scene .wj-photo-frame+.wj-photo-frame{transform:rotate(6deg);margin-top:20px}
+#wine-journal-v3 .wj-photo-block{display:flex;align-items:center;justify-content:center;min-height:95px;background:linear-gradient(135deg,#d5cbbd,#b49e88);color:#594436;position:relative}
+#wine-journal-v3 .wj-photo-block.wj-photo-olive{background:linear-gradient(135deg,#d2d7bb,#949d77);color:#3d442e}
+#wine-journal-v3 .wj-occasion-body{display:block;padding:22px}
+#wine-journal-v3 .wj-occasion-body .wj-small{display:block;margin-bottom:7px}
+#wine-journal-v3 .wj-occasion-body .wj-wine-name{display:block}
+#wine-journal-v3 .wj-occasion-body .wj-muted{display:block;margin-top:10px}
+#wine-journal-v3 .wj-occasion-head{border-bottom:1px solid var(--wj-line);padding-bottom:25px;margin-bottom:25px}
+#wine-journal-v3 .wj-occasion-head h1{margin:9px 0 16px}
+#wine-journal-v3 .wj-memory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:19px 0}
+#wine-journal-v3 .wj-memory{margin:0;padding:8px 8px 12px;background:var(--wj-card);border:1px solid var(--wj-line);border-radius:2px;min-width:0}
+#wine-journal-v3 .wj-memory:nth-child(3n+1){transform:rotate(-1deg)}
+#wine-journal-v3 .wj-memory:nth-child(3n+2){transform:rotate(1deg)}
+#wine-journal-v3 .wj-memory figcaption{font-size:12px;color:var(--wj-muted);padding:10px 4px 0;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-memory .wj-photo-block{min-height:130px;flex-direction:column;gap:9px}
+#wine-journal-v3 .wj-note-paper{padding:22px;border-left:3px solid var(--wj-olive);background:var(--wj-card);margin:18px 0;color:var(--wj-ink)}
+#wine-journal-v3 .wj-occasion-wines{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#wine-journal-v3 .wj-occasion-wine{border:1px solid var(--wj-line);border-radius:7px;background:var(--wj-card);padding:17px}
+#wine-journal-v3 .wj-occasion-wine h3{margin:6px 0}
+#wine-journal-v3 .wj-upload{display:block;padding:15px;border:1px dashed var(--wj-brown);border-radius:6px;margin-top:17px;background:var(--wj-card);overflow-wrap:anywhere}
+#wine-journal-v3 .wj-upload input{display:block;max-width:100%;font-size:12px;margin-top:10px}
+#wine-journal-v3 .wj-check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-top:1px solid var(--wj-line);cursor:pointer}
+#wine-journal-v3 .wj-check-row input{width:19px;height:19px;flex:none;margin-top:4px;accent-color:var(--wj-burgundy)}
+#wine-journal-v3 .wj-check-row span{min-width:0}
+#wine-journal-v3 .wj-rating-history{list-style:none;padding:0;margin:15px 0}
+#wine-journal-v3 .wj-rating-history li{padding:13px 0;border-top:1px solid var(--wj-line);display:flex;justify-content:space-between;gap:14px}
+#wine-journal-v3 .wj-footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;border-top:1px solid var(--wj-line);margin-top:33px;padding-top:17px;font-size:12px;color:var(--wj-muted)}
+#wine-journal-v3.wj-list .wj-grid{grid-template-columns:1fr}
+#wine-journal-v3.wj-list .wj-wine-card{display:grid;grid-template-columns:100px 1fr}
+#wine-journal-v3.wj-list .wj-wine-card .wj-art{min-height:145px}
+#wine-journal-v3.wj-list .wj-card-content{padding:16px 20px}
+#wine-journal-v3 .wj-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@container(max-width:780px){#wine-journal-v3 .wj-topbar{gap:12px;padding:15px 21px}#wine-journal-v3 .wj-brand{font-size:23px}#wine-journal-v3 .wj-nav{order:3;width:100%}#wine-journal-v3 .wj-nav button{flex:1}#wine-journal-v3 .wj-main{padding:25px}#wine-journal-v3 .wj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#wine-journal-v3 .wj-two-col{grid-template-columns:1fr}}
+@container(max-width:500px){#wine-journal-v3 .wj-topbar{padding:13px 16px}#wine-journal-v3 .wj-brand{font-size:21px;gap:6px}#wine-journal-v3 .wj-top-actions{gap:6px}#wine-journal-v3 .wj-top-actions .wj-button{padding:9px 10px}#wine-journal-v3 .wj-account span{display:none}#wine-journal-v3 .wj-main{padding:23px 18px}#wine-journal-v3 h1{font-size:34px}#wine-journal-v3 .wj-hero{grid-template-columns:90px minmax(0,1fr);gap:16px;align-items:start}#wine-journal-v3 .wj-hero .wj-art{min-height:170px}#wine-journal-v3 .wj-hero h1{font-size:28px}#wine-journal-v3 .wj-grid{gap:12px}#wine-journal-v3 .wj-card-content{padding:13px 12px}#wine-journal-v3 .wj-wine-name{font-size:21px}#wine-journal-v3 .wj-wine-card .wj-art{min-height:154px}#wine-journal-v3 .wj-card-bottom{align-items:flex-start;flex-direction:column;gap:5px}#wine-journal-v3 .wj-toolbar&gt;label{flex:1 1 130px}#wine-journal-v3 .wj-methods{gap:6px}#wine-journal-v3 .wj-methods button{flex-direction:column;padding:10px 4px;font-size:13px}#wine-journal-v3 .wj-occasion-grid,#wine-journal-v3 .wj-occasion-wines{grid-template-columns:1fr}#wine-journal-v3 .wj-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#wine-journal-v3 .wj-memory .wj-photo-block{min-height:108px}#wine-journal-v3 .wj-occasion-head h1{font-size:35px}#wine-journal-v3 .wj-panel{padding:18px}#wine-journal-v3 .wj-fields{gap:14px 10px}#wine-journal-v3 .wj-result{align-items:flex-start}#wine-journal-v3 .wj-result .wj-button{padding:9px 10px}}
+#wine-journal-v3 .wj-nav{order:3;width:100%;gap:8px}
+#wine-journal-v3 .wj-nav button{flex:1;white-space:normal}
+#wine-journal-v3 .wj-account{min-width:44px}
+#wine-journal-v3 .wj-wine-name,#wine-journal-v3 h2,#wine-journal-v3 h3{overflow-wrap:anywhere}
+#wine-journal-v3 .wj-place-picker,#wine-journal-v3 .wj-inline-occasion{padding:18px;border:1px solid var(--wj-line);background:var(--wj-card);border-radius:8px;margin:10px 0 18px}
+#wine-journal-v3 .wj-place-result{display:flex;flex-direction:column;width:100%;text-align:left;gap:4px;border:0;border-top:1px solid var(--wj-line);padding:12px 0;min-height:54px;background:var(--wj-card)}
+#wine-journal-v3 .wj-cover-picker{display:grid;grid-template-columns:110px minmax(0,1fr);gap:19px;align-items:center;margin-bottom:23px}
+#wine-journal-v3 .wj-cover-preview{width:110px;height:145px;object-fit:contain;border:1px solid var(--wj-line);border-radius:6px;background:var(--wj-card)}
+#wine-journal-v3 .wj-cover-empty{display:flex;align-items:center;justify-content:center;background:var(--wj-soft);color:var(--wj-olive)}
+#wine-journal-v3 .wj-cover-art img{width:100%;height:190px;object-fit:contain}
+#wine-journal-v3 .wj-staged-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 0;border-bottom:1px solid var(--wj-line);flex-wrap:wrap}
+#wine-journal-v3 .wj-staged-entry&gt;div{min-width:0;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-discover-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+#wine-journal-v3 .wj-discover-tabs button[aria-pressed=true]{background:var(--wj-olive);color:var(--wj-card);border-color:var(--wj-olive)}
+#wine-journal-v3 .wj-guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+#wine-journal-v3 .wj-guide-card{text-align:left;padding:24px;border:1px solid var(--wj-line);border-radius:8px;background:var(--wj-card);min-width:0}
+#wine-journal-v3 .wj-guide-card .wj-overline{display:flex;align-items:center;gap:8px}
+#wine-journal-v3 .wj-guide-card p{margin:12px 0;color:var(--wj-muted)}
+#wine-journal-v3 .wj-article{max-width:660px;margin:0 auto}
+#wine-journal-v3 .wj-article h2,#wine-journal-v3 .wj-article h3{margin:27px 0 12px}
+#wine-journal-v3 .wj-article p{margin:14px 0}
+#wine-journal-v3 .wj-article&gt;a{display:inline-block;margin:15px 0}
+#wine-journal-v3 .wj-hero .wj-actions .wj-button{max-width:100%;white-space:normal}
+@container(max-width:500px){#wine-journal-v3 .wj-nav{display:grid;grid-template-columns:1fr 1fr;gap:4px}#wine-journal-v3 .wj-guide-grid{grid-template-columns:1fr}#wine-journal-v3 .wj-cover-picker{grid-template-columns:1fr}#wine-journal-v3 .wj-fields{grid-template-columns:1fr}#wine-journal-v3 .wj-nav button{padding:8px 10px}#wine-journal-v3 .wj-guide-card{padding:20px}#wine-journal-v3 .wj-inline-occasion,#wine-journal-v3 .wj-place-picker{padding:13px}#wine-journal-v3 .wj-discover-tabs{gap:6px}#wine-journal-v3 .wj-discover-tabs .wj-button{flex:1;padding:9px}}
+
+
+/* Product tokens and responsive layouts refined from the imported Stitch screens. */
+#wine-journal-v3 .wj-surface{border:0;border-radius:0}
+#wine-journal-v3 ::selection{color:var(--wj-card);background:var(--wj-burgundy)}
+#wine-journal-v3 input,#wine-journal-v3 textarea{caret-color:var(--wj-burgundy)}
+#wine-journal-v3 input::placeholder,#wine-journal-v3 textarea::placeholder{color:var(--wj-muted);opacity:1}
+#wine-journal-v3 .wj-topbar{flex-wrap:nowrap;gap:20px;padding:18px 30px;border-bottom:0;box-shadow:0 2px 6px #332c2808}
+#wine-journal-v3 .wj-brand{font-size:24px;flex-shrink:0;gap:12px;margin-right:auto}
+#wine-journal-v3 .wj-brand-mark{display:flex;align-items:center;justify-content:center;width:42px;height:44px;border-radius:13px;background:var(--wj-greenwash)}
+#wine-journal-v3 .wj-brand-mark svg{width:21px;height:25px}
+#wine-journal-v3 .wj-nav{order:initial;width:auto;background:#f7f5ed;border-radius:16px;padding:4px;gap:0;flex-wrap:nowrap}
+#wine-journal-v3 .wj-nav button{font:400 14px Georgia,serif;min-height:40px;padding:10px 12px;border-radius:12px;flex:0 0 auto;white-space:nowrap}
+#wine-journal-v3 .wj-nav button[aria-current=page]{box-shadow:none;background:var(--wj-greenwash);color:var(--wj-olive)}
+#wine-journal-v3 .wj-top-actions{order:initial;margin-left:auto;gap:9px}
+#wine-journal-v3 .wj-account{border:0;background:transparent;padding:8px}
+#wine-journal-v3 .wj-account span{display:none}
+#wine-journal-v3 .wj-main{padding:34px;min-height:450px}
+#wine-journal-v3 .wj-page-head{margin-bottom:28px}
+#wine-journal-v3 .wj-serif-subtitle{font-family:Georgia,serif;font-size:17px}
+#wine-journal-v3 .wj-count{background:var(--wj-soft);color:var(--wj-ink);padding:6px 15px;border-radius:20px;font-size:13px}
+#wine-journal-v3 .wj-toolbar{background:var(--wj-card);border-radius:12px;padding:18px;display:grid;grid-template-columns:minmax(0,2fr) minmax(100px,1fr) minmax(130px,1fr);gap:16px;margin-bottom:24px}
+#wine-journal-v3 .wj-toolbar .wj-input,#wine-journal-v3 .wj-search-wrap{background:var(--wj-paper);border-color:transparent}
+#wine-journal-v3 .wj-toolbar .wj-search-wrap input{background:transparent}
+#wine-journal-v3 .wj-toolbar label{min-width:0}
+#wine-journal-v3 .wj-grid{gap:20px}
+#wine-journal-v3 .wj-wine-card{border:0;border-radius:12px;box-shadow:0 2px 3px #332c2805}
+#wine-journal-v3 .wj-card-content{padding:20px;gap:7px}
+#wine-journal-v3 .wj-producer{font:400 12px/1.5 Georgia,serif;color:var(--wj-brown);letter-spacing:.5px}
+#wine-journal-v3 .wj-wine-name{font-size:24px;line-height:1.2;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-art{min-height:210px;background:#ece9df}
+#wine-journal-v3 .wj-art.wj-art-green{background:#e9edde}
+#wine-journal-v3 .wj-art.wj-art-rose{background:#f1e7e5}
+#wine-journal-v3 .wj-bottle{transform:scale(1.14)}
+#wine-journal-v3 .wj-card-bottom{margin-top:10px;gap:8px;flex-wrap:wrap}
+#wine-journal-v3 .wj-card-bottom .wj-score{font-size:19px;font-family:Georgia,serif}
+#wine-journal-v3 .wj-add-card{min-height:260px;border:1px dashed var(--wj-line);border-radius:12px;background:transparent;padding:25px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--wj-muted);text-align:center}
+#wine-journal-v3 .wj-add-card&gt;.wj-wine-name{color:var(--wj-ink);font-size:24px}
+#wine-journal-v3 .wj-add-card&gt;svg{width:28px;height:28px;color:var(--wj-olive)}
+#wine-journal-v3 .wj-wine-card:hover,#wine-journal-v3 .wj-add-card:hover{box-shadow:0 4px 15px #332c2814}
+#wine-journal-v3 .wj-button:hover{filter:brightness(.96)}
+#wine-journal-v3 .wj-text-button:hover{text-decoration:underline;text-underline-offset:4px}
+#wine-journal-v3 .wj-record-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);grid-template-areas:&#x27;hero rating&#x27; &#x27;history specs&#x27;;gap:24px;align-items:start}
+#wine-journal-v3 .wj-record-hero{grid-area:hero;display:grid;grid-template-columns:125px minmax(0,1fr);gap:24px;padding:24px;background:var(--wj-card);border-radius:12px;margin:0}
+#wine-journal-v3 .wj-record-hero h1{font-size:34px;line-height:1.13}
+#wine-journal-v3 .wj-record-hero .wj-art{min-height:230px;border-radius:6px}
+#wine-journal-v3 .wj-record-hero .wj-release{margin:12px 0 7px;font-size:14px}
+#wine-journal-v3 .wj-record-hero .wj-actions{gap:5px;margin-top:18px}
+#wine-journal-v3 .wj-panel{border:0;border-radius:12px;padding:24px;box-shadow:0 2px 3px #332c2805}
+#wine-journal-v3 .wj-panel+.wj-panel{margin:0}
+#wine-journal-v3 .wj-record-rating{grid-area:rating}
+#wine-journal-v3 .wj-record-history{grid-area:history}
+#wine-journal-v3 .wj-record-specs{grid-area:specs}
+#wine-journal-v3 .wj-record-grid h2{font-size:24px}
+#wine-journal-v3 .wj-rating-display{display:flex;align-items:baseline;gap:10px;margin:17px 0 10px;color:var(--wj-burgundy)}
+#wine-journal-v3 .wj-rating-display svg{align-self:center}
+#wine-journal-v3 .wj-rating-value{font-size:42px}
+#wine-journal-v3 .wj-rating-help{margin:16px 0 20px}
+#wine-journal-v3 .wj-entry{padding:18px 0 22px}
+#wine-journal-v3 .wj-entry:first-of-type{border-top:0}
+#wine-journal-v3 .wj-entry:last-child{padding-bottom:0}
+#wine-journal-v3 .wj-entry-note{font-family:Georgia,serif;line-height:1.65;margin:16px 0!important;white-space:pre-wrap}
+#wine-journal-v3 .wj-entry-meta{font-size:13px;gap:12px}
+#wine-journal-v3 .wj-entry-meta span{display:inline-flex;align-items:center;gap:4px}
+#wine-journal-v3 .wj-entry [data-a=occasion]{background:#f1e4e7;padding:6px 12px;border-radius:10px;font-size:13px}
+#wine-journal-v3 .wj-record-specs .wj-specs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}
+#wine-journal-v3 .wj-record-specs .wj-specs&gt;div{display:block}
+#wine-journal-v3 .wj-record-specs dd{margin-top:5px;font-family:Georgia,serif;font-size:17px}
+#wine-journal-v3 .wj-producer-link{display:inline-flex;align-items:center;gap:5px;min-height:44px}
+#wine-journal-v3 .wj-availability{margin-top:14px}
+#wine-journal-v3 .wj-form{max-width:650px}
+#wine-journal-v3 .wj-form&gt;label{display:block}
+#wine-journal-v3 .wj-input{border-color:#c7bfb2;border-radius:8px}
+#wine-journal-v3 .wj-selected-wine{background:var(--wj-greenwash);border:0;border-radius:10px;padding:18px;align-items:center}
+#wine-journal-v3 .wj-selected-wine&gt;div&gt;div:first-child{font:400 19px/1.4 Georgia,serif}
+#wine-journal-v3 .wj-date-field,#wine-journal-v3 .wj-quick-note{margin-top:22px}
+#wine-journal-v3 .wj-quick-note textarea{min-height:86px}
+#wine-journal-v3 .wj-field-space{margin-top:22px}
+#wine-journal-v3 .wj-context{margin-top:12px}
+#wine-journal-v3 .wj-form details{border:0;border-top:1px solid var(--wj-line);border-radius:0;background:none;padding:0;margin-top:18px}
+#wine-journal-v3 .wj-form details&gt;summary{padding:18px 0;cursor:pointer;min-height:54px}
+#wine-journal-v3 .wj-form details&gt;summary .wj-small{display:inline;margin-left:7px}
+#wine-journal-v3 .wj-form-foot{padding-top:22px;margin-top:26px;border-top:1px solid var(--wj-line)}
+#wine-journal-v3 .wj-inline-occasion{border:1px solid var(--wj-line);background:var(--wj-card);border-radius:12px;padding:20px}
+#wine-journal-v3 .wj-inline-occasion .wj-row{margin-bottom:18px}
+#wine-journal-v3 .wj-inline-occasion h2{font-size:24px}
+#wine-journal-v3 .wj-form h2{font-size:24px}
+#wine-journal-v3 .wj-history-heading{margin-top:32px}
+#wine-journal-v3 .wj-rating-history{list-style:none;padding:0;background:var(--wj-card);border-radius:12px}
+#wine-journal-v3 .wj-rating-history li{padding:18px 20px;gap:16px;flex-wrap:wrap}
+#wine-journal-v3 .wj-banner{border:0;background:var(--wj-greenwash);border-radius:10px;color:var(--wj-olive)}
+#wine-journal-v3 .wj-occasion-head{margin-bottom:26px}
+#wine-journal-v3 .wj-occasion-head .wj-row+.wj-row{margin-top:16px}
+#wine-journal-v3 .wj-note-paper{background:var(--wj-card);border:0;border-radius:4px;padding:24px 30px;margin:0 0 32px;box-shadow:0 4px 10px #332c280a;font:italic 21px/1.65 Georgia,serif;transform:rotate(-.35deg)}
+#wine-journal-v3 .wj-note-paper:before{display:none}
+#wine-journal-v3 .wj-occasion-wine{border:0;background:var(--wj-card);border-radius:12px;padding:22px}
+#wine-journal-v3 .wj-occasion-wine h3{margin-top:8px}
+#wine-journal-v3 .wj-occasion-wine&gt;.wj-small{margin-top:6px}
+#wine-journal-v3 .wj-memory-grid{gap:22px;margin:22px 0}
+#wine-journal-v3 .wj-memory{margin:0;background:var(--wj-card);padding:10px 10px 15px;box-shadow:0 5px 12px #332c2814;border:0;border-radius:3px;transform:rotate(-1deg)}
+#wine-journal-v3 .wj-memory:nth-child(even){transform:rotate(1deg)}
+#wine-journal-v3 .wj-memory figcaption{font:400 17px/1.45 Georgia,serif;padding:12px 3px 0}
+#wine-journal-v3 .wj-memory .wj-text-button{font-size:12px;min-height:44px;margin-left:3px}
+#wine-journal-v3 .wj-photo-block{height:180px;background:#ebe6da}
+#wine-journal-v3 .wj-photo-block.wj-photo-olive{background:var(--wj-greenwash);color:var(--wj-olive)}
+#wine-journal-v3 .wj-media-preview{width:100%;height:190px;object-fit:cover;display:block;background:var(--wj-soft);border-radius:2px}
+#wine-journal-v3 video.wj-media-preview{object-fit:contain}
+#wine-journal-v3 .wj-memories-section{margin-top:34px}
+#wine-journal-v3 .wj-entry-memories{margin-top:22px}
+#wine-journal-v3 .wj-occasion-wine-heading{display:grid;grid-template-columns:86px minmax(0,1fr);gap:18px;align-items:center}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-art{min-height:140px;border-radius:6px}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-bottle{transform:scale(.75)}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-cover-art img{height:140px;object-fit:contain}
+#wine-journal-v3 .wj-occasion-wine-heading h3{overflow-wrap:anywhere}
+#wine-journal-v3 .wj-occasion-wine-heading&gt;.wj-art+div{min-width:0}
+#wine-journal-v3 .wj-occasion-wine-heading .wj-small{margin-top:8px}
+#wine-journal-v3 .wj-occasion-entry+.wj-occasion-entry{border-top:1px solid var(--wj-line);padding-top:15px;margin-top:12px}
+#wine-journal-v3 .wj-memory-origin{font-size:12px;color:var(--wj-muted);padding:8px 3px 0;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-memory-open{display:block;padding:0;border:0;width:100%;background:var(--wj-soft);text-align:inherit}
+#wine-journal-v3 .wj-memory&gt;.wj-text-button{max-width:100%;overflow-wrap:anywhere;white-space:normal}
+#wine-journal-v3 .wj-wine-highlights&gt;.wj-section-head{margin-bottom:0}
+#wine-journal-v3 .wj-wine-highlights .wj-memory-grid{align-items:start}
+#wine-journal-v3 .wj-wine-highlights .wj-memory:nth-child(3n){transform:rotate(-.4deg)}
+#wine-journal-v3 .wj-upload{background:var(--wj-card);border:1px dashed var(--wj-line);border-radius:8px;padding:16px;margin:18px 0 10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;overflow-wrap:anywhere}
+#wine-journal-v3 .wj-upload input{min-width:0;max-width:100%;font-size:13px}
+#wine-journal-v3 .wj-mobile-nav{display:none}
+#wine-journal-v3 .wj-preview-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 34px;border-top:1px solid var(--wj-line);color:var(--wj-muted);font-size:12px}
+#wine-journal-v3 .wj-page-head .wj-overline{display:none}
+#wine-journal-v3 .wj-guide-grid{gap:24px}
+#wine-journal-v3 .wj-guide-card{border:0;border-radius:12px;background:var(--wj-card)}
+#wine-journal-v3.wj-list .wj-add-card{min-height:160px}
+@container (max-width:900px){
+ #wine-journal-v3 .wj-topbar{flex-wrap:wrap;gap:10px;padding:16px 24px}
+ #wine-journal-v3 .wj-nav{order:3;justify-content:center;width:100%;margin-top:6px}
+ #wine-journal-v3 .wj-record-grid{grid-template-columns:minmax(0,1.4fr) minmax(225px,1fr);gap:20px}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:95px minmax(0,1fr);padding:20px;gap:18px}
+ #wine-journal-v3 .wj-record-hero h1{font-size:30px}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:215px}
+ #wine-journal-v3 .wj-record-hero .wj-release{font-size:13px}
+}
+@container (max-width:700px){
+ #wine-journal-v3 .wj-record-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:&#x27;hero&#x27; &#x27;rating&#x27; &#x27;history&#x27; &#x27;specs&#x27;}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:120px minmax(0,1fr)}
+ #wine-journal-v3 .wj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #wine-journal-v3 .wj-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (max-width:540px){
+ #wine-journal-v3 .wj-topbar{padding:12px 18px;flex-wrap:nowrap}
+ #wine-journal-v3 .wj-brand{font-size:22px;gap:9px}
+ #wine-journal-v3 .wj-brand-mark{width:32px;height:38px;border-radius:9px}
+ #wine-journal-v3 .wj-nav{display:none}
+ #wine-journal-v3 .wj-top-actions&gt;.wj-primary{padding:10px 12px;font-size:13px}
+ #wine-journal-v3 .wj-top-actions&gt;.wj-primary svg{display:none}
+ #wine-journal-v3 .wj-account{padding:6px;min-width:44px}
+ #wine-journal-v3 .wj-main{padding:26px 18px 32px}
+ #wine-journal-v3 h1{font-size:34px}
+ #wine-journal-v3 .wj-page-head{gap:14px;margin-bottom:22px}
+ #wine-journal-v3 .wj-toolbar{padding:0;background:none;grid-template-columns:1fr 1fr;gap:14px}
+ #wine-journal-v3 .wj-toolbar .wj-search{grid-column:1/-1}
+ #wine-journal-v3 .wj-toolbar .wj-input,#wine-journal-v3 .wj-search-wrap{background:var(--wj-card)}
+ #wine-journal-v3 .wj-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+ #wine-journal-v3 .wj-wine-card{display:grid;grid-template-columns:minmax(0,1fr) 84px;align-items:start;padding:18px;gap:12px;position:relative}
+ #wine-journal-v3 .wj-wine-card .wj-art{grid-column:2;grid-row:1;min-height:135px;border-radius:5px;width:84px;overflow:hidden}
+ #wine-journal-v3 .wj-wine-card .wj-bottle{transform:scale(.7);margin-top:20px}
+ #wine-journal-v3 .wj-card-content{grid-column:1;grid-row:1;padding:0;gap:7px;display:flex}
+ #wine-journal-v3 .wj-wine-name{font-size:23px;line-height:1.24}
+ #wine-journal-v3 .wj-producer{font-size:12px;line-height:1.5}
+ #wine-journal-v3 .wj-wine-sub{font-size:13px;line-height:1.5}
+ #wine-journal-v3 .wj-card-bottom{border:0;gap:6px;margin-top:4px;padding-top:0;align-items:start;flex-direction:column}
+ #wine-journal-v3 .wj-card-bottom .wj-score{font-size:17px}
+ #wine-journal-v3 .wj-add-card{min-height:185px;gap:12px}
+ #wine-journal-v3 .wj-add-card&gt;svg{display:none}
+ #wine-journal-v3 .wj-record-hero{grid-template-columns:90px minmax(0,1fr);padding:18px;gap:15px}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:185px}
+ #wine-journal-v3 .wj-record-hero .wj-bottle{transform:scale(.88)}
+ #wine-journal-v3 .wj-record-hero h1{font-size:28px}
+ #wine-journal-v3 .wj-record-hero .wj-actions{gap:0}
+ #wine-journal-v3 .wj-record-hero .wj-primary{padding:10px;font-size:13px}
+ #wine-journal-v3 .wj-record-hero .wj-text-button{font-size:13px}
+ #wine-journal-v3 .wj-panel{padding:20px}
+ #wine-journal-v3 .wj-rating-display{margin:10px 0}
+ #wine-journal-v3 .wj-record-rating h2{font-size:22px}
+ #wine-journal-v3 .wj-record-rating&gt;.wj-text-button{margin-top:5px}
+ #wine-journal-v3 .wj-entry .wj-row{gap:4px}
+ #wine-journal-v3 .wj-form details&gt;summary .wj-small{display:block;margin:5px 0 0 17px}
+ #wine-journal-v3 .wj-form-foot{gap:12px}
+ #wine-journal-v3 .wj-form-foot&gt;.wj-primary{width:100%}
+ #wine-journal-v3 .wj-inline-occasion{padding:16px}
+ #wine-journal-v3 .wj-note-paper{font-size:20px;padding:22px}
+ #wine-journal-v3 .wj-memory-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+ #wine-journal-v3 .wj-media-preview,#wine-journal-v3 .wj-photo-block{height:230px}
+ #wine-journal-v3 .wj-mobile-nav{display:flex;justify-content:space-around;padding:10px 8px;background:var(--wj-card);border-top:1px solid var(--wj-line)}
+ #wine-journal-v3 .wj-mobile-nav button{display:flex;align-items:center;justify-content:center;gap:7px;flex-direction:column;font-size:12px;min-height:52px;min-width:60px;background:none;border:0;color:var(--wj-muted);border-radius:9px;padding:6px}
+ #wine-journal-v3 .wj-mobile-nav button[aria-current=page]{color:var(--wj-burgundy);background:#f1e4e7}
+ #wine-journal-v3 .wj-preview-footer{padding:14px 18px;justify-content:center;font-size:11px}
+ #wine-journal-v3 .wj-footer{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+ #wine-journal-v3 .wj-footer&gt;span{display:inline-flex;align-items:center;gap:6px;margin:0}
+ #wine-journal-v3.wj-list .wj-wine-card{grid-template-columns:minmax(0,1fr) 84px}
+ #wine-journal-v3.wj-list .wj-card-content{padding:0}
+ #wine-journal-v3.wj-list .wj-wine-card .wj-art{min-height:135px}
+}
+@container (max-width:355px){
+ #wine-journal-v3 .wj-topbar{padding:12px;gap:6px}
+ #wine-journal-v3 .wj-brand{font-size:18px;gap:6px}
+ #wine-journal-v3 .wj-brand-mark{width:24px}
+ #wine-journal-v3 .wj-top-actions{gap:4px}
+ #wine-journal-v3 .wj-top-actions&gt;.wj-primary{padding:10px 8px}
+ #wine-journal-v3 .wj-record-hero{display:block}
+ #wine-journal-v3 .wj-record-hero .wj-art{min-height:150px;margin-bottom:18px}
+ #wine-journal-v3 .wj-record-hero h1{font-size:31px}
+}
+@media(prefers-reduced-motion:no-preference){#wine-journal-v3 .wj-wine-card,#wine-journal-v3 .wj-add-card{transition:box-shadow .18s ease-out}}
+
+&lt;/style&gt;
+&lt;script&gt;
+(function(){
+  const root=document.getElementById(&#x27;wine-journal-v3&#x27;);
+  const app=root.querySelector(&#x27;#wj-app&#x27;);
+  const TODAY=&#x27;2026-09-14&#x27;;
+  const design={paper:&#x27;Cream&#x27;,burgundy:&#x27;#722c40&#x27;,olive:&#x27;#555e3f&#x27;,brown:&#x27;#795f4b&#x27;,frame:&#x27;Web&#x27;,layout:&#x27;Cards&#x27;};
+  const wines=[
+    {id:&#x27;cr23&#x27;,brand:&#x27;Calculated Risk&#x27;,name:&#x27;Barrel Selection&#x27;,grape:&#x27;Cabernet Sauvignon&#x27;,region:&#x27;Napa Valley&#x27;,year:&#x27;2023&#x27;,type:&#x27;Red&#x27;,mark:&#x27;CR&#x27;,art:&#x27;&#x27;,family:&#x27;barrel&#x27;,url:&#x27;https://calculatedriskwinery.com/products/2023-cabernet-sauvignon-barrel-selection-napa-valley&#x27;},
+    {id:&#x27;cr24&#x27;,brand:&#x27;Calculated Risk&#x27;,name:&#x27;Barrel Selection&#x27;,grape:&#x27;Cabernet Sauvignon&#x27;,region:&#x27;Napa Valley&#x27;,year:&#x27;2024&#x27;,type:&#x27;Red&#x27;,mark:&#x27;CR&#x27;,art:&#x27;wj-art-green&#x27;,family:&#x27;barrel&#x27;,url:&#x27;https://calculatedriskwinery.com/products/napa-valley-barrel-selection-cabernet-sauvignon-2024&#x27;},
+    {id:&#x27;son23&#x27;,brand:&#x27;Calculated Risk&#x27;,name:&#x27;Sonoma County Reserve&#x27;,grape:&#x27;Cabernet Sauvignon&#x27;,region:&#x27;Sonoma County&#x27;,year:&#x27;2023&#x27;,type:&#x27;Red&#x27;,mark:&#x27;CR&#x27;,art:&#x27;wj-art-rose&#x27;,family:&#x27;reserve&#x27;,url:&#x27;https://calculatedriskwinery.com/products/2023-cabernet-sauvignon-reserve-sonoma-county&#x27;},
+    {id:&#x27;hm23&#x27;,brand:&#x27;Calculated Risk&#x27;,name:&#x27;Howell Mountain&#x27;,grape:&#x27;Cabernet Sauvignon&#x27;,region:&#x27;Howell Mountain&#x27;,year:&#x27;2023&#x27;,type:&#x27;Red&#x27;,mark:&#x27;CR&#x27;,art:&#x27;wj-art-green&#x27;,family:&#x27;howell&#x27;,url:&#x27;https://calculatedriskwinery.com/products/howell-mountain-cabernet-sauvignon-2023&#x27;},
+    {id:&#x27;krug&#x27;,brand:&#x27;Krug&#x27;,name:&#x27;Grande Cuvée&#x27;,grape:&#x27;Champagne blend&#x27;,region:&#x27;Champagne&#x27;,year:&#x27;173rd edition · Multi-vintage&#x27;,type:&#x27;Sparkling&#x27;,mark:&#x27;K&#x27;,art:&#x27;&#x27;,family:&#x27;krug&#x27;,url:&#x27;https://www.krug.com/en-int/champagne/krug-grande-cuvee-173eme-edition&#x27;}
+  ];
+  let entries=[
+    {id:&#x27;e1&#x27;,wineId:&#x27;cr23&#x27;,date:&#x27;2026-09-12&#x27;,time:&#x27;21:00&#x27;,place:&#x27;Bar Sol&#x27;,notes:&#x27;Dark fruit, a little spice, and a lovely long finish. My favourite of the evening.&#x27;,descriptors:[&#x27;Fruit&#x27;,&#x27;Spice&#x27;],occasionId:&#x27;o1&#x27;,media:[{name:&#x27;The bottle on our table&#x27;,type:&#x27;photo&#x27;}]},
+    {id:&#x27;e2&#x27;,wineId:&#x27;cr23&#x27;,date:&#x27;2026-06-08&#x27;,time:&#x27;&#x27;,place:&#x27;Home&#x27;,notes:&#x27;Opened with pasta. Would come back to this one.&#x27;,descriptors:[],occasionId:&#x27;&#x27;,media:[]},
+    {id:&#x27;e3&#x27;,wineId:&#x27;son23&#x27;,date:&#x27;2026-09-12&#x27;,time:&#x27;19:45&#x27;,place:&#x27;Bar Sol&#x27;,notes:&#x27;Soft and rounded. Really enjoyed this with dinner.&#x27;,descriptors:[&#x27;Fruit&#x27;],occasionId:&#x27;o1&#x27;,media:[]},
+    {id:&#x27;e4&#x27;,wineId:&#x27;cr24&#x27;,date:&#x27;2026-09-11&#x27;,time:&#x27;&#x27;,place:&#x27;Wine shop&#x27;,notes:&#x27;A small sample at the counter. Want to spend more time with this vintage.&#x27;,descriptors:[],occasionId:&#x27;&#x27;,media:[]},
+    {id:&#x27;e5&#x27;,wineId:&#x27;hm23&#x27;,date:&#x27;2026-06-04&#x27;,time:&#x27;&#x27;,place:&#x27;At home&#x27;,notes:&#x27;Rich and structured. A bottle to remember.&#x27;,descriptors:[],occasionId:&#x27;&#x27;,media:[]}
+  ];
+  let occasions=[{id:&#x27;o1&#x27;,title:&#x27;Dinner with Alex &amp; Sam&#x27;,date:&#x27;2026-09-12&#x27;,time:&#x27;19:00&#x27;,place:&#x27;Bar Sol&#x27;,notes:&#x27;A long dinner, the corner table, and plenty to catch up on. The little things I want to remember.&#x27;,media:[{name:&#x27;Around the table&#x27;,type:&#x27;photo&#x27;},{name:&#x27;The last of the evening light&#x27;,type:&#x27;photo&#x27;},{name:&#x27;A moment from dinner&#x27;,type:&#x27;video&#x27;}]}];
+  const ratings={cr23:[{value:4,date:&#x27;2026-06-08&#x27;},{value:4.5,date:&#x27;2026-09-12&#x27;}],cr24:[],son23:[{value:4,date:&#x27;2026-09-12&#x27;}],hm23:[{value:4.5,date:&#x27;2026-06-04&#x27;}]};
+  let signedIn=true,screen=&#x27;library&#x27;,selectedWine=&#x27;cr23&#x27;,selectedOccasion=&#x27;o1&#x27;,draft=null,occasionDraft=null;
+  let query=&#x27;&#x27;,catalogQuery=&#x27;&#x27;,filter=&#x27;All&#x27;,sort=&#x27;recent&#x27;,method=&#x27;search&#x27;,photoResults=false,scanFailure=false;
+  let captureOccasion=&#x27;&#x27;,guideOpen=false,entryDetailsOpen=false,notice=&#x27;&#x27;,pending=null,uid=20;
+  const esc=v=&gt;String(v==null?&#x27;&#x27;:v).replace(/[&amp;&lt;&gt;&quot;&#x27;]/g,c=&gt;({&#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;,&quot;&#x27;&quot;:&#x27;&amp;#39;&#x27;}[c]));
+  const icon=n=&gt;&#x27;&lt;i data-lucide=&quot;&#x27;+n+&#x27;&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&#x27;;
+  const wine=id=&gt;wines.find(w=&gt;w.id===id)||(draft?.wineData?.id===id?draft.wineData:null)||occasionDraft?.newEntries?.find(e=&gt;e.wineData?.id===id)?.wineData||(manualWine?.id===id?manualWine:null);
+  const occasion=id=&gt;occasions.find(o=&gt;o.id===id);
+  const ownEntries=id=&gt;entries.filter(e=&gt;e.wineId===id).sort((a,b)=&gt;b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+  const score=id=&gt;{const r=ratings[id]||[];return r.length?r[r.length-1].value:null;};
+  const date=d=&gt;d?new Date(d+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;en-GB&#x27;,{day:&#x27;numeric&#x27;,month:&#x27;short&#x27;,year:&#x27;numeric&#x27;}):&#x27;Date not set&#x27;;
+  const shortDate=d=&gt;d?new Date(d+&#x27;T12:00:00&#x27;).toLocaleDateString(&#x27;en-GB&#x27;,{day:&#x27;numeric&#x27;,month:&#x27;short&#x27;}):&#x27;&#x27;;
+  const time=t=&gt;t?t:&#x27;&#x27;;
+  const title=o=&gt;o.title||(&#x27;Occasion · &#x27;+shortDate(o.date));
+  const button=(label,action,extra=&#x27;&#x27;,kind=&#x27;&#x27;)=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-button &#x27;+kind+&#x27;&quot; data-a=&quot;&#x27;+action+&#x27;&quot; &#x27;+extra+&#x27;&gt;&#x27;+label+&#x27;&lt;/button&gt;&#x27;;
+  const textButton=(label,action,extra=&#x27;&#x27;)=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-text-button&quot; data-a=&quot;&#x27;+action+&#x27;&quot; &#x27;+extra+&#x27;&gt;&#x27;+label+&#x27;&lt;/button&gt;&#x27;;
+  const back=(label,action,extra=&#x27;&#x27;)=&gt;&#x27;&lt;div class=&quot;wj-back&quot;&gt;&#x27;+textButton(icon(&#x27;arrow-left&#x27;)+label,action,extra)+&#x27;&lt;/div&gt;&#x27;;
+  const empty=(heading,body,action)=&gt;&#x27;&lt;div class=&quot;wj-empty&quot;&gt;&lt;h2&gt;&#x27;+heading+&#x27;&lt;/h2&gt;&lt;p&gt;&#x27;+body+&#x27;&lt;/p&gt;&#x27;+action+&#x27;&lt;/div&gt;&#x27;;
+  const scoreText=id=&gt;score(id)==null?&#x27;&lt;span class=&quot;wj-small&quot;&gt;Not rated&lt;/span&gt;&#x27;:&#x27;&lt;span class=&quot;wj-score&quot;&gt;&#x27;+icon(&#x27;star&#x27;)+score(id).toFixed(1)+&#x27;&lt;/span&gt;&#x27;;
+  function art(w){
+    const src=w.coverData||w.catalogCover;
+    if(src)return `&lt;span class=&quot;wj-art wj-cover-art&quot;&gt;&lt;img src=&quot;${esc(src)}&quot; alt=&quot;${w.coverData?&#x27;Your bottle photo&#x27;:&#x27;Catalog bottle image&#x27;} for ${esc(w.name)}&quot;&gt;&lt;/span&gt;`;
+    return `&lt;span class=&quot;wj-art ${w.art||&#x27;&#x27;}&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;wj-bottle&quot;&gt;&lt;span class=&quot;wj-bottle-label&quot;&gt;${esc(w.mark)}&lt;small&gt;${esc(w.year.length&lt;6?w.year:&#x27;173&#x27;)}&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;`;
+  }
+
+  function wineCard(w){
+    const es=ownEntries(w.id);
+    return `&lt;button type=&quot;button&quot; class=&quot;wj-wine-card&quot; data-a=&quot;wine&quot; data-id=&quot;${w.id}&quot; aria-label=&quot;${esc(w.brand+&#x27; &#x27;+w.name+&#x27; &#x27;+w.year)}&quot;&gt;
+      ${art(w)}&lt;span class=&quot;wj-card-content&quot;&gt;&lt;span class=&quot;wj-producer&quot;&gt;${esc(w.brand)}&lt;/span&gt;
+      &lt;span class=&quot;wj-wine-name&quot;&gt;${esc(w.name)}&lt;/span&gt;&lt;span class=&quot;wj-wine-sub&quot;&gt;${esc(w.year)} · ${esc(w.grape)}&lt;/span&gt;
+      &lt;span class=&quot;wj-small&quot;&gt;${esc(w.region)}&lt;/span&gt;&lt;span class=&quot;wj-card-bottom&quot;&gt;${scoreText(w.id)}&lt;span&gt;Last tried ${shortDate(es[0].date)}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;`;
+  }
+
+  function selectedWineBlock(id){const w=wine(id);return `&lt;div class=&quot;wj-selected-wine&quot;&gt;${icon(&#x27;wine&#x27;)}&lt;div&gt;&lt;div&gt;${esc(w.brand)} · ${esc(w.name)}&lt;/div&gt;&lt;div class=&quot;wj-small&quot;&gt;${esc(w.year)} · ${esc(w.grape)}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`;}
+
+  function libraryCards(){
+    let items=wines.filter(w=&gt;entries.some(e=&gt;e.wineId===w.id));
+    items=items.filter(w=&gt;(w.brand+&#x27; &#x27;+w.name+&#x27; &#x27;+w.grape+&#x27; &#x27;+w.region+&#x27; &#x27;+w.year).toLowerCase().includes(query.toLowerCase())&amp;&amp;(filter===&#x27;All&#x27;||w.type===filter));
+    items.sort((a,b)=&gt;sort===&#x27;rating&#x27;?(score(b.id)??-1)-(score(a.id)??-1):sort===&#x27;name&#x27;?a.name.localeCompare(b.name)||b.year.localeCompare(a.year):ownEntries(b.id)[0].date.localeCompare(ownEntries(a.id)[0].date)||a.name.localeCompare(b.name));
+    if(!items.length)return empty(&#x27;No wines match&#x27;,&#x27;Try a different search or filter.&#x27;,textButton(&#x27;Clear filters&#x27;,&#x27;clear-filters&#x27;));
+    return &#x27;&lt;div class=&quot;wj-grid&quot;&gt;&#x27;+items.map(wineCard).join(&#x27;&#x27;)+(!query&amp;&amp;filter===&#x27;All&#x27;?&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-add-card&quot; data-a=&quot;find&quot;&gt;&#x27;+icon(&#x27;notebook-pen&#x27;)+&#x27;&lt;span class=&quot;wj-wine-name&quot;&gt;Another wine to remember&lt;/span&gt;&lt;span&gt;Save a bottle or a glass you tried.&lt;/span&gt;&lt;span class=&quot;wj-text-button&quot;&gt;Log a wine &#x27;+icon(&#x27;arrow-right&#x27;)+&#x27;&lt;/span&gt;&lt;/button&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;;
+  }
+
+  function library(){
+    if(!signedIn)return empty(&#x27;Your journal starts with a wine.&#x27;,&#x27;Look up a bottle whenever you like. Sign in when you want to save your own memories.&#x27;,button(&#x27;Find a wine&#x27;,&#x27;find&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)+&#x27; &#x27;+button(&#x27;Sign in&#x27;,&#x27;auth&#x27;));
+    const count=new Set(entries.map(e=&gt;e.wineId)).size;
+    return `&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;h1&gt;My wines&lt;/h1&gt;&lt;p class=&quot;wj-subtitle wj-serif-subtitle&quot;&gt;Wines you’ve tried. Moments worth keeping.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;wj-count&quot;&gt;${count} wines · ${entries.length} entries&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;wj-toolbar&quot;&gt;&lt;label class=&quot;wj-search&quot;&gt;&lt;span class=&quot;wj-label&quot;&gt;Search your wines&lt;/span&gt;&lt;span class=&quot;wj-search-wrap&quot;&gt;${icon(&#x27;search&#x27;)}&lt;input class=&quot;wj-input&quot; data-live=&quot;library&quot; value=&quot;${esc(query)}&quot; placeholder=&quot;Name, producer, vintage…&quot; aria-label=&quot;Search your wines&quot;&gt;&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Type&lt;/span&gt;&lt;select class=&quot;wj-input&quot; data-live=&quot;filter&quot;&gt;${[&#x27;All&#x27;,...new Set(wines.filter(w=&gt;ownEntries(w.id).length).map(w=&gt;w.type))].map(v=&gt;`&lt;option${filter===v?&#x27; selected&#x27;:&#x27;&#x27;}&gt;${esc(v)}&lt;/option&gt;`).join(&#x27;&#x27;)}&lt;/select&gt;&lt;/label&gt;
+    &lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Sort by&lt;/span&gt;&lt;select class=&quot;wj-input&quot; data-live=&quot;sort&quot;&gt;${[[&#x27;recent&#x27;,&#x27;Recently tried&#x27;],[&#x27;rating&#x27;,&#x27;My rating&#x27;],[&#x27;name&#x27;,&#x27;Wine name&#x27;]].map(([v,l])=&gt;`&lt;option value=&quot;${v}&quot;${sort===v?&#x27; selected&#x27;:&#x27;&#x27;}&gt;${l}&lt;/option&gt;`).join(&#x27;&#x27;)}&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;
+    &lt;div id=&quot;wj-library-results&quot;&gt;${libraryCards()}&lt;/div&gt;&lt;div class=&quot;wj-footer&quot;&gt;&lt;span&gt;${icon(&#x27;lock-keyhole&#x27;)} Your journal is private&lt;/span&gt;&lt;span&gt;Every vintage keeps its own story.&lt;/span&gt;&lt;/div&gt;`;
+  }
+
+  function entryRow(e){
+    const o=occasion(e.occasionId);
+    return `&lt;article class=&quot;wj-entry&quot;&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;h3&gt;${date(e.date)}&lt;/h3&gt;${textButton(&#x27;Open entry &#x27;+icon(&#x27;arrow-up-right&#x27;),&#x27;edit-entry&#x27;,&#x27;data-id=&quot;&#x27;+e.id+&#x27;&quot;&#x27;)}&lt;/div&gt;
+    &lt;div class=&quot;wj-entry-meta&quot;&gt;${e.place?`&lt;span&gt;${icon(&#x27;map-pin&#x27;)} ${esc(e.place)}&lt;/span&gt;`:&#x27;&#x27;}${e.time?`&lt;span&gt;${icon(&#x27;clock-3&#x27;)} ${esc(e.time)}&lt;/span&gt;`:&#x27;&#x27;}${e.media.length?`&lt;span&gt;${icon(&#x27;images&#x27;)} ${e.media.length} ${e.media.length===1?&#x27;memory&#x27;:&#x27;memories&#x27;}&lt;/span&gt;`:&#x27;&#x27;}&lt;/div&gt;
+    ${e.notes?`&lt;p class=&quot;wj-entry-note&quot;&gt;${esc(e.notes)}&lt;/p&gt;`:&#x27;&lt;p class=&quot;wj-small&quot;&gt;Add a thought whenever you’re ready.&lt;/p&gt;&#x27;}${o?textButton(icon(&#x27;notebook&#x27;)+esc(title(o)),&#x27;occasion&#x27;,&#x27;data-id=&quot;&#x27;+o.id+&#x27;&quot;&#x27;):&#x27;&lt;span class=&quot;wj-small&quot;&gt;Everyday entry · no occasion&lt;/span&gt;&#x27;}&lt;/article&gt;`;
+  }
+
+  function winePage(){
+    const w=wine(selectedWine),es=ownEntries(w.id),r=score(w.id);
+    return (captureOccasion?&#x27;&#x27;:back(({library:&#x27;My wines&#x27;,browse:&#x27;Browse wines&#x27;,find:&#x27;Find a wine&#x27;,occasion:&#x27;Occasion&#x27;})[wineReturn]||&#x27;My wines&#x27;,&#x27;return-wine&#x27;))+
+      `&lt;div class=&quot;wj-record-grid&quot;&gt;&lt;section class=&quot;wj-hero wj-record-hero&quot;&gt;${art(w)}&lt;div&gt;&lt;p class=&quot;wj-producer&quot;&gt;${esc(w.brand)}&lt;/p&gt;&lt;h1&gt;${esc(w.name)}&lt;/h1&gt;&lt;p class=&quot;wj-release&quot;&gt;${esc(w.year)} · ${esc(w.grape)}&lt;/p&gt;&lt;p class=&quot;wj-muted&quot;&gt;${icon(&#x27;map-pin&#x27;)} ${esc(w.region)}&lt;/p&gt;&lt;div class=&quot;wj-actions&quot;&gt;${button(icon(&#x27;plus&#x27;)+&#x27;Log this wine&#x27;,&#x27;log&#x27;,&#x27;data-id=&quot;&#x27;+w.id+&#x27;&quot;&#x27;,&#x27;wj-primary&#x27;)}${w.family===&#x27;barrel&#x27;?textButton(&#x27;Other vintage &#x27;+icon(&#x27;arrow-right&#x27;),&#x27;other-vintage&#x27;):&#x27;&#x27;}&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+      ${signedIn?`&lt;section class=&quot;wj-panel wj-record-rating&quot;&gt;&lt;h2&gt;My current rating&lt;/h2&gt;&lt;div class=&quot;wj-rating-display&quot;&gt;&lt;span class=&quot;wj-rating-value&quot;&gt;${r==null?&#x27;Not rated&#x27;:r.toFixed(1)}&lt;/span&gt;${r==null?&#x27;&#x27;:`&lt;span class=&quot;wj-small&quot;&gt;/ 5&lt;/span&gt;${icon(&#x27;star&#x27;)}`}&lt;/div&gt;&lt;p class=&quot;wj-small&quot;&gt;${r==null?&#x27;Add a rating when you’re ready.&#x27;:&#x27;Your latest rating for this release.&#x27;}&lt;/p&gt;${textButton(&#x27;Rating &amp; history &#x27;+icon(&#x27;arrow-right&#x27;),&#x27;rating&#x27;)}&lt;/section&gt;`:&#x27;&#x27;}
+      &lt;section class=&quot;wj-panel wj-record-history&quot;&gt;&lt;div class=&quot;wj-section-head&quot;&gt;&lt;h2&gt;Your drinking history&lt;/h2&gt;${signedIn?`&lt;span class=&quot;wj-small&quot;&gt;${es.length} ${es.length===1?&#x27;entry&#x27;:&#x27;entries&#x27;}&lt;/span&gt;`:&#x27;&#x27;}&lt;/div&gt;
+      ${signedIn?(es.length?es.map(entryRow).join(&#x27;&#x27;):empty(&#x27;Your first glass, remembered.&#x27;,&#x27;Save the date you tried this wine. Notes can come later.&#x27;,button(&#x27;Log this wine&#x27;,&#x27;log&#x27;,&#x27;data-id=&quot;&#x27;+w.id+&#x27;&quot;&#x27;))):empty(&#x27;Keep your own wine story.&#x27;,&#x27;Log a wine when you want to save your own notes and memories.&#x27;,button(&#x27;Log this wine&#x27;,&#x27;log&#x27;,&#x27;data-id=&quot;&#x27;+w.id+&#x27;&quot;&#x27;))}&lt;/section&gt;
+      &lt;section class=&quot;wj-panel wj-record-specs&quot;&gt;&lt;h2&gt;About the wine&lt;/h2&gt;&lt;dl class=&quot;wj-specs&quot;&gt;&lt;div&gt;&lt;dt&gt;Origin&lt;/dt&gt;&lt;dd&gt;${esc(w.region)}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Style&lt;/dt&gt;&lt;dd&gt;${esc(w.type)}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Grape / blend&lt;/dt&gt;&lt;dd&gt;${esc(w.grape)}&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Vintage / edition&lt;/dt&gt;&lt;dd&gt;${esc(w.year)}&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;
+      ${w.url?`&lt;a class=&quot;wj-producer-link&quot; href=&quot;${esc(w.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Visit producer ${icon(&#x27;arrow-up-right&#x27;)}&lt;/a&gt;`:&#x27;&#x27;}&lt;p class=&quot;wj-small wj-availability&quot;&gt;Price and purchase links are not available in this preview.&lt;/p&gt;&lt;/section&gt;&lt;/div&gt;${winePhotoHighlights(w.id)}`;
+  }
+
+  function startEntry(id,oId=&#x27;&#x27;){mediaError=&#x27;&#x27;;selectedWine=id;captureOccasion=oId;const o=captureParent();draft={id:&#x27;&#x27;,wineId:id,date:o?o.date:TODAY,time:&#x27;&#x27;,place:o?o.place:&#x27;&#x27;,placeRef:copy(o?.placeRef||null),notes:&#x27;&#x27;,descriptors:[],occasionId:o&amp;&amp;o.id?o.id:&#x27;&#x27;,media:[],...(manualWine&amp;&amp;manualWine.id===id?{wineData:copy(manualWine)}:{})};inlineOccasion=null;placePicker=null;guideOpen=false;entryDetailsOpen=false;go(&#x27;entry&#x27;);}
+  function entryPage(){
+    const o=captureParent()||occasion(draft.occasionId),inParent=Boolean(captureOccasion);
+    return back(inParent?&#x27;Back to occasion&#x27;:draft.id?&#x27;Cancel changes&#x27;:&#x27;Cancel entry&#x27;,&#x27;cancel-capture&#x27;)+
+    `&lt;form class=&quot;wj-form&quot; data-form=&quot;entry&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;h1&gt;${draft.id?&#x27;Your wine entry&#x27;:&#x27;I tried this wine.&#x27;}&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;${draft.id?&#x27;Come back to the details, whenever you like.&#x27;:&#x27;The wine and date are all you need.&#x27;}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+    ${selectedWineBlock(draft.wineId)}&lt;label class=&quot;wj-date-field&quot;&gt;&lt;span class=&quot;wj-label&quot;&gt;Date tried&lt;/span&gt;&lt;input class=&quot;wj-input&quot; type=&quot;date&quot; required data-draft=&quot;date&quot; value=&quot;${esc(draft.date)}&quot;&gt;&lt;/label&gt;
+    ${o?`&lt;p class=&quot;wj-small wj-context&quot;&gt;For ${esc(title(o))}. This entry keeps its own date and place.&lt;/p&gt;`:&#x27;&#x27;}
+    &lt;label class=&quot;wj-quick-note&quot;&gt;&lt;span class=&quot;wj-label&quot;&gt;${draft.id?&#x27;Personal notes&#x27;:&#x27;Quick notes&#x27;} · optional&lt;/span&gt;&lt;textarea class=&quot;wj-input&quot; rows=&quot;2&quot; data-draft=&quot;notes&quot; placeholder=&quot;A first impression, the food, something to remember…&quot;&gt;${esc(draft.notes)}&lt;/textarea&gt;&lt;/label&gt;
+    ${textButton(icon(&#x27;sprout&#x27;)+(guideOpen?&#x27;Hide tasting prompts&#x27;:&#x27;Help me describe it&#x27;),&#x27;guide&#x27;,&#x27;aria-expanded=&quot;&#x27;+guideOpen+&#x27;&quot;&#x27;)}
+    ${guideOpen?`&lt;div class=&quot;wj-guide&quot;&gt;&lt;h2&gt;Start with what you notice.&lt;/h2&gt;&lt;p&gt;What familiar smells or flavours come to mind?&lt;/p&gt;&lt;div class=&quot;wj-descriptors&quot;&gt;${[&#x27;Fruit&#x27;,&#x27;Floral&#x27;,&#x27;Spice&#x27;,&#x27;Earthy&#x27;].map(t=&gt;button(t,&#x27;descriptor&#x27;,&#x27;data-value=&quot;&#x27;+t+&#x27;&quot; aria-pressed=&quot;&#x27;+draft.descriptors.includes(t)+&#x27;&quot;&#x27;)).join(&#x27;&#x27;)}&lt;/div&gt;&lt;p class=&quot;wj-small&quot;&gt;Body: weight in your mouth. Acidity: mouth-watering. Tannin: a drying feeling.&lt;/p&gt;&lt;/div&gt;`:&#x27;&#x27;}
+    &lt;details data-optional=&quot;entry&quot;${entryDetailsOpen?&#x27; open&#x27;:&#x27;&#x27;}&gt;&lt;summary&gt;Add details &lt;span class=&quot;wj-small&quot;&gt;Time, place, occasion &amp; memories&lt;/span&gt;&lt;/summary&gt;
+    &lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Time · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; type=&quot;time&quot; data-draft=&quot;time&quot; value=&quot;${esc(draft.time)}&quot;&gt;&lt;/label&gt;&lt;div class=&quot;wj-field-space&quot;&gt;${locationField(&#x27;entry&#x27;)}&lt;/div&gt;
+    ${!inParent?`&lt;div class=&quot;wj-field-space&quot;&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Occasion · optional&lt;/span&gt;&lt;select class=&quot;wj-input&quot; data-draft=&quot;occasionId&quot;${inlineOccasion?&#x27; disabled&#x27;:&#x27;&#x27;}&gt;&lt;option value=&quot;&quot;&gt;No occasion&lt;/option&gt;${occasions.map(x=&gt;`&lt;option value=&quot;${x.id}&quot;${draft.occasionId===x.id?&#x27; selected&#x27;:&#x27;&#x27;}&gt;${esc(title(x))}&lt;/option&gt;`).join(&#x27;&#x27;)}&lt;/select&gt;&lt;/label&gt;
+    ${!inlineOccasion?textButton(icon(&#x27;plus&#x27;)+&#x27;Create new occasion&#x27;,&#x27;inline-new&#x27;):`&lt;section class=&quot;wj-inline-occasion&quot;&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;h2&gt;New occasion&lt;/h2&gt;${textButton(&#x27;Cancel new occasion&#x27;,&#x27;inline-cancel&#x27;)}&lt;/div&gt;${occasionFields(&#x27;inline&#x27;)}&lt;p class=&quot;wj-small&quot;&gt;Save this occasion with your entry, then add more wines from its scrapbook.&lt;/p&gt;&lt;/section&gt;`}&lt;/div&gt;`:&#x27;&#x27;}
+    &lt;section class=&quot;wj-field-space&quot;&gt;&lt;h2&gt;Photos &amp; videos &lt;span class=&quot;wj-small&quot;&gt;optional&lt;/span&gt;&lt;/h2&gt;${memoryGrid(draft.media,&#x27;entry&#x27;)}${uploadField(&#x27;entry&#x27;)}&lt;/section&gt;&lt;/details&gt;
+    &lt;div class=&quot;wj-form-foot&quot;&gt;&lt;span class=&quot;wj-privacy&quot;&gt;${icon(&#x27;lock-keyhole&#x27;)} Private to you&lt;/span&gt;&lt;button class=&quot;wj-button wj-primary&quot; type=&quot;submit&quot;${mediaBusy?&#x27; disabled&#x27;:&#x27;&#x27;}&gt;${captureOccasion===&#x27;@draft&#x27;?&#x27;Add to occasion&#x27;:!signedIn?&#x27;Sign in to save&#x27;:inlineOccasion?&#x27;Save entry &amp; occasion&#x27;:draft.id?&#x27;Save changes&#x27;:&#x27;Save entry&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;`;
+  }
+
+  function catalogResults(){let found=wines.filter(w=&gt;!w.ownerOnly).filter(w=&gt;(w.brand+&#x27; &#x27;+w.name+&#x27; &#x27;+w.grape+&#x27; &#x27;+w.year+&#x27; &#x27;+w.region).toLowerCase().includes(catalogQuery.toLowerCase()));return found.length?found.map(w=&gt;&#x27;&lt;div class=&quot;wj-result&quot;&gt;&#x27;+icon(&#x27;wine&#x27;)+&#x27;&lt;div class=&quot;wj-result-info&quot;&gt;&lt;div class=&quot;wj-small&quot;&gt;&#x27;+esc(w.brand)+&#x27;&lt;/div&gt;&lt;h3&gt;&#x27;+esc(w.name)+&#x27;&lt;/h3&gt;&lt;p class=&quot;wj-small&quot;&gt;&#x27;+esc(w.grape)+&#x27; · &#x27;+esc(w.year)+&#x27;&lt;br&gt;&#x27;+esc(w.region)+&#x27;&lt;/p&gt;&lt;/div&gt;&#x27;+button(&#x27;View&#x27;,&#x27;wine&#x27;,&#x27;data-id=&quot;&#x27;+w.id+&#x27;&quot;&#x27;)+&#x27;&lt;/div&gt;&#x27;).join(&#x27;&#x27;):empty(&#x27;No matching wine&#x27;,&#x27;Try a producer name, another spelling, or add the wine yourself.&#x27;,button(&#x27;Add wine manually&#x27;,&#x27;manual&#x27;));}
+  function findPage(){const ctx=captureParent();return &#x27;&lt;div class=&quot;wj-form&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;Discover &amp; remember&lt;/div&gt;&lt;h1&gt;Find a wine.&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Scan a code, use a label photo, or search by name.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&#x27;+(ctx?&#x27;&lt;div class=&quot;wj-banner&quot;&gt;&#x27;+icon(&#x27;notebook&#x27;)+&#x27;Adding to &#x27;+esc(title(ctx))+&#x27;&lt;/div&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;div class=&quot;wj-methods&quot; aria-label=&quot;Find a wine using&quot;&gt;&#x27;+[[&#x27;search&#x27;,&#x27;search&#x27;,&#x27;Search&#x27;],[&#x27;barcode&#x27;,&#x27;scan-barcode&#x27;,&#x27;Barcode&#x27;],[&#x27;photo&#x27;,&#x27;camera&#x27;,&#x27;Photo&#x27;]].map(x=&gt;&#x27;&lt;button type=&quot;button&quot; data-a=&quot;method&quot; data-id=&quot;&#x27;+x[0]+&#x27;&quot; aria-pressed=&quot;&#x27;+(method===x[0])+&#x27;&quot;&gt;&#x27;+icon(x[1])+x[2]+&#x27;&lt;/button&gt;&#x27;).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;+(method===&#x27;search&#x27;?&#x27;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Wine, producer, or label wording&lt;/span&gt;&lt;span class=&quot;wj-search-wrap&quot;&gt;&#x27;+icon(&#x27;search&#x27;)+&#x27;&lt;input class=&quot;wj-input&quot; data-live=&quot;catalog&quot; value=&quot;&#x27;+esc(catalogQuery)+&#x27;&quot; placeholder=&quot;Try Calculated Risk&quot; aria-label=&quot;Search the wine catalog&quot;&gt;&lt;/span&gt;&lt;/label&gt;&lt;div style=&quot;margin-top:19px&quot; id=&quot;wj-catalog-results&quot;&gt;&#x27;+catalogResults()+&#x27;&lt;/div&gt;&#x27;:method===&#x27;barcode&#x27;?&#x27;&lt;div class=&quot;wj-scan&quot;&gt;&#x27;+icon(&#x27;scan-barcode&#x27;)+&#x27;&lt;h3&gt;Place the barcode in view&lt;/h3&gt;&lt;span class=&quot;wj-small&quot;&gt;Sample capture for this design walkthrough&lt;/span&gt;&#x27;+button(&#x27;Use sample barcode&#x27;,&#x27;sample-scan&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)+&#x27;&lt;/div&gt;&#x27;+textButton(&#x27;Try a no-match result&#x27;,&#x27;scan-failure&#x27;)+(scanFailure?&#x27;&lt;div class=&quot;wj-warning&quot;&gt;No wine found for this code. You can search by name or add the wine manually.&lt;/div&gt;&#x27;:&#x27;&#x27;):&#x27;&lt;div class=&quot;wj-scan&quot;&gt;&#x27;+icon(&#x27;camera&#x27;)+&#x27;&lt;h3&gt;A clear photo of the label&lt;/h3&gt;&lt;span class=&quot;wj-small&quot;&gt;Sample capture for this design walkthrough&lt;/span&gt;&#x27;+button(&#x27;Use sample label photo&#x27;,&#x27;sample-photo&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)+&#x27;&lt;/div&gt;&#x27;+(photoResults?&#x27;&lt;div style=&quot;margin-top:23px&quot;&gt;&lt;h2&gt;Which bottle is yours?&lt;/h2&gt;&lt;p class=&quot;wj-small&quot; style=&quot;margin:8px 0 16px&quot;&gt;Check the name, origin, and vintage.&lt;/p&gt;&#x27;+catalogResults()+&#x27;&lt;/div&gt;&#x27;:&#x27;&#x27;))+&#x27;&lt;div class=&quot;wj-row&quot; style=&quot;margin-top:20px&quot;&gt;&lt;span class=&quot;wj-small&quot;&gt;Looking up a wine doesn’t add an entry.&lt;/span&gt;&#x27;+textButton(&#x27;Add wine manually&#x27;,&#x27;manual&#x27;)+&#x27;&lt;/div&gt;&lt;/div&gt;&#x27;;}
+  function memoryGrid(media,context=&#x27;&#x27;){
+    return media.length?&#x27;&lt;div class=&quot;wj-memory-grid&quot;&gt;&#x27;+media.map((m,i)=&gt;`&lt;figure class=&quot;wj-memory&quot;&gt;${memoryPreview(m,i)}&lt;figcaption&gt;${esc(m.name)}&lt;/figcaption&gt;${m.ownerType===&#x27;entry&#x27;?&#x27;&lt;p class=&quot;wj-memory-origin&quot;&gt;&#x27;+esc(m.sourceName)+&#x27;&lt;/p&gt;&#x27;:&#x27;&#x27;}${context?textButton(&#x27;Remove&#x27;,&#x27;remove-memory&#x27;,&#x27;data-ctx=&quot;&#x27;+context+&#x27;&quot; data-index=&quot;&#x27;+i+&#x27;&quot;&#x27;):m.ownerType===&#x27;entry&#x27;?textButton(&#x27;Open wine entry&#x27;,&#x27;edit-entry&#x27;,&#x27;data-id=&quot;&#x27;+m.ownerId+&#x27;&quot;&#x27;):m.ownerType===&#x27;occasion&#x27;?textButton(&#x27;Remove from occasion&#x27;,&#x27;remove-memory&#x27;,&#x27;data-ctx=&quot;occasion&quot; data-index=&quot;&#x27;+m.ownerIndex+&#x27;&quot;&#x27;):&#x27;&#x27;}&lt;/figure&gt;`).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;:&#x27;&#x27;;
+  }
+
+  function memoryScene(){return &#x27;&lt;span class=&quot;wj-memory-scene&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;wj-photo-frame&quot;&gt;&lt;span class=&quot;wj-photo-block&quot;&gt;&#x27;+icon(&#x27;image&#x27;)+&#x27;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;wj-photo-frame&quot;&gt;&lt;span class=&quot;wj-photo-block wj-photo-olive&quot;&gt;&#x27;+icon(&#x27;image&#x27;)+&#x27;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&#x27;;}
+  function occasionList(){if(!signedIn)return empty(&#x27;Your occasions, kept together.&#x27;,&#x27;Sign in to keep your own wine memories.&#x27;,button(&#x27;Sign in&#x27;,&#x27;auth&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;));return &#x27;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;The stories around the wine&lt;/div&gt;&lt;h1&gt;Occasions&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;A dinner, a visit, an evening you want to keep.&lt;/p&gt;&lt;/div&gt;&#x27;+button(icon(&#x27;plus&#x27;)+&#x27;New occasion&#x27;,&#x27;new-occasion&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)+&#x27;&lt;/div&gt;&lt;div class=&quot;wj-occasion-grid&quot;&gt;&#x27;+occasions.slice().sort((a,b)=&gt;b.date.localeCompare(a.date)).map(o=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-occasion-card&quot; data-a=&quot;occasion&quot; data-id=&quot;&#x27;+o.id+&#x27;&quot;&gt;&#x27;+memoryScene()+&#x27;&lt;span class=&quot;wj-occasion-body&quot;&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+date(o.date)+(o.place?&#x27; · &#x27;+esc(o.place):&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-wine-name&quot;&gt;&#x27;+esc(title(o))+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-muted&quot;&gt;&#x27;+entries.filter(e=&gt;e.occasionId===o.id).length+&#x27; wine entries · &#x27;+o.media.length+&#x27; occasion memories&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;&#x27;).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&lt;div class=&quot;wj-footer&quot;&gt;&lt;span&gt;&#x27;+icon(&#x27;lock-keyhole&#x27;)+&#x27; Private to you&lt;/span&gt;&lt;span&gt;Everyday entries are always in My wines.&lt;/span&gt;&lt;/div&gt;&#x27;;}
+  function occasionPage(){
+    if(!signedIn)return occasionList();const o=occasion(selectedOccasion),es=entries.filter(e=&gt;e.occasionId===o.id),wineIds=[...new Set(es.map(e=&gt;e.wineId))];
+    return back(&#x27;Occasions&#x27;,&#x27;occasions&#x27;)+`&lt;div class=&quot;wj-occasion-head&quot;&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;h1&gt;${esc(title(o))}&lt;/h1&gt;${textButton(icon(&#x27;pencil&#x27;)+&#x27;Edit occasion&#x27;,&#x27;edit-occasion&#x27;)}&lt;/div&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;div class=&quot;wj-entry-meta&quot;&gt;&lt;span&gt;${icon(&#x27;calendar-days&#x27;)} ${date(o.date)}&lt;/span&gt;${o.time?&#x27;&lt;span&gt;&#x27;+icon(&#x27;clock-3&#x27;)+&#x27; &#x27;+esc(o.time)+&#x27;&lt;/span&gt;&#x27;:&#x27;&#x27;}${o.place?&#x27;&lt;span&gt;&#x27;+icon(&#x27;map-pin&#x27;)+&#x27; &#x27;+esc(o.place)+&#x27;&lt;/span&gt;&#x27;:&#x27;&#x27;}&lt;/div&gt;&lt;span class=&quot;wj-privacy&quot;&gt;${icon(&#x27;lock-keyhole&#x27;)} Private to you&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+    ${o.notes?&#x27;&lt;div class=&quot;wj-note-paper&quot;&gt;&lt;p&gt;&#x27;+esc(o.notes)+&#x27;&lt;/p&gt;&lt;/div&gt;&#x27;:&#x27;&#x27;}&lt;section&gt;&lt;div class=&quot;wj-section-head&quot;&gt;&lt;h2&gt;The wines we tried&lt;/h2&gt;${button(icon(&#x27;plus&#x27;)+&#x27;Add wine&#x27;,&#x27;occasion-add-wine&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)}&lt;/div&gt;
+    ${es.length?&#x27;&lt;div class=&quot;wj-occasion-wines&quot;&gt;&#x27;+wineIds.map(id=&gt;{const w=wine(id),related=es.filter(e=&gt;e.wineId===id);return `&lt;article class=&quot;wj-occasion-wine&quot; data-wine-id=&quot;${id}&quot;&gt;&lt;div class=&quot;wj-occasion-wine-heading&quot;&gt;${art(w)}&lt;div&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;span class=&quot;wj-producer&quot;&gt;${esc(w.brand)}&lt;/span&gt;&lt;span aria-label=&quot;Current personal rating&quot;&gt;${scoreText(w.id)}&lt;/span&gt;&lt;/div&gt;&lt;h3&gt;${esc(w.name)}&lt;/h3&gt;&lt;p class=&quot;wj-small&quot;&gt;${esc(w.year)} · ${esc(w.grape)}&lt;/p&gt;${textButton(&#x27;Wine record &#x27;+icon(&#x27;arrow-up-right&#x27;),&#x27;wine&#x27;,&#x27;data-id=&quot;&#x27;+w.id+&#x27;&quot;&#x27;)}&lt;/div&gt;&lt;/div&gt;${related.map(e=&gt;`&lt;div class=&quot;wj-occasion-entry&quot;&gt;${related.length&gt;1?&#x27;&lt;p class=&quot;wj-small&quot;&gt;&#x27;+date(e.date)+(e.time?&#x27; · &#x27;+esc(e.time):&#x27;&#x27;)+&#x27;&lt;/p&gt;&#x27;:&#x27;&#x27;}&lt;p class=&quot;wj-entry-note&quot;&gt;${esc(e.notes||&#x27;Add your notes when you’re ready.&#x27;)}&lt;/p&gt;${textButton(&#x27;Entry &amp; notes&#x27;,&#x27;edit-entry&#x27;,&#x27;data-id=&quot;&#x27;+e.id+&#x27;&quot;&#x27;)}&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/article&gt;`;}).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;:empty(&#x27;Add the first wine&#x27;,&#x27;Find a wine or link an entry you already saved.&#x27;,button(&#x27;Add wine&#x27;,&#x27;occasion-add-wine&#x27;))}${textButton(&#x27;Link existing entries&#x27;,&#x27;edit-occasion&#x27;)}&lt;/section&gt;
+    &lt;section class=&quot;wj-memories-section wj-occasion-album&quot;&gt;&lt;h2&gt;Little moments&lt;/h2&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;The people, the place, the things worth keeping.&lt;/p&gt;${memoryGrid(occasionMemories(o,es))}${uploadField(&#x27;occasion&#x27;)}&lt;/section&gt;`;
+  }
+
+  function newOccasion(edit=false){const o=edit?occasion(selectedOccasion):null;occasionDraft=o?copy(o):{id:&#x27;&#x27;,title:&#x27;&#x27;,date:TODAY,time:&#x27;&#x27;,place:&#x27;&#x27;,placeRef:null,notes:&#x27;&#x27;,media:[]};occasionDraft.entryIds=o?entries.filter(e=&gt;e.occasionId===o.id).map(e=&gt;e.id):[];occasionDraft.newEntries=[];placePicker=null;captureOccasion=&#x27;&#x27;;go(&#x27;occasion-form&#x27;);}
+  function occasionForm(){const d=occasionDraft,available=entries.filter(e=&gt;!e.occasionId||e.occasionId===d.id);return back(d.id?&#x27;Occasion&#x27;:&#x27;Occasions&#x27;,&#x27;cancel-occasion&#x27;)+&#x27;&lt;form class=&quot;wj-form&quot; data-form=&quot;occasion&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;Make room for a memory&lt;/div&gt;&lt;h1&gt;&#x27;+(d.id?&#x27;Edit occasion&#x27;:&#x27;A moment, kept together.&#x27;)+&#x27;&lt;/h1&gt;&lt;/div&gt;&lt;/div&gt;&#x27;+occasionFields(&#x27;occasion&#x27;)+&#x27;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Occasion notes · optional&lt;/span&gt;&lt;textarea class=&quot;wj-input&quot; data-occasion=&quot;notes&quot; placeholder=&quot;The people, the food, the things you want to keep…&quot;&gt;&#x27;+esc(d.notes)+&#x27;&lt;/textarea&gt;&lt;/label&gt;&lt;section style=&quot;margin-top:25px&quot;&gt;&lt;div class=&quot;wj-section-head&quot;&gt;&lt;h2&gt;Wines for this occasion&lt;/h2&gt;&#x27;+button(icon(&#x27;plus&#x27;)+&#x27;Add a wine&#x27;,&#x27;draft-add-wine&#x27;)+&#x27;&lt;/div&gt;&lt;p class=&quot;wj-small&quot;&gt;Find a wine by barcode, photo, search, or add it manually. Return here to add another.&lt;/p&gt;&#x27;+d.newEntries.map(e=&gt;{const w=e.wineData||wine(e.wineId);return &#x27;&lt;div class=&quot;wj-staged-entry&quot;&gt;&lt;div&gt;&lt;h3&gt;&#x27;+esc(w.name)+&#x27;&lt;/h3&gt;&lt;p class=&quot;wj-small&quot;&gt;&#x27;+esc(w.year)+&#x27; · &#x27;+date(e.date)+(e.place?&#x27; · &#x27;+esc(e.place):&#x27;&#x27;)+&#x27;&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;wj-actions&quot;&gt;&#x27;+textButton(&#x27;Edit&#x27;,&#x27;edit-staged&#x27;,&#x27;data-id=&quot;&#x27;+e._key+&#x27;&quot;&#x27;)+textButton(&#x27;Remove&#x27;,&#x27;remove-staged&#x27;,&#x27;data-id=&quot;&#x27;+e._key+&#x27;&quot;&#x27;)+&#x27;&lt;/div&gt;&lt;/div&gt;&#x27;;}).join(&#x27;&#x27;)+&#x27;&lt;/section&gt;&lt;details&gt;&lt;summary&gt;Link entries you already saved&#x27;+(d.entryIds.length?&#x27; · &#x27;+d.entryIds.length+&#x27; selected&#x27;:&#x27;&#x27;)+&#x27;&lt;/summary&gt;&lt;p class=&quot;wj-small&quot; style=&quot;margin-bottom:12px&quot;&gt;Their original dates, places, notes, and memories stay with them.&lt;/p&gt;&#x27;+available.map(e=&gt;{const w=wine(e.wineId);return &#x27;&lt;label class=&quot;wj-check-row&quot;&gt;&lt;input type=&quot;checkbox&quot; data-existing=&quot;&#x27;+e.id+&#x27;&quot;&#x27;+(d.entryIds.includes(e.id)?&#x27; checked&#x27;:&#x27;&#x27;)+&#x27;&gt;&lt;span&gt;&#x27;+esc(w.name)+&#x27; · &#x27;+esc(w.year)+&#x27;&lt;br&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+date(e.date)+(e.place?&#x27; · &#x27;+esc(e.place):&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;&#x27;;}).join(&#x27;&#x27;)+&#x27;&lt;/details&gt;&lt;div id=&quot;wj-context-warning&quot;&gt;&lt;/div&gt;&lt;div class=&quot;wj-form-foot&quot;&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+(d.newEntries.length?&#x27;New entries will be saved with this occasion.&#x27;:&#x27;You can add wines later, too.&#x27;)+&#x27;&lt;/span&gt;&lt;button class=&quot;wj-button wj-primary&quot; type=&quot;submit&quot;&gt;Save occasion&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;&#x27;;}
+  function ratingPage(){
+    const w=wine(selectedWine),history=ratings[w.id]||[];
+    return back(&#x27;Wine record&#x27;,&#x27;rating-back&#x27;)+`&lt;form class=&quot;wj-form&quot; data-form=&quot;rating&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;h1&gt;My rating&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;${esc(w.brand)} · ${esc(w.name)} · ${esc(w.year)}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;wj-panel&quot;&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Current personal rating&lt;/span&gt;&lt;select class=&quot;wj-input&quot; name=&quot;rating&quot; required&gt;&lt;option value=&quot;&quot; disabled${score(w.id)==null?&#x27; selected&#x27;:&#x27;&#x27;}&gt;Choose a rating&lt;/option&gt;${Array.from({length:9},(_,i)=&gt;1+i*.5).map(v=&gt;`&lt;option value=&quot;${v}&quot;${score(w.id)===v?&#x27; selected&#x27;:&#x27;&#x27;}&gt;${v.toFixed(1)} / 5&lt;/option&gt;`).join(&#x27;&#x27;)}&lt;/select&gt;&lt;/label&gt;
+    &lt;p class=&quot;wj-rating-help&quot;&gt;Your latest opinion of this wine. Previous ratings stay in your history.&lt;/p&gt;&lt;button type=&quot;submit&quot; class=&quot;wj-button wj-primary&quot;&gt;Update rating&lt;/button&gt;&lt;p class=&quot;wj-small wj-context&quot;&gt;Updating a rating does not add a drinking entry.&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;wj-section-head wj-history-heading&quot;&gt;&lt;h2&gt;Rating history&lt;/h2&gt;&lt;span class=&quot;wj-small&quot;&gt;${history.length} ${history.length===1?&#x27;rating&#x27;:&#x27;ratings&#x27;}&lt;/span&gt;&lt;/div&gt;
+    ${history.length?`&lt;ol class=&quot;wj-rating-history&quot;&gt;${history.slice().reverse().map((r,i)=&gt;`&lt;li&gt;&lt;span class=&quot;wj-score&quot;&gt;${icon(&#x27;star&#x27;)}${r.value.toFixed(1)}${i===0?&#x27; &lt;span class=&quot;wj-chip&quot;&gt;Current&lt;/span&gt;&#x27;:&#x27;&#x27;}&lt;/span&gt;&lt;span class=&quot;wj-small&quot;&gt;${date(r.date)}${r.time?&#x27; · &#x27;+esc(r.time):&#x27;&#x27;}&lt;/span&gt;&lt;/li&gt;`).join(&#x27;&#x27;)}&lt;/ol&gt;`:&#x27;&lt;p class=&quot;wj-subtitle&quot;&gt;Your first rating will appear here.&lt;/p&gt;&#x27;}&lt;/form&gt;`;
+  }
+
+  function authPage(){
+    const summary=pending===&#x27;entry&#x27;&amp;&amp;draft?selectedWineBlock(draft.wineId)+`&lt;p class=&quot;wj-small wj-context&quot;&gt;${date(draft.date)} · Your entry is ready to save.&lt;/p&gt;`:&#x27;&#x27;;
+    return back(pending?&#x27;Back to your draft&#x27;:&#x27;Keep browsing&#x27;,&#x27;auth-back&#x27;)+`&lt;form class=&quot;wj-form&quot; data-form=&quot;auth&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;h1&gt;Keep this one.&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Sign in to save your wines and memories.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;${summary}&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Email&lt;/span&gt;&lt;input class=&quot;wj-input&quot; type=&quot;email&quot; name=&quot;email&quot; required autocomplete=&quot;email&quot; placeholder=&quot;you@example.com&quot;&gt;&lt;/label&gt;&lt;button type=&quot;submit&quot; class=&quot;wj-button wj-primary wj-field-space&quot;&gt;Continue&lt;/button&gt;&lt;p class=&quot;wj-small wj-context&quot;&gt;Preview sign-in only. No email is sent.&lt;/p&gt;&lt;/form&gt;`;
+  }
+
+  function manualPage(){const d=manualDraft;return back(&#x27;Find a wine&#x27;,&#x27;manual-back&#x27;)+&#x27;&lt;form class=&quot;wj-form&quot; data-form=&quot;manual&quot;&gt;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;Your own record&lt;/div&gt;&lt;h1&gt;Add a wine.&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Start with what you know.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;wj-cover-picker&quot;&gt;&#x27;+(d.coverData?&#x27;&lt;img class=&quot;wj-cover-preview&quot; src=&quot;&#x27;+esc(d.coverData)+&#x27;&quot; alt=&quot;Bottle photo preview&quot;&gt;&#x27;:&#x27;&lt;div class=&quot;wj-cover-preview wj-cover-empty&quot;&gt;&#x27;+icon(&#x27;wine&#x27;)+&#x27;&lt;/div&gt;&#x27;)+&#x27;&lt;div&gt;&lt;label class=&quot;wj-upload&quot;&gt;Bottle photo · optional&lt;input type=&quot;file&quot; accept=&quot;image/jpeg,image/png,image/webp&quot; data-cover&gt;&lt;/label&gt;&lt;p class=&quot;wj-small&quot;&gt;Your wine’s cover in My wines. JPEG, PNG, or WebP.&lt;/p&gt;&#x27;+(d.coverData?textButton(&#x27;Remove photo&#x27;,&#x27;cover-remove&#x27;):&#x27;&#x27;)+&#x27;&lt;p id=&quot;wj-cover-error&quot; class=&quot;wj-error&quot; role=&quot;alert&quot;&gt;&#x27;+esc(d.error||&#x27;&#x27;)+&#x27;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Wine name&lt;/span&gt;&lt;input class=&quot;wj-input&quot; required data-manual=&quot;name&quot; value=&quot;&#x27;+esc(d.name)+&#x27;&quot; placeholder=&quot;Name or wording from the label&quot;&gt;&lt;/label&gt;&lt;div class=&quot;wj-fields&quot;&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Producer · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; data-manual=&quot;producer&quot; value=&quot;&#x27;+esc(d.producer)+&#x27;&quot;&gt;&lt;/label&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Vintage · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; data-manual=&quot;vintage&quot; value=&quot;&#x27;+esc(d.vintage)+&#x27;&quot; placeholder=&quot;Unknown&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;p class=&quot;wj-small&quot; style=&quot;margin-bottom:15px&quot;&gt;A personal wine record. This cover photo stays with your personal wine record.&lt;/p&gt;&lt;button class=&quot;wj-button wj-primary&quot; type=&quot;submit&quot;&gt;Continue to entry&lt;/button&gt;&lt;/form&gt;&#x27;;}
+  function accountPage(){return &#x27;&lt;div class=&quot;wj-form&quot;&gt;&#x27;+back(&#x27;My wines&#x27;,&#x27;library&#x27;)+&#x27;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;Your space&lt;/div&gt;&lt;h1&gt;Your account&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Your wine journal is private.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&#x27;+button(&#x27;Sign out&#x27;,&#x27;signout&#x27;)+&#x27;&lt;/div&gt;&#x27;;}
+  function render(){
+    const currentDetails=root.querySelector(&#x27;details[data-optional=&quot;entry&quot;]&#x27;);
+    if(currentDetails&amp;&amp;lastRenderedScreen===screen&amp;&amp;screen===&#x27;entry&#x27;)entryDetailsOpen=currentDetails.open;
+    const screens={library,wine:winePage,entry:entryPage,find:findPage,occasions:occasionList,occasion:occasionPage,&#x27;occasion-form&#x27;:occasionForm,rating:ratingPage,auth:authPage,manual:manualPage,account:accountPage,browse:browsePage,guides:guidesPage,&#x27;guide-article&#x27;:guidePage};
+    const oldFocus=document.activeElement,focusAction=root.contains(oldFocus)?oldFocus.dataset.a:null,focusId=oldFocus?.dataset?.id;
+    let body=(screens[screen]||library)();
+    if(screen===&#x27;find&#x27;&amp;&amp;captureOccasion)body=back(&#x27;Back to occasion&#x27;,&#x27;cancel-capture&#x27;)+body;
+    if(screen===&#x27;wine&#x27;&amp;&amp;captureOccasion)body=back(&#x27;Back to wine search&#x27;,&#x27;context-find&#x27;)+body;
+    const nav=[[&#x27;browse&#x27;,&#x27;compass&#x27;,&#x27;Browse&#x27;],[&#x27;library&#x27;,&#x27;book-open&#x27;,&#x27;My wines&#x27;],[&#x27;occasions&#x27;,&#x27;notebook&#x27;,&#x27;Occasions&#x27;],[&#x27;guides&#x27;,&#x27;book-open-text&#x27;,&#x27;Guides&#x27;]];
+    const active=[&#x27;wine&#x27;,&#x27;entry&#x27;,&#x27;rating&#x27;].includes(screen)?&#x27;library&#x27;:[&#x27;occasion&#x27;,&#x27;occasion-form&#x27;].includes(screen)?&#x27;occasions&#x27;:screen===&#x27;guide-article&#x27;?&#x27;guides&#x27;:screen;
+    const navLinks=(mobile=false)=&gt;nav.map(([id,ic,label])=&gt;`&lt;button type=&quot;button&quot; data-a=&quot;${id}&quot;${active===id?&#x27; aria-current=&quot;page&quot;&#x27;:&#x27;&#x27;}&gt;${mobile?icon(ic):&#x27;&#x27;}&lt;span&gt;${!mobile&amp;&amp;id===&#x27;browse&#x27;?&#x27;Browse wines&#x27;:label}&lt;/span&gt;&lt;/button&gt;`).join(&#x27;&#x27;);
+    app.innerHTML=`&lt;header class=&quot;wj-topbar&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;wj-brand&quot; data-a=&quot;library&quot;&gt;&lt;span class=&quot;wj-brand-mark&quot;&gt;${icon(&#x27;wine&#x27;)}&lt;/span&gt;&lt;span&gt;Wine Journal&lt;/span&gt;&lt;/button&gt;&lt;nav class=&quot;wj-nav&quot; aria-label=&quot;Main navigation&quot;&gt;${navLinks()}&lt;/nav&gt;&lt;div class=&quot;wj-top-actions&quot;&gt;${button(icon(&#x27;plus&#x27;)+&#x27;Log wine&#x27;,&#x27;find&#x27;,&#x27;&#x27;,&#x27;wj-primary&#x27;)}&lt;button type=&quot;button&quot; class=&quot;wj-button wj-account&quot; data-a=&quot;${signedIn?&#x27;account&#x27;:&#x27;auth&#x27;}&quot; aria-label=&quot;${signedIn?&#x27;Your account&#x27;:&#x27;Sign in&#x27;}&quot;&gt;${icon(&#x27;user-round&#x27;)}&lt;span&gt;${signedIn?&#x27;Account&#x27;:&#x27;Sign in&#x27;}&lt;/span&gt;&lt;/button&gt;&lt;/div&gt;&lt;/header&gt;
+    &lt;main class=&quot;wj-main&quot; data-screen=&quot;${screen}&quot;&gt;${notice?&#x27;&lt;div class=&quot;wj-banner&quot; role=&quot;status&quot;&gt;&#x27;+icon(&#x27;check&#x27;)+esc(notice)+&#x27;&lt;/div&gt;&#x27;:&#x27;&#x27;}${queuedNavigation?&#x27;&lt;section class=&quot;wj-warning&quot; role=&quot;alert&quot;&gt;&lt;h2&gt;Leave this unfinished form?&lt;/h2&gt;&lt;p&gt;Your unsaved entry and occasion changes will be discarded.&lt;/p&gt;&lt;div class=&quot;wj-actions&quot;&gt;&#x27;+button(&#x27;Keep editing&#x27;,&#x27;keep-editing&#x27;)+button(&#x27;Discard and continue&#x27;,&#x27;discard-navigation&#x27;)+&#x27;&lt;/div&gt;&lt;/section&gt;&#x27;:&#x27;&#x27;}${body}&lt;/main&gt;
+    &lt;nav class=&quot;wj-mobile-nav&quot; aria-label=&quot;Mobile navigation&quot;&gt;${navLinks(true)}&lt;/nav&gt;&lt;footer class=&quot;wj-preview-footer&quot;&gt;&lt;span&gt;Design walkthrough · sample journal&lt;/span&gt;&lt;span&gt;Changes reset when you reload&lt;/span&gt;&lt;/footer&gt;`;
+    refreshIcons();updateContextWarning();
+    if(focusAction&amp;&amp;lastRenderedScreen===screen){const match=Array.from(root.querySelectorAll(&#x27;button[data-a]&#x27;)).find(b=&gt;b.dataset.a===focusAction&amp;&amp;b.dataset.id===focusId);if(match)match.focus({preventScroll:true});}
+    if(lastRenderedScreen&amp;&amp;lastRenderedScreen!==screen){root.querySelector(&#x27;main&#x27;).scrollIntoView({block:&#x27;start&#x27;});const first=root.querySelector(&#x27;main button,main input,main select&#x27;);if(first)first.focus({preventScroll:true});}
+    lastRenderedScreen=screen;
+  }
+
+  function refreshIcons(){if(globalThis.lucide)globalThis.lucide.createIcons({attrs:{width:16,height:16}});}
+  function go(where){screen=where;notice=&#x27;&#x27;;render();}
+  function saveEntry(){if(!draft||!draft.date)return;if(captureOccasion===&#x27;@draft&#x27;){const staged=copy(draft);staged._key=staged._key||&#x27;draft&#x27;+(++uid);const ix=occasionDraft.newEntries.findIndex(e=&gt;e._key===staged._key);if(ix&gt;=0)occasionDraft.newEntries[ix]=staged;else occasionDraft.newEntries.push(staged);draft=null;manualWine=null;manualDraft=null;captureOccasion=&#x27;&#x27;;screen=&#x27;occasion-form&#x27;;notice=&#x27;Wine added to this occasion draft. Add another when you’re ready.&#x27;;render();return;}let created=null;if(inlineOccasion){created=makeOccasion(inlineOccasion);occasions.push(created);draft.occasionId=created.id;}const saved=commitEntry(draft),parent=captureOccasion;selectedWine=saved.wineId;draft=null;inlineOccasion=null;manualWine=null;manualDraft=null;placePicker=null;captureOccasion=&#x27;&#x27;;pending=null;if(created||parent){selectedOccasion=created?created.id:parent;screen=&#x27;occasion&#x27;;}else screen=&#x27;wine&#x27;;notice=created?&#x27;Entry and occasion saved. You can add another wine here.&#x27;:&#x27;Entry saved. Add more detail whenever you like.&#x27;;render();}
+  function saveOccasion(){const d=occasionDraft;if(!d||!d.date)return;const saved=makeOccasion(d);if(d.id)occasions=occasions.map(o=&gt;o.id===d.id?saved:o);else occasions.push(saved);entries=entries.map(e=&gt;d.entryIds.includes(e.id)?{...e,occasionId:saved.id}:e.occasionId===saved.id?{...e,occasionId:&#x27;&#x27;}:e);d.newEntries.forEach(e=&gt;commitEntry({...e,occasionId:saved.id}));selectedOccasion=saved.id;occasionDraft=null;draft=null;pending=null;captureOccasion=&#x27;&#x27;;placePicker=null;screen=&#x27;occasion&#x27;;notice=&#x27;Occasion and its new wine entries saved. Existing drinking details were kept.&#x27;;render();}
+
+  let browseTab=&#x27;catalog&#x27;,browseQuery=&#x27;&#x27;,selectedGuide=&#x27;tasting&#x27;,manualDraft=null,manualWine=null;
+  let inlineOccasion=null,placePicker=null,queuedNavigation=null,wineReturn=&#x27;library&#x27;;
+  const copy=v=&gt;JSON.parse(JSON.stringify(v));
+  const samplePlaces=[{id:&#x27;sample:bar-sol-napa&#x27;,name:&#x27;Bar Sol&#x27;,address:&#x27;Downtown Napa · sample place&#x27;},{id:&#x27;sample:bar-sol-sonoma&#x27;,name:&#x27;Bar Sol&#x27;,address:&#x27;Sonoma town centre · sample place&#x27;},{id:&#x27;sample:olive-table&#x27;,name:&#x27;The Olive Table&#x27;,address:&#x27;San Francisco · sample place&#x27;}];
+  const guideTopics=[
+    {id:&#x27;tasting&#x27;,name:&#x27;Find your own tasting words&#x27;,category:&#x27;Notes &amp; tasting&#x27;,intro:&#x27;A few familiar words are enough.&#x27;,icon:&#x27;sprout&#x27;},
+    {id:&#x27;styles&#x27;,name:&#x27;Get to know a wine&#x27;,category:&#x27;Grapes &amp; styles&#x27;,intro:&#x27;Look at grape, style, place, and release together.&#x27;,icon:&#x27;wine&#x27;},
+    {id:&#x27;pairing&#x27;,name:&#x27;Explore food &amp; wine&#x27;,category:&#x27;Pairings&#x27;,intro:&#x27;Notice what a bite of food changes.&#x27;,icon:&#x27;utensils&#x27;},
+    {id:&#x27;regions&#x27;,name:&#x27;Read the place on the label&#x27;,category:&#x27;Regions&#x27;,intro:&#x27;Explore the origin of wines in your journal.&#x27;,icon:&#x27;map-pin&#x27;}
+  ];
+  function captureParent(){return captureOccasion===&#x27;@draft&#x27;?occasionDraft:occasion(captureOccasion);}
+  function findStart(context=&#x27;&#x27;){captureOccasion=context;method=&#x27;search&#x27;;catalogQuery=&#x27;&#x27;;photoResults=false;scanFailure=false;manualWine=null;go(&#x27;find&#x27;);}
+  function locationOwner(ctx){return ctx===&#x27;entry&#x27;?draft:ctx===&#x27;inline&#x27;?inlineOccasion:occasionDraft;}
+  function locationField(ctx){const d=locationOwner(ctx);return &#x27;&lt;div class=&quot;wj-location&quot;&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Location · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; data-location=&quot;&#x27;+ctx+&#x27;&quot; value=&quot;&#x27;+esc(d.place||&#x27;&#x27;)+&#x27;&quot; placeholder=&quot;Home, Alex’s house, a restaurant…&quot;&gt;&lt;/label&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+(d.placeRef?&#x27;Selected place · &#x27;+esc(d.placeRef.address):&#x27;Use any personal label.&#x27;)+&#x27;&lt;/span&gt;&#x27;+textButton(icon(&#x27;map-pin&#x27;)+&#x27;Find a place&#x27;,&#x27;place-open&#x27;,&#x27;data-ctx=&quot;&#x27;+ctx+&#x27;&quot;&#x27;)+&#x27;&lt;/div&gt;&#x27;+((placePicker&amp;&amp;placePicker.ctx===ctx)?&#x27;&lt;div class=&quot;wj-place-picker&quot;&gt;&lt;div class=&quot;wj-row&quot;&gt;&lt;h3&gt;Find a place&lt;/h3&gt;&#x27;+textButton(&#x27;Close&#x27;,&#x27;place-close&#x27;)+&#x27;&lt;/div&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Place name or town&lt;/span&gt;&lt;input class=&quot;wj-input&quot; data-place-query value=&quot;&#x27;+esc(placePicker.query)+&#x27;&quot; placeholder=&quot;Try Bar Sol&quot;&gt;&lt;/label&gt;&lt;p class=&quot;wj-small&quot; style=&quot;margin:10px 0&quot;&gt;Sample suggestions · Google Places connection planned&lt;/p&gt;&lt;div id=&quot;wj-place-results&quot;&gt;&#x27;+placeResults()+&#x27;&lt;/div&gt;&lt;/div&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;;}
+  function placeResults(){const q=placePicker.query.toLowerCase().trim();const found=samplePlaces.filter(p=&gt;(p.name+&#x27; &#x27;+p.address).toLowerCase().includes(q));return found.length?found.map(p=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-place-result&quot; data-a=&quot;place-select&quot; data-id=&quot;&#x27;+p.id+&#x27;&quot;&gt;&lt;span&gt;&#x27;+esc(p.name)+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+esc(p.address)+&#x27;&lt;/span&gt;&lt;/button&gt;&#x27;).join(&#x27;&#x27;):&#x27;&lt;p class=&quot;wj-small&quot;&gt;No sample match. Close search and type your own location label.&lt;/p&gt;&#x27;;}
+  function occasionFields(ctx){const d=ctx===&#x27;inline&#x27;?inlineOccasion:occasionDraft;const attr=ctx===&#x27;inline&#x27;?&#x27;data-inline&#x27;:&#x27;data-occasion&#x27;;return &#x27;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Occasion title · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; &#x27;+attr+&#x27;=&quot;title&quot; value=&quot;&#x27;+esc(d.title)+&#x27;&quot; placeholder=&quot;Dinner with Alex &amp; Sam&quot;&gt;&lt;/label&gt;&lt;div class=&quot;wj-fields&quot;&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Occasion date&lt;/span&gt;&lt;input class=&quot;wj-input&quot; type=&quot;date&quot; required &#x27;+attr+&#x27;=&quot;date&quot; value=&quot;&#x27;+esc(d.date)+&#x27;&quot;&gt;&lt;/label&gt;&lt;label&gt;&lt;span class=&quot;wj-label&quot;&gt;Start time · optional&lt;/span&gt;&lt;input class=&quot;wj-input&quot; type=&quot;time&quot; &#x27;+attr+&#x27;=&quot;time&quot; value=&quot;&#x27;+esc(d.time)+&#x27;&quot;&gt;&lt;/label&gt;&lt;div class=&quot;wj-field-full&quot;&gt;&#x27;+locationField(ctx)+&#x27;&lt;/div&gt;&lt;/div&gt;&#x27;;}
+  function makeOccasion(d){return {id:d.id||&#x27;o&#x27;+(++uid),title:d.title.trim(),date:d.date,time:d.time,place:d.place,placeRef:copy(d.placeRef||null),notes:d.notes||&#x27;&#x27;,media:copy(d.media||[])};}
+  function commitEntry(d){const saved=copy(d);if(saved.wineData&amp;&amp;!wines.some(w=&gt;w.id===saved.wineId)){wines.push({...saved.wineData,ownerOnly:true});ratings[saved.wineId]=[];}delete saved.wineData;delete saved._key;if(saved.id)entries=entries.map(e=&gt;e.id===saved.id?saved:e);else{saved.id=&#x27;e&#x27;+(++uid);entries.push(saved);}return saved;}
+  function cancelCapture(){
+    const parent=captureOccasion,fromEntry=Boolean(draft);
+    draft=null;inlineOccasion=null;manualWine=null;manualDraft=null;placePicker=null;pending=null;captureOccasion=&#x27;&#x27;;mediaError=&#x27;&#x27;;
+    if(parent===&#x27;@draft&#x27;)go(&#x27;occasion-form&#x27;);else if(parent){selectedOccasion=parent;go(&#x27;occasion&#x27;);}
+    else if(fromEntry&amp;&amp;wine(selectedWine))go(&#x27;wine&#x27;);else go(&#x27;library&#x27;);
+  }
+
+  function browseCards(){let items=wines.filter(w=&gt;!w.ownerOnly&amp;&amp;(w.brand+&#x27; &#x27;+w.name+&#x27; &#x27;+w.grape+&#x27; &#x27;+w.region+&#x27; &#x27;+w.year).toLowerCase().includes(browseQuery.toLowerCase()));return items.length?&#x27;&lt;div class=&quot;wj-grid&quot;&gt;&#x27;+items.map(w=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-wine-card&quot; data-a=&quot;browse-wine&quot; data-id=&quot;&#x27;+w.id+&#x27;&quot;&gt;&#x27;+art(w)+&#x27;&lt;span class=&quot;wj-card-content&quot;&gt;&lt;span class=&quot;wj-producer&quot;&gt;&#x27;+esc(w.brand)+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-wine-name&quot;&gt;&#x27;+esc(w.name)+&#x27;&lt;/span&gt;&lt;span&gt;&#x27;+esc(w.year)+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-small&quot;&gt;&#x27;+esc(w.grape)+&#x27; · &#x27;+esc(w.region)+&#x27;&lt;/span&gt;&lt;span class=&quot;wj-chip&quot;&gt;View wine&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;&#x27;).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;:empty(&#x27;No matching wine&#x27;,&#x27;Try another name or region.&#x27;,textButton(&#x27;Clear search&#x27;,&#x27;browse-clear&#x27;));}
+  function browsePage(){let content=&#x27;&#x27;;if(browseTab===&#x27;catalog&#x27;){content=&#x27;&lt;label class=&quot;wj-search&quot;&gt;&lt;span class=&quot;wj-label&quot;&gt;Search wines, grapes, or regions&lt;/span&gt;&lt;input class=&quot;wj-input&quot; data-live=&quot;browse&quot; value=&quot;&#x27;+esc(browseQuery)+&#x27;&quot; placeholder=&quot;Try Cabernet Sauvignon or Napa&quot;&gt;&lt;/label&gt;&lt;div id=&quot;wj-browse-results&quot; style=&quot;margin-top:22px&quot;&gt;&#x27;+browseCards()+&#x27;&lt;/div&gt;&#x27;;}else if(browseTab===&#x27;you&#x27;){const liked=signedIn?wines.filter(w=&gt;!w.ownerOnly&amp;&amp;score(w.id)&gt;=4):[];content=&#x27;&lt;div class=&quot;wj-guide&quot;&gt;&lt;span class=&quot;wj-overline&quot;&gt;Future discovery concept&lt;/span&gt;&lt;h2&gt;A starting point for your taste.&lt;/h2&gt;&lt;p&gt;&#x27;+(liked.length?&#x27;Your higher-rated sample wines give future suggestions a starting point. There is still plenty to discover.&#x27;:&#x27;Rate wines you’ve tried to give future suggestions a starting point.&#x27;)+&#x27;&lt;/p&gt;&lt;p class=&quot;wj-small&quot;&gt;Suggestions will explain why a wine appears and offer “Not for me”. No recommendation service is connected.&lt;/p&gt;&lt;/div&gt;&#x27;+(liked.length?&#x27;&lt;div class=&quot;wj-two-col&quot;&gt;&lt;section&gt;&lt;h3&gt;Because you enjoyed…&lt;/h3&gt;&#x27;+selectedWineBlock(liked[0].id)+&#x27;&lt;p class=&quot;wj-subtitle&quot;&gt;Try a related grape, another region, or a new style. Exact matches will depend on the available wine data.&lt;/p&gt;&#x27;+button(&#x27;Explore related wines&#x27;,&#x27;browse-related&#x27;,&#x27;data-query=&quot;&#x27;+esc(liked[0].grape)+&#x27;&quot;&#x27;)+&#x27;&lt;/section&gt;&lt;aside class=&quot;wj-panel&quot;&gt;&lt;div class=&quot;wj-overline&quot;&gt;Learn as you explore&lt;/div&gt;&lt;h3&gt;What shaped that impression?&lt;/h3&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;A few tasting words can help you understand your preferences.&lt;/p&gt;&#x27;+textButton(&#x27;Open tasting guide&#x27;,&#x27;open-guide&#x27;,&#x27;data-id=&quot;tasting&quot;&#x27;)+&#x27;&lt;/aside&gt;&lt;/div&gt;&#x27;:button(&#x27;Explore the catalog&#x27;,&#x27;browse-tab&#x27;,&#x27;data-id=&quot;catalog&quot;&#x27;));}else{content=&#x27;&lt;div class=&quot;wj-guide&quot;&gt;&lt;span class=&quot;wj-overline&quot;&gt;Future community concept&lt;/span&gt;&lt;h2&gt;What people are enjoying.&lt;/h2&gt;&lt;p&gt;Trending wines and public reviews will live here.&lt;/p&gt;&lt;p class=&quot;wj-small&quot;&gt;This journal has no public activity yet.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;wj-panel&quot;&gt;&lt;div class=&quot;wj-overline&quot;&gt;Illustrative layout · invented sample data&lt;/div&gt;&lt;h3&gt;Example community wine&lt;/h3&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;2023 · Red · Example region&lt;/p&gt;&lt;div class=&quot;wj-actions&quot; style=&quot;margin-top:15px&quot;&gt;&lt;span class=&quot;wj-score&quot;&gt;&#x27;+icon(&#x27;star&#x27;)+&#x27;4.3 / 5&lt;/span&gt;&lt;span class=&quot;wj-small&quot;&gt;128 public ratings · sample&lt;/span&gt;&lt;span class=&quot;wj-chip&quot;&gt;Trending this week · sample&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;wj-small&quot; style=&quot;margin-top:12px&quot;&gt;Community rating and your personal rating will be labeled separately.&lt;/p&gt;&lt;/div&gt;&#x27;;}return &#x27;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;Find your next discovery&lt;/div&gt;&lt;h1&gt;Browse wines&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Explore bottles before deciding what to try.&lt;/p&gt;&lt;/div&gt;&#x27;+textButton(icon(&#x27;book-open&#x27;)+&#x27;Wine guides&#x27;,&#x27;guides&#x27;)+&#x27;&lt;/div&gt;&lt;div class=&quot;wj-discover-tabs&quot; aria-label=&quot;Wine discovery views&quot;&gt;&#x27;+[[&#x27;catalog&#x27;,&#x27;All wines&#x27;],[&#x27;you&#x27;,&#x27;For you&#x27;],[&#x27;trending&#x27;,&#x27;Trending&#x27;]].map(([id,label])=&gt;button(label,&#x27;browse-tab&#x27;,&#x27;data-id=&quot;&#x27;+id+&#x27;&quot; aria-pressed=&quot;&#x27;+(browseTab===id)+&#x27;&quot;&#x27;)).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;+content;}
+  function guidesPage(){return &#x27;&lt;div class=&quot;wj-page-head&quot;&gt;&lt;div&gt;&lt;div class=&quot;wj-overline&quot;&gt;A little knowledge, a richer glass&lt;/div&gt;&lt;h1&gt;Wine guides&lt;/h1&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Start with a question. Find words for what you enjoy.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;wj-guide-grid&quot;&gt;&#x27;+guideTopics.map(g=&gt;&#x27;&lt;button type=&quot;button&quot; class=&quot;wj-guide-card&quot; data-a=&quot;open-guide&quot; data-id=&quot;&#x27;+g.id+&#x27;&quot;&gt;&lt;span class=&quot;wj-overline&quot;&gt;&#x27;+icon(g.icon)+esc(g.category)+&#x27;&lt;/span&gt;&lt;h2&gt;&#x27;+esc(g.name)+&#x27;&lt;/h2&gt;&lt;p&gt;&#x27;+esc(g.intro)+&#x27;&lt;/p&gt;&lt;span class=&quot;wj-text-button&quot;&gt;Explore guide &#x27;+icon(&#x27;arrow-right&#x27;)+&#x27;&lt;/span&gt;&lt;/button&gt;&#x27;).join(&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;;}
+  function guidePage(){const g=guideTopics.find(x=&gt;x.id===selectedGuide);let text=&#x27;&#x27;;if(g.id===&#x27;tasting&#x27;)text=&#x27;&lt;h2&gt;Start with something familiar.&lt;/h2&gt;&lt;p&gt;Think of a fruit, flower, spice, or other smell you recognise. Write your own words; you do not need a perfect answer.&lt;/p&gt;&lt;h3&gt;Then notice the feel.&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Body:&lt;/strong&gt; the weight of the wine in your mouth. &lt;strong&gt;Acidity:&lt;/strong&gt; the mouth-watering sensation. &lt;strong&gt;Tannin:&lt;/strong&gt; the drying or gripping feeling.&lt;/p&gt;&lt;p&gt;Keep observations alongside the entry from that day. Your current rating belongs to the wine and can change over time.&lt;/p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://www.wsetglobal.com/knowledge-centre/blog/2026/how-to-train-your-palate&quot;&gt;Further reading: WSET on training your palate&lt;/a&gt;&#x27;;else if(g.id===&#x27;pairing&#x27;)text=&#x27;&lt;h2&gt;Notice the change.&lt;/h2&gt;&lt;p&gt;A bite of food can change how a wine tastes. Sweetness, salt, acidity, fat, and chilli can all affect the impression.&lt;/p&gt;&lt;p&gt;Sweet food may make a wine seem drier or more bitter. Salty food can soften the impression of tannin. Treat pairings as experiments in what you enjoy.&lt;/p&gt;&lt;h3&gt;A useful journal prompt&lt;/h3&gt;&lt;p&gt;“With this food, the wine felt…” Add the dish and your impression to the drinking entry so you can find it again.&lt;/p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://www.wsetglobal.com/knowledge-centre/blog/2023/july/13/four-rules-to-masterful-food-and-wine-pairing&quot;&gt;Further reading: WSET food and wine pairing&lt;/a&gt;&#x27;;else if(g.id===&#x27;styles&#x27;)text=&#x27;&lt;h2&gt;Read the bottle in layers.&lt;/h2&gt;&lt;p&gt;Start with the producer and wine name, then look for the grape or blend, origin, vintage, and any named edition.&lt;/p&gt;&lt;p&gt;In the sample catalog, Calculated Risk’s Barrel Selection and Sonoma County Reserve are separate offerings. The 2023 and 2024 Barrel Selection also keep separate records.&lt;/p&gt;&lt;h3&gt;Explore an example&lt;/h3&gt;&lt;p&gt;Open a wine’s details without adding it to your journal. Log it only when you want to record trying it.&lt;/p&gt;&#x27;+button(&#x27;Browse Cabernet Sauvignon&#x27;,&#x27;browse-related&#x27;,&#x27;data-query=&quot;Cabernet&quot;&#x27;);else text=&#x27;&lt;h2&gt;A place worth exploring.&lt;/h2&gt;&lt;p&gt;Use the origin on a bottle as a starting point. Compare wines from the same place, or follow a grape into another region.&lt;/p&gt;&lt;p&gt;The sample catalog includes Napa Valley, Sonoma County, Howell Mountain, and Champagne. More detailed region articles and maps are planned.&lt;/p&gt;&lt;div class=&quot;wj-actions&quot;&gt;&#x27;+button(&#x27;Explore Napa Valley&#x27;,&#x27;browse-related&#x27;,&#x27;data-query=&quot;Napa&quot;&#x27;)+button(&#x27;Explore Champagne&#x27;,&#x27;browse-related&#x27;,&#x27;data-query=&quot;Champagne&quot;&#x27;)+&#x27;&lt;/div&gt;&#x27;;return back(&#x27;Wine guides&#x27;,&#x27;guides&#x27;)+&#x27;&lt;article class=&quot;wj-article&quot;&gt;&lt;div class=&quot;wj-overline&quot;&gt;&#x27;+esc(g.category)+&#x27;&lt;/div&gt;&lt;h1&gt;&#x27;+esc(g.name)+&#x27;&lt;/h1&gt;&#x27;+text+&#x27;&lt;/article&gt;&#x27;;}
+
+  function submitPreview(form){if(!mediaBusy&amp;&amp;form&amp;&amp;form.reportValidity())form.dispatchEvent(new Event(&#x27;submit&#x27;,{bubbles:true,cancelable:true}));}
+
+  let mediaBusy=false,mediaError=&#x27;&#x27;,lastRenderedScreen=&#x27;&#x27;,expandedWineMemories=&#x27;&#x27;;
+  function memoryPreview(m,i=0){
+    if(m.src)return m.type===&#x27;video&#x27;?`&lt;video class=&quot;wj-media-preview&quot; controls preload=&quot;metadata&quot; playsinline src=&quot;${esc(m.src)}&quot; aria-label=&quot;${esc(m.name)}&quot;&gt;&lt;/video&gt;`:`&lt;img class=&quot;wj-media-preview&quot; src=&quot;${esc(m.src)}&quot; alt=&quot;${esc(m.name)}&quot;&gt;`;
+    return `&lt;div class=&quot;wj-photo-block ${i%2?&#x27;wj-photo-olive&#x27;:&#x27;&#x27;}&quot;&gt;${icon(m.type===&#x27;video&#x27;?&#x27;film&#x27;:&#x27;image&#x27;)}&lt;span class=&quot;wj-small&quot;&gt;${m.type===&#x27;video&#x27;?&#x27;Video memory&#x27;:&#x27;Photo memory&#x27;} · sample&lt;/span&gt;&lt;/div&gt;`;
+  }
+  function taggedMemories(owner,ownerType){
+    const sourceName=ownerType===&#x27;occasion&#x27;?title(owner):wine(owner.wineId).name+&#x27; · &#x27;+wine(owner.wineId).year;
+    return owner.media.map((m,i)=&gt;({...m,ownerType,ownerId:owner.id,ownerIndex:i,sourceName,sourceDate:owner.date}));
+  }
+  function uniqueMemories(items){
+    const seen=new Set();return items.filter(m=&gt;{const key=m.src||m.id||(m.ownerType+&#x27;:&#x27;+m.ownerId+&#x27;:&#x27;+m.ownerIndex);if(seen.has(key))return false;seen.add(key);return true;});
+  }
+  function occasionMemories(o,es){return uniqueMemories([...taggedMemories(o,&#x27;occasion&#x27;),...es.flatMap(e=&gt;taggedMemories(e,&#x27;entry&#x27;))]);}
+  function winePhotoHighlights(id){
+    if(!signedIn||captureOccasion)return &#x27;&#x27;;
+    const es=ownEntries(id),occasionIds=new Set(es.map(e=&gt;e.occasionId).filter(Boolean));
+    const photos=uniqueMemories([...occasions.filter(o=&gt;occasionIds.has(o.id)).flatMap(o=&gt;taggedMemories(o,&#x27;occasion&#x27;)),...es.flatMap(e=&gt;taggedMemories(e,&#x27;entry&#x27;))].filter(m=&gt;m.type===&#x27;photo&#x27;).sort((a,b)=&gt;b.sourceDate.localeCompare(a.sourceDate)));
+    if(!photos.length)return &#x27;&#x27;;
+    const expanded=expandedWineMemories===id,shown=expanded?photos:photos.slice(0,3);
+    return `&lt;section class=&quot;wj-memories-section wj-wine-highlights&quot;&gt;&lt;div class=&quot;wj-section-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Moments with this wine&lt;/h2&gt;&lt;p class=&quot;wj-subtitle&quot;&gt;Photos from your entries and the occasions you shared.&lt;/p&gt;&lt;/div&gt;${photos.length&gt;3?textButton(expanded?&#x27;Show highlights&#x27;:&#x27;View all &#x27;+photos.length+&#x27; photos&#x27;,&#x27;toggle-wine-memories&#x27;,&#x27;aria-expanded=&quot;&#x27;+expanded+&#x27;&quot;&#x27;):&#x27;&#x27;}&lt;/div&gt;&lt;div class=&quot;wj-memory-grid&quot;&gt;${shown.map((m,i)=&gt;{const action=m.ownerType===&#x27;occasion&#x27;?&#x27;occasion&#x27;:&#x27;edit-entry&#x27;;return `&lt;figure class=&quot;wj-memory&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;wj-memory-open&quot; data-a=&quot;${action}&quot; data-id=&quot;${m.ownerId}&quot; aria-label=&quot;Open ${esc(m.sourceName)}: ${esc(m.name)}&quot;&gt;${memoryPreview(m,i)}&lt;/button&gt;&lt;figcaption&gt;${esc(m.name)}&lt;/figcaption&gt;&lt;p class=&quot;wj-memory-origin&quot;&gt;${date(m.sourceDate)}&lt;/p&gt;${textButton((m.ownerType===&#x27;occasion&#x27;?icon(&#x27;notebook&#x27;):&#x27;&#x27;)+esc(m.ownerType===&#x27;occasion&#x27;?m.sourceName:&#x27;Open wine entry&#x27;),action,&#x27;data-id=&quot;&#x27;+m.ownerId+&#x27;&quot;&#x27;)}&lt;/figure&gt;`;}).join(&#x27;&#x27;)}&lt;/div&gt;&lt;/section&gt;`;
+  }
+  function uploadField(context){return `&lt;label class=&quot;wj-upload&quot;&gt;${icon(&#x27;images&#x27;)} Add photos or a short video&lt;input type=&quot;file&quot; accept=&quot;image/jpeg,image/png,image/webp,video/mp4,video/webm&quot; multiple data-files=&quot;${context}&quot;${mediaBusy?&#x27; disabled&#x27;:&#x27;&#x27;}&gt;&lt;/label&gt;&lt;p class=&quot;wj-small&quot;&gt;Local preview · images up to 8 MB, videos up to 25 MB.&lt;/p&gt;${mediaBusy?&#x27;&lt;p role=&quot;status&quot; class=&quot;wj-small&quot;&gt;Preparing your memories…&lt;/p&gt;&#x27;:&#x27;&#x27;}${mediaError?&#x27;&lt;p role=&quot;alert&quot; class=&quot;wj-error&quot;&gt;&#x27;+esc(mediaError)+&#x27;&lt;/p&gt;&#x27;:&#x27;&#x27;}`;}
+  function loadMemories(input){
+    const target=input.dataset.files===&#x27;entry&#x27;?draft:occasion(selectedOccasion),files=Array.from(input.files||[]),originScreen=screen;
+    if(!target||!files.length||mediaBusy)return;
+    const supported=f=&gt;[&#x27;image/jpeg&#x27;,&#x27;image/png&#x27;,&#x27;image/webp&#x27;,&#x27;video/mp4&#x27;,&#x27;video/webm&#x27;].includes(f.type)&amp;&amp;f.size&lt;=(f.type.startsWith(&#x27;video/&#x27;)?25:8)*1024*1024;
+    if(files.some(f=&gt;!supported(f))){mediaError=&#x27;Choose JPEG, PNG, or WebP images up to 8 MB, or MP4/WebM videos up to 25 MB. Try a smaller or supported file.&#x27;;render();return;}
+    mediaBusy=true;mediaError=&#x27;&#x27;;render();
+    Promise.all(files.map(f=&gt;new Promise((resolve,reject)=&gt;{const r=new FileReader();r.onerror=()=&gt;reject(new Error(&#x27;Could not read this file.&#x27;));r.onload=()=&gt;resolve({name:f.name,type:f.type.startsWith(&#x27;video/&#x27;)?&#x27;video&#x27;:&#x27;photo&#x27;,src:String(r.result)});r.readAsDataURL(f);}))).then(items=&gt;{if(target===draft||occasions.includes(target)){const seen=new Set(target.media.map(m=&gt;m.src).filter(Boolean));target.media.push(...items.filter(m=&gt;{if(seen.has(m.src))return false;seen.add(m.src);return true;}));}}).catch(()=&gt;{mediaError=&#x27;Could not read these memories. Please try again.&#x27;;}).finally(()=&gt;{mediaBusy=false;if(screen===originScreen)render();});
+  }
+  root.addEventListener(&#x27;click&#x27;,function(event){
+    const b=event.target.closest(&#x27;button[data-a]&#x27;);if(!b)return;
+    if(b.dataset.a===&#x27;rating-back&#x27;){event.stopImmediatePropagation();go(&#x27;wine&#x27;);}
+    if(b.dataset.a===&#x27;toggle-wine-memories&#x27;){event.stopImmediatePropagation();expandedWineMemories=expandedWineMemories===selectedWine?&#x27;&#x27;:selectedWine;render();}
+    if(b.dataset.a===&#x27;auth-back&#x27;){event.stopImmediatePropagation();if(pending===&#x27;entry&#x27;)go(&#x27;entry&#x27;);else if(pending===&#x27;occasion&#x27;)go(&#x27;occasion-form&#x27;);else go(&#x27;browse&#x27;);}
+    if(b.dataset.a===&#x27;remove-memory&#x27;){event.stopImmediatePropagation();const owner=b.dataset.ctx===&#x27;entry&#x27;?draft:occasion(selectedOccasion);owner.media.splice(Number(b.dataset.index),1);render();}
+  });
+
+  root.addEventListener(&#x27;click&#x27;,event=&gt;{const submit=event.target.closest(&#x27;button[type=&quot;submit&quot;]&#x27;);if(submit){event.preventDefault();submitPreview(submit.form);}},true);
+  root.addEventListener(&#x27;keydown&#x27;,event=&gt;{if(event.key===&#x27;Enter&#x27;&amp;&amp;event.target.tagName===&#x27;INPUT&#x27;&amp;&amp;event.target.form&amp;&amp;event.target.type!==&#x27;file&#x27;){event.preventDefault();submitPreview(event.target.form);}});
+  const navigationActions=new Set([&#x27;library&#x27;,&#x27;browse&#x27;,&#x27;guides&#x27;,&#x27;occasions&#x27;,&#x27;find&#x27;,&#x27;account&#x27;,&#x27;auth&#x27;,&#x27;signout&#x27;,&#x27;new-occasion&#x27;]);
+  function clearCapture(){mediaError=&#x27;&#x27;;draft=null;occasionDraft=null;inlineOccasion=null;manualDraft=null;manualWine=null;captureOccasion=&#x27;&#x27;;placePicker=null;pending=null;}
+  function navigateAction(a){clearCapture();if(a===&#x27;find&#x27;)findStart();else if(a===&#x27;new-occasion&#x27;)newOccasion();else if(a===&#x27;signout&#x27;){signedIn=false;go(&#x27;library&#x27;);}else go(a);}
+  root.addEventListener(&#x27;click&#x27;,function(event){
+    const b=event.target.closest(&#x27;button[data-a]&#x27;);if(!b)return;const a=b.dataset.a,id=b.dataset.id;notice=&#x27;&#x27;;
+    if(navigationActions.has(a)){if(draft||occasionDraft||manualDraft){queuedNavigation=a;render();return;}navigateAction(a);return;}
+    if(a===&#x27;keep-editing&#x27;){queuedNavigation=null;render();}
+    else if(a===&#x27;discard-navigation&#x27;){const dest=queuedNavigation;queuedNavigation=null;navigateAction(dest);}
+    else if(a===&#x27;wine&#x27;){wineReturn=screen===&#x27;find&#x27;?&#x27;find&#x27;:screen===&#x27;occasion&#x27;?&#x27;occasion&#x27;:&#x27;library&#x27;;selectedWine=id;go(&#x27;wine&#x27;);}
+    else if(a===&#x27;return-wine&#x27;)go(wineReturn);
+    else if(a===&#x27;browse-wine&#x27;){captureOccasion=&#x27;&#x27;;wineReturn=&#x27;browse&#x27;;selectedWine=id;go(&#x27;wine&#x27;);}
+    else if(a===&#x27;log&#x27;)startEntry(id,captureOccasion);
+    else if(a===&#x27;cancel-capture&#x27;)cancelCapture();
+    else if(a===&#x27;context-find&#x27;)go(&#x27;find&#x27;);
+    else if(a===&#x27;edit-entry&#x27;){mediaError=&#x27;&#x27;;draft=copy(entries.find(e=&gt;e.id===id));selectedWine=draft.wineId;captureOccasion=screen===&#x27;occasion&#x27;?selectedOccasion:&#x27;&#x27;;inlineOccasion=null;guideOpen=false;entryDetailsOpen=true;go(&#x27;entry&#x27;);}
+    else if(a===&#x27;guide&#x27;){guideOpen=!guideOpen;render();}
+    else if(a===&#x27;descriptor&#x27;){const v=b.dataset.value;draft.descriptors=draft.descriptors.includes(v)?draft.descriptors.filter(x=&gt;x!==v):draft.descriptors.concat(v);render();}
+    else if(a===&#x27;method&#x27;){method=id;photoResults=false;scanFailure=false;render();}
+    else if(a===&#x27;sample-scan&#x27;){selectedWine=&#x27;cr23&#x27;;wineReturn=&#x27;find&#x27;;go(&#x27;wine&#x27;);}
+    else if(a===&#x27;sample-photo&#x27;){photoResults=true;catalogQuery=&#x27;Calculated Risk&#x27;;render();}
+    else if(a===&#x27;scan-failure&#x27;){scanFailure=true;render();}
+    else if(a===&#x27;manual&#x27;){manualDraft=manualDraft||{name:&#x27;&#x27;,producer:&#x27;&#x27;,vintage:&#x27;&#x27;,coverData:&#x27;&#x27;,error:&#x27;&#x27;};go(&#x27;manual&#x27;);}
+    else if(a===&#x27;manual-back&#x27;){manualDraft=null;manualWine=null;go(&#x27;find&#x27;);}
+    else if(a===&#x27;cover-remove&#x27;){manualDraft.coverData=&#x27;&#x27;;manualDraft.error=&#x27;&#x27;;render();}
+    else if(a===&#x27;other-vintage&#x27;){method=&#x27;search&#x27;;catalogQuery=&#x27;Barrel Selection&#x27;;go(&#x27;find&#x27;);}
+    else if(a===&#x27;clear-filters&#x27;){query=&#x27;&#x27;;filter=&#x27;All&#x27;;render();}
+    else if(a===&#x27;occasion&#x27;){selectedOccasion=id;go(&#x27;occasion&#x27;);}
+    else if(a===&#x27;edit-occasion&#x27;)newOccasion(true);
+    else if(a===&#x27;occasion-add-wine&#x27;)findStart(selectedOccasion);
+    else if(a===&#x27;draft-add-wine&#x27;){placePicker=null;findStart(&#x27;@draft&#x27;);}
+    else if(a===&#x27;cancel-occasion&#x27;){const id=occasionDraft.id;occasionDraft=null;placePicker=null;if(id){selectedOccasion=id;go(&#x27;occasion&#x27;);}else go(&#x27;occasions&#x27;);}
+    else if(a===&#x27;edit-staged&#x27;){draft=copy(occasionDraft.newEntries.find(e=&gt;e._key===id));selectedWine=draft.wineId;captureOccasion=&#x27;@draft&#x27;;entryDetailsOpen=true;go(&#x27;entry&#x27;);}
+    else if(a===&#x27;remove-staged&#x27;){occasionDraft.newEntries=occasionDraft.newEntries.filter(e=&gt;e._key!==id);render();}
+    else if(a===&#x27;inline-new&#x27;){inlineOccasion={title:&#x27;&#x27;,date:draft.date,time:&#x27;&#x27;,place:draft.place,placeRef:copy(draft.placeRef||null),notes:&#x27;&#x27;,media:[]};placePicker=null;render();}
+    else if(a===&#x27;inline-cancel&#x27;){inlineOccasion=null;placePicker=null;render();}
+    else if(a===&#x27;place-open&#x27;){placePicker={ctx:b.dataset.ctx,query:&#x27;&#x27;};render();}
+    else if(a===&#x27;place-close&#x27;){placePicker=null;render();}
+    else if(a===&#x27;place-select&#x27;){const p=samplePlaces.find(p=&gt;p.id===id),d=locationOwner(placePicker.ctx);d.place=p.name;d.placeRef={id:p.id,source:&#x27;sample&#x27;,address:p.address};placePicker=null;render();}
+    else if(a===&#x27;rating&#x27;)go(&#x27;rating&#x27;);
+    else if(a===&#x27;browse-tab&#x27;){browseTab=id;go(&#x27;browse&#x27;);}
+    else if(a===&#x27;browse-clear&#x27;){browseQuery=&#x27;&#x27;;render();}
+    else if(a===&#x27;browse-related&#x27;){browseQuery=b.dataset.query;browseTab=&#x27;catalog&#x27;;go(&#x27;browse&#x27;);}
+    else if(a===&#x27;open-guide&#x27;){selectedGuide=id;go(&#x27;guide-article&#x27;);}
+  });
+  root.addEventListener(&#x27;input&#x27;,function(event){const el=event.target;
+    if(el.dataset.draft&amp;&amp;draft)draft[el.dataset.draft]=el.value;
+    if(el.dataset.occasion&amp;&amp;occasionDraft){occasionDraft[el.dataset.occasion]=el.value;updateContextWarning();}
+    if(el.dataset.inline&amp;&amp;inlineOccasion)inlineOccasion[el.dataset.inline]=el.value;
+    if(el.dataset.manual&amp;&amp;manualDraft)manualDraft[el.dataset.manual]=el.value;
+    if(el.dataset.location){const d=locationOwner(el.dataset.location);d.place=el.value;d.placeRef=null;const hint=el.closest(&#x27;.wj-location&#x27;).querySelector(&#x27;.wj-row .wj-small&#x27;);if(hint)hint.textContent=&#x27;Use any personal label.&#x27;;updateContextWarning();}
+    if(el.hasAttribute(&#x27;data-place-query&#x27;)){placePicker.query=el.value;root.querySelector(&#x27;#wj-place-results&#x27;).innerHTML=placeResults();}
+    if(el.dataset.live===&#x27;library&#x27;){query=el.value;root.querySelector(&#x27;#wj-library-results&#x27;).innerHTML=libraryCards();refreshIcons();}
+    if(el.dataset.live===&#x27;catalog&#x27;){catalogQuery=el.value;root.querySelector(&#x27;#wj-catalog-results&#x27;).innerHTML=catalogResults();refreshIcons();}
+    if(el.dataset.live===&#x27;browse&#x27;){browseQuery=el.value;root.querySelector(&#x27;#wj-browse-results&#x27;).innerHTML=browseCards();refreshIcons();}
+  });
+  root.addEventListener(&#x27;change&#x27;,function(event){const el=event.target;
+    if(el.dataset.live===&#x27;filter&#x27;||el.dataset.live===&#x27;sort&#x27;){if(el.dataset.live===&#x27;filter&#x27;)filter=el.value;else sort=el.value;root.querySelector(&#x27;#wj-library-results&#x27;).innerHTML=libraryCards();refreshIcons();}
+    if(el.dataset.draft&amp;&amp;draft){draft[el.dataset.draft]=el.value;if(el.dataset.draft===&#x27;occasionId&#x27;)render();}
+    if(el.dataset.occasion&amp;&amp;occasionDraft){occasionDraft[el.dataset.occasion]=el.value;updateContextWarning();}
+    if(el.dataset.inline&amp;&amp;inlineOccasion)inlineOccasion[el.dataset.inline]=el.value;
+    if(el.dataset.existing){const id=el.dataset.existing;occasionDraft.entryIds=el.checked?Array.from(new Set(occasionDraft.entryIds.concat(id))):occasionDraft.entryIds.filter(v=&gt;v!==id);updateContextWarning();}
+    if(el.hasAttribute(&#x27;data-cover&#x27;)){const f=el.files&amp;&amp;el.files[0],target=manualDraft;if(!f||!target)return;if(![&#x27;image/jpeg&#x27;,&#x27;image/png&#x27;,&#x27;image/webp&#x27;].includes(f.type)||f.size&gt;8*1024*1024){target.error=&#x27;Choose a JPEG, PNG, or WebP under 8 MB for this preview.&#x27;;render();return;}const reader=new FileReader();reader.onload=()=&gt;{if(manualDraft!==target)return;target.coverData=String(reader.result);target.error=&#x27;&#x27;;if(screen===&#x27;manual&#x27;)render();};reader.onerror=()=&gt;{if(manualDraft!==target)return;target.error=&#x27;Could not read this photo. Try another file.&#x27;;if(screen===&#x27;manual&#x27;)render();};reader.readAsDataURL(f);}
+    if(el.dataset.files)loadMemories(el);
+  });
+  root.addEventListener(&#x27;submit&#x27;,function(event){const form=event.target;event.preventDefault();
+    if(form.dataset.form===&#x27;entry&#x27;){if(captureOccasion===&#x27;@draft&#x27;)saveEntry();else if(!signedIn){pending=&#x27;entry&#x27;;go(&#x27;auth&#x27;);}else saveEntry();}
+    else if(form.dataset.form===&#x27;occasion&#x27;){if(!signedIn){pending=&#x27;occasion&#x27;;go(&#x27;auth&#x27;);}else saveOccasion();}
+    else if(form.dataset.form===&#x27;auth&#x27;){signedIn=true;if(pending===&#x27;entry&#x27;)saveEntry();else if(pending===&#x27;occasion&#x27;)saveOccasion();else go(&#x27;library&#x27;);}
+    else if(form.dataset.form===&#x27;rating&#x27;){const v=Number(new FormData(form).get(&#x27;rating&#x27;));if(score(selectedWine)!==v){if(!ratings[selectedWine])ratings[selectedWine]=[];ratings[selectedWine].push({value:v,date:TODAY,time:new Date().toLocaleTimeString(&#x27;en-GB&#x27;,{hour:&#x27;2-digit&#x27;,minute:&#x27;2-digit&#x27;})});}screen=&#x27;wine&#x27;;notice=&#x27;Your current rating is updated. Past ratings are kept.&#x27;;render();}
+    else if(form.dataset.form===&#x27;manual&#x27;){const d=manualDraft,name=d.name.trim();if(!name){d.error=&#x27;Add the wine name or wording from its label.&#x27;;render();return;}const id=&#x27;w&#x27;+(++uid);manualWine={id,brand:d.producer.trim()||&#x27;Personal wine record&#x27;,name,grape:&#x27;Grape not added&#x27;,region:&#x27;Origin not added&#x27;,year:d.vintage.trim()||&#x27;Vintage unknown&#x27;,type:&#x27;Unknown&#x27;,mark:&#x27;WJ&#x27;,art:&#x27;&#x27;,family:id,url:&#x27;&#x27;,coverData:d.coverData,ownerOnly:true};startEntry(id,captureOccasion);}
+  });
+  root.addEventListener(&#x27;toggle&#x27;,function(event){if(event.target.dataset.optional===&#x27;entry&#x27;)entryDetailsOpen=event.target.open;},true);
+  function updateContextWarning(){const target=root.querySelector(&#x27;#wj-context-warning&#x27;);if(!target||!occasionDraft)return;const different=entries.some(e=&gt;occasionDraft.entryIds.includes(e.id)&amp;&amp;(e.date!==occasionDraft.date||(e.place&amp;&amp;occasionDraft.place&amp;&amp;e.place!==occasionDraft.place)));target.innerHTML=different?&#x27;&lt;p class=&quot;wj-warning&quot;&gt;Some selected entries have a different drinking date or location. Their original details will be kept.&lt;/p&gt;&#x27;:&#x27;&#x27;;}
+  function applyDesign(){root.style.setProperty(&#x27;--wj-paper&#x27;,design.paper===&#x27;Cream&#x27;?&#x27;#f7f3eb&#x27;:&#x27;#ffffff&#x27;);root.style.setProperty(&#x27;--wj-card&#x27;,design.paper===&#x27;Cream&#x27;?&#x27;#fffdf8&#x27;:&#x27;#ffffff&#x27;);root.style.setProperty(&#x27;--wj-burgundy&#x27;,design.burgundy);root.style.setProperty(&#x27;--wj-olive&#x27;,design.olive);root.style.setProperty(&#x27;--wj-brown&#x27;,design.brown);root.classList.toggle(&#x27;wj-phone&#x27;,design.frame===&#x27;Phone&#x27;);root.classList.toggle(&#x27;wj-list&#x27;,design.layout===&#x27;List&#x27;);}
+  applyDesign();render();
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:applyDesign});tweak.addSelect(design,&#x27;paper&#x27;,{label:&#x27;Light surface&#x27;,options:[&#x27;Cream&#x27;,&#x27;White&#x27;]});tweak.addColorPicker(design,&#x27;burgundy&#x27;,{label:&#x27;Burgundy&#x27;,reference:&#x27;--wj-burgundy&#x27;});tweak.addColorPicker(design,&#x27;olive&#x27;,{label:&#x27;Olive&#x27;,reference:&#x27;--wj-olive&#x27;});tweak.addColorPicker(design,&#x27;brown&#x27;,{label:&#x27;Branch brown&#x27;,reference:&#x27;--wj-brown&#x27;});tweak.addSelect(design,&#x27;frame&#x27;,{label:&#x27;Screen size&#x27;,options:[&#x27;Web&#x27;,&#x27;Phone&#x27;]});tweak.addSelect(design,&#x27;layout&#x27;,{label:&#x27;Wine library&#x27;,options:[&#x27;Cards&#x27;,&#x27;List&#x27;]});}
+})();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) =&gt; {
+    lastPointerWasTouch =
+      event.type === &quot;pointerdown&quot; &amp;&amp; event.pointerType === &quot;touch&quot;;
+  };
+  const handleTouchClick = (event) =&gt; {
+    const isTouch = event.pointerType === &quot;touch&quot; || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch &amp;&amp; activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() =&gt; {
+      if (activeTrigger === trigger &amp;&amp; !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) =&gt; {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerdown&quot;, handlePointer);
+    document.removeEventListener(&quot;pointercancel&quot;, handlePointer);
+    document.removeEventListener(&quot;click&quot;, handleTouchClick);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerdown&quot;, handlePointer);
+  document.addEventListener(&quot;pointercancel&quot;, handlePointer);
+  document.addEventListener(&quot;click&quot;, handleTouchClick);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-tabs&quot;&gt;
+(() =&gt; {
+  const selector = &#x27;.nav[role=&quot;tablist&quot;] [role=&quot;tab&quot;]&#x27;;
+  const disabled = &#x27;:disabled,[aria-disabled=&quot;true&quot;]&#x27;;
+  const selectTab = (selected) =&gt; {
+    const panelId = selected.getAttribute(&quot;aria-controls&quot;);
+    for (const tab of selected.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;)) {
+      const active = tab === selected;
+      tab.classList.toggle(&quot;active&quot;, active);
+      tab.setAttribute(&quot;aria-selected&quot;, String(active));
+      const id = tab.getAttribute(&quot;aria-controls&quot;);
+      const panel = id &amp;&amp; document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden &amp;&amp; selected.id) {
+          panel.setAttribute(&quot;aria-labelledby&quot;, selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) =&gt; {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === &quot;click&quot;) {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;),
+    ).filter((candidate) =&gt; !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === &quot;ArrowRight&quot; || event.key === &quot;ArrowDown&quot;) {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === &quot;ArrowLeft&quot; || event.key === &quot;ArrowUp&quot;) {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === &quot;Home&quot;) {
+      next = 0;
+    } else if (event.key === &quot;End&quot;) {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll(&#x27;.nav[role=&quot;tablist&quot;]&#x27;)) {
+    const selected =
+      list.querySelector(&#x27;[role=&quot;tab&quot;][aria-selected=&quot;true&quot;]&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;].active&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;]&#x27;);
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener(&quot;click&quot;, interact);
+  document.addEventListener(&quot;keydown&quot;, interact);
+  window.addEventListener(&quot;pagehide&quot;, () =&gt; {
+    document.removeEventListener(&quot;click&quot;, interact);
+    document.removeEventListener(&quot;keydown&quot;, interact);
+  }, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

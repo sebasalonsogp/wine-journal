@@ -1,0 +1,16 @@
+{
+  "passed": [
+    "Wine + date creates one standalone entry; later notes update that same entry.",
+    "Current release rating, retained revision history, no duplicate revisions or drinking entries, rating sort.",
+    "Inline occasion cancel/save preserves quick notes and independent drinking date and place.",
+    "Saved occasion -> identify a new wine -> log -> return to the same scrapbook.",
+    "Occasion draft -> multiple wines including manual cover; parent retained, one final save.",
+    "Photo type errors, local preview, retained entry media, and remove memory.",
+    "Place picker selection can be replaced by a private label.",
+    "Guest lookup hides private history; sign-in back/resumption preserves the entry.",
+    "Browse, future discovery concepts, guides, and related catalog filters remain connected.",
+    "Nine screen states at 320/390/768/1024/1440, keyboard activation, no runtime errors or external requests."
+  ],
+  "errors": [],
+  "externalRequests": []
+}
