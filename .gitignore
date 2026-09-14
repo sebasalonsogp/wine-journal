@@ -1,0 +1,46 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# JavaScript / Next.js
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.uv-cache/
+build/
+
+# Generated reports and local service state
+coverage/
+.coverage
+htmlcov/
+playwright-report/
+test-results/
+supabase/.temp/
+supabase/.branches/
+*.log
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.vercel/
+
+# Private journal data never belongs in Git
+uploads/
+backups/

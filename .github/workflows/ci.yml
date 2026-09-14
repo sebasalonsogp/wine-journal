@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run generate:api
+      - run: git diff --exit-code -- src/lib/api/schema.d.ts
+      - run: npm run build
+      - run: npm audit --audit-level=high
+
+  api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.13"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - run: uv sync --locked
+      - run: uv run --locked ruff check . ../../scripts/export_openapi.py
+      - run: uv run --locked ruff format --check . ../../scripts/export_openapi.py
+      - run: uv run --locked mypy
+      - run: uv run --locked pytest
+      - run: uv build
+      - run: uv run --locked python ../../scripts/export_openapi.py
+      - run: git diff --exit-code -- ../../contracts/openapi.json
+      - run: uv run --locked pip-audit --skip-editable

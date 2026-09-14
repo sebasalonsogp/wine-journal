@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Core tokens from the reviewed Stitch design system. */
+@theme {
+  --color-background: #f7f3eb;
+  --color-foreground: #332c28;
+  --color-surface: #fffdf8;
+  --color-muted-foreground: #70665c;
+  --color-primary: #722c40;
+  --color-primary-foreground: #fffdf8;
+  --color-secondary: #555e3f;
+  --color-secondary-foreground: #fffdf8;
+  --color-accent: #795f4b;
+  --color-border: #ddd5c9;
+  --font-sans: "Segoe UI", Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  line-height: 1.55;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
