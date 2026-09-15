@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: proposed phased execution plan for review, September 14, 2026. This replans the same project backlog after the completed scaffold. **59 tasks remain; no product implementation is started by this planning change.** The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 14, 2026. **Three of 59 tasks are complete; 56 remain, including partially completed F02.** F01/F03/F04 form the first backend checkpoint; the web sign-in UI is still pending. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -15,7 +15,7 @@ Before executing a task, list its concrete files and test cases. If it requires 
 - [x] Architecture, story map, Stitch sources and the connected walkthrough are versioned in the private [repository](https://github.com/sebasalonsogp/wine-journal).
 - [x] Local lint/types/builds, two API smoke tests, browser smoke and the [initial Linux CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34895334930) passed.
 
-Local Docker/Supabase startup, real authentication, database tables, all journal features and hosted application deployment remain unimplemented. Existing tests verify the scaffold, not those capabilities. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
+This records the original scaffold milestone. Subsequent access/database evidence is recorded under F01–F04 and in the [access checkpoint](access-checkpoint.md). The private journal and hosted deployment remain unimplemented. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
 
 ## Early feasibility lane: Start alongside Phase 1
 
@@ -157,16 +157,16 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Milestone:** An owner signs in to a real private shell; guest access remains available.
 
 <a id="f01"></a>
-### F01: Settle the first sign-in flow
+### F01: Settle the sign-in methods
 
-- [ ] **Outcome:** Select one manageable authentication method.
+- [x] **Outcome:** Select managed email-code sign-in and the requested social providers.
 
 **Acceptance:**
 
-- Confirm email OTP/magic link or one OAuth provider after checking delivery/setup; define recovery and allowed return destinations.
+- Confirm email OTP plus Google, Apple and Facebook through Supabase; define recovery, provider registration prerequisites and allowed return destinations.
 - Record the choice in an ADR and update the sign-in UX; keep lookup guest-accessible and saving authenticated.
 
-**Verify:** Walk new-user, returning-user, expired-link/session, and cancel/return scenarios; record the user's choice before dependent integration.
+**Verify:** Record the user's choice and walk new-user, returning-user, expired-code/session and cancel/return scenarios. Implemented evidence: [ADR 0006](../docs/decisions/0006-authentication-and-public-repository.md), provider setup boundaries, and a successful local two-account OTP/API smoke. Web recovery/callback execution remains F05/F06.
 
 **Dependencies:** [BASE](#base). **Size:** S.
 
@@ -186,6 +186,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Verify:** Run migration from empty Postgres and verify runtime grants; CI uses disposable Postgres, never hosted personal data.
 
+**Progress:** F02a schema/roles/migrations and F02b isolated integration/CI verification passed. The [CI run](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed all 38 API tests. F02c remains open: resolve Docker's ignored default port-binding option and verify the full Supabase stack stays on loopback. The guarded stack is stopped with volumes retained. F03/F04 used the completed data/identity foundations; F05 still needs this local-startup follow-up.
+
 **Dependencies:** [BASE](#base). **Size:** M.
 
 **Primary change areas:** apps/api/src/wine_journal/core and accounts models; apps/api/migrations; apps/api/tests/integration; .github/workflows/ci.yml.
@@ -195,7 +197,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f03"></a>
 ### F03: Verify caller identity
 
-- [ ] **Outcome:** Create the reusable FastAPI authentication boundary.
+- [x] **Outcome:** Create the reusable FastAPI authentication boundary.
 
 **Acceptance:**
 
@@ -210,12 +212,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** AC-01, AC-03.
 
-**Checkpoint after F01, F02, F03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after F01, F02, F03:** Identity/database tests and the real local OTP smoke passed. F02c's safe persistent startup remains open and is explicitly recorded, not hidden by the green isolated API suite.
 
 <a id="f04"></a>
 ### F04: Resolve the application account
 
-- [ ] **Outcome:** Expose the first real authenticated API operation.
+- [x] **Outcome:** Expose the first real authenticated API operation.
 
 **Acceptance:**
 
@@ -223,6 +225,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Apply the agreed JSON/error/request-ID conventions and required CORS methods, including PUT; generate the implemented OpenAPI contract.
 
 **Verify:** Use two identities and concurrent bootstrap requests to prove uniqueness, no owner substitution, readable errors, and no account creation by GET; check browser preflight.
+
+**Evidence:** [CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed 38 API tests and web/contract checks; [secret checks](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468120) passed. Real local Supabase OTP tokens were accepted for two separate app accounts. [Checkpoint details](access-checkpoint.md) distinguish backend verification from pending browser work.
 
 **Dependencies:** [F02](#f02), [F03](#f03). **Size:** M.
 

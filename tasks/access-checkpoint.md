@@ -20,7 +20,7 @@ F02 was split into configuration/model/migration work and provisioning/integrati
 - Full history scan passed with the exact reviewed documentation false-positive exception. The staged diff and tracked-file checks are required again before publishing.
 - Local startup guard was exercised on the real host: it detected non-loopback Supabase ports and stopped the stack, retaining volumes. Unit tests also cover allowed loopback, non-loopback and inspection-failure cleanup.
 
-GitHub CI results and final task completion are recorded in the delivery checklist after the branch checks finish. Local tests do not substitute for that evidence.
+[GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed for code commit `965ba22`: all 38 API tests, web checks/build and generated contract checks. [Secret checks](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468120) also passed. F01/F03/F04 are complete; F02 remains partial until safe persistent local Supabase startup is usable. The [pull request](https://github.com/sebasalonsogp/wine-journal/pull/1) contains the reviewed commits.
 
 ## Remaining work
 
