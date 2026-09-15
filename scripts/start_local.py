@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from configure_local import write_new
@@ -20,13 +21,17 @@ def main() -> None:
     cli = [npx, "--yes", "supabase@2.117.0"]
     key_path = ROOT / "supabase/signing_keys.json"
     if not key_path.exists():
-        key = subprocess.run(
-            cli + ["gen", "signing-key", "--algorithm", "ES256"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        print("Generating a local signing key; key output is suppressed.", flush=True)
+        # The CLI reads config before generating. Our config references this not-yet
+        # existing key, so generate outside the project to avoid a bootstrap cycle.
+        with tempfile.TemporaryDirectory(prefix="wine-journal-keygen-") as directory:
+            key = subprocess.run(
+                cli + ["gen", "signing-key", "--algorithm", "ES256"],
+                cwd=directory,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
         write_new(key_path, json.dumps([json.loads(key.stdout)]) + "\n")
     network = subprocess.run(
         ["docker", "network", "inspect", NETWORK], capture_output=True, text=True
