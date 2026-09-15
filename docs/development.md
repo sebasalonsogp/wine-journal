@@ -21,15 +21,17 @@ From `apps/api`:
 
 ```sh
 uv sync --locked
-uv run --locked ruff check . ../../scripts/export_openapi.py
-uv run --locked ruff format --check . ../../scripts/export_openapi.py
+uv run --locked ruff check --config pyproject.toml . ../../scripts
+uv run --locked ruff format --check --config pyproject.toml . ../../scripts
 uv run --locked mypy
-uv run --locked pytest
+uv run --locked python ../../scripts/run_api_tests.py
 uv build
 uv run --locked pip-audit --skip-editable
 ```
 
-The two HTTP checks cover liveness without external services and browser-origin handling. They do not establish authentication, database isolation, or production readiness. Unit tests, Postgres integration tests, and Playwright user journeys will be added with real domain behavior. CORS is browser policy, not authorization.
+The full runner creates a disposable Postgres 17 container, generates credentials in memory, binds it explicitly to loopback, verifies migrations/roles and runs the API tests. It removes only its own container afterward. No hosted secrets are required, including on fork pull requests. Run `uv run --locked pytest` for fast checks without Docker; database-dependent cases explicitly skip in that mode, so it does not replace the full runner. Current coverage includes JWT claims/signatures/rotation, account isolation/concurrency, migration downgrade/upgrade, privilege denial, safe error responses and tracked-secret-file checks. CORS is browser policy, not authorization.
+
+With a verified local Supabase stack, `uv run --locked python ../../scripts/smoke_local_auth.py` performs two real email-code sign-ins via the local Mailpit inbox and sends their signed tokens through the account API. It prints no codes or tokens, refuses a hosted issuer, and leaves synthetic local identities for inspection. It is not a browser journey; F05–F07 still own the UI and browser automation.
 
 ## Contracts
 
@@ -45,7 +47,7 @@ Review and commit changes to both generated files. FastAPI is the source of trut
 
 ## CI and dependencies
 
-GitHub Actions runs web and API checks separately on pushes to `main` and pull requests. Actions are pinned to verified commit revisions. No deployment, paid service, or branch-protection setting is configured by this scaffold.
+GitHub Actions runs web and API checks separately on pushes to `main` and pull requests. A separate workflow checks tracked credential paths and complete Git history with redacted Gitleaks output. Actions and the scanner download are pinned to verified revisions/checksums. Secret scanning and push protection are enabled on GitHub. No deployment, paid service, or branch-protection ruleset has been configured.
 
 Use the committed `package-lock.json` and `uv.lock`. Update dependencies deliberately and run checks before committing the new locks. The generator-compatible ESLint 9 release currently produces an upstream end-of-support warning; Next's bundled import/React/accessibility plugins still declare ESLint 9 compatibility. Upgrade the lint stack together once those plugins support ESLint 10. The current FastAPI/Starlette test stack also emits upstream deprecation warnings; they are not suppressed.
 
@@ -54,8 +56,8 @@ Use the committed `package-lock.json` and `uv.lock`. Update dependencies deliber
 - Keep routes thin and work in feature slices. Do not build all proposed database tables before the first usable flow.
 - Backend modules own their writes; Journal coordinates entry/occasion/rating transactions. Provider calls and media work stay outside those transactions.
 - `core` and web `lib` must not import business features. Shared components contain presentation, not private-record access.
-- The schema model is a design until implemented with migrations and isolation tests. Direct SQLAlchemy access will require explicit ownership enforcement.
+- Only accounts have been implemented from the broader schema design. Their API lookup is scoped to verified issuer/subject. Every later private-data slice must add its own ownership constraints and isolation tests; SQLAlchemy is not automatic RLS.
 - Secrets, local environments, uploads, and backups are ignored by Git. Configuration examples contain names and safe defaults only.
 - Keep active planning and design changes inside this repository. The parent workspace holds the earlier archive.
 
-Docker is needed only when starting the local Supabase stack. It was not running during initial scaffolding, so local Auth/Postgres/Storage integration is still unverified. See [Supabase setup](../supabase/README.md).
+Docker is needed for the full API suite and local Supabase. Local email Auth/Postgres were exercised; Storage and browser flows remain unimplemented. See [Supabase setup](../supabase/README.md) for the current Docker Desktop port-binding issue and the startup guard. The guard's refusal is not a successful running development environment.
