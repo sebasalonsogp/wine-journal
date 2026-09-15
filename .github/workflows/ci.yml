@@ -80,7 +80,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: apps/web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
@@ -92,6 +92,7 @@ jobs:
       - run: uv sync --project apps/api --locked
       - run: npm ci --prefix apps/web
       - name: Start disposable local Supabase with generated credentials
+        id: local_supabase
         run: uv run --project apps/api --locked python scripts/start_local.py
       - run: npm run build --prefix apps/web
       - name: Check browser assets against generated private values
@@ -109,5 +110,5 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
       - name: Stop local services without printing credentials
-        if: always()
+        if: always() && (steps.local_supabase.outcome == 'success' || steps.local_supabase.outcome == 'failure')
         run: npx --yes supabase@2.117.0 stop > /dev/null 2>&1
