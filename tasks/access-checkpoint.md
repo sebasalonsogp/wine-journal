@@ -1,6 +1,6 @@
 # Access foundation checkpoint
 
-September 14, 2026. This is the first backend checkpoint within Phase 1, not the finished sign-in experience or private journal.
+September 14, 2026. This records the initial backend checkpoint within Phase 1. The subsequent [web access checkpoint](web-access-checkpoint.md) resolves local startup and adds the sign-in/session experience; the private journal remains subsequent work.
 
 ## Implemented
 
@@ -20,12 +20,12 @@ F02 was split into configuration/model/migration work and provisioning/integrati
 - Full history scan passed with the exact reviewed documentation false-positive exception. The staged diff and tracked-file checks are required again before publishing.
 - Local startup guard was exercised on the real host: it detected non-loopback Supabase ports and stopped the stack, retaining volumes. Unit tests also cover allowed loopback, non-loopback and inspection-failure cleanup.
 
-[GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed for code commit `965ba22`: all 38 API tests, web checks/build and generated contract checks. [Secret checks](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468120) also passed. F01/F03/F04 are complete; F02 remains partial until safe persistent local Supabase startup is usable. The [pull request](https://github.com/sebasalonsogp/wine-journal/pull/1) contains the reviewed commits.
+[GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed for code commit `965ba22`: all 38 API tests, web checks/build and generated contract checks. [Secret checks](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468120) also passed. That initial checkpoint completed F01/F03/F04 and left F02's startup follow-up open; F02 is now resolved as recorded below. The [pull request](https://github.com/sebasalonsogp/wine-journal/pull/1) contains the reviewed commits.
 
 ## Remaining work
 
-F05–F07 still own the web sign-in shell, secure session/callback/recovery behavior, provider buttons and browser CI. Social providers need registered apps/credentials and live verification; none is claimed operational. No hosted services or real email delivery were configured.
+The subsequent [web access checkpoint](web-access-checkpoint.md) implements the F05/F06 sign-in shell and secure session/callback/recovery behavior and adds F07 browser automation. Social providers still need registered apps/credentials and live verification; none is claimed operational. No hosted services or real email delivery were configured.
 
-The current Docker Desktop/Supabase network-binding mismatch must be resolved before leaving the full local stack running; see [local setup](../supabase/README.md). The isolated API test runner uses an explicit loopback mapping and remains usable. Synthetic identities remain only in retained local volumes. Existing upstream test-client deprecations and a Windows pytest-cache ACL warning are recorded; checks are not disabled to hide them.
+Docker Desktop's localhost-default setting resolved the network-binding mismatch; see [local setup](../supabase/README.md). The isolated API runner continues to use an explicit loopback mapping. Synthetic identities remain only in retained local volumes. Existing upstream test-client deprecations and a Windows pytest-cache ACL warning are recorded; checks are not disabled to hide them.
 
-Provider/media feasibility tasks R01–R07 and the journal itself remain pending. The next implementation target is F05 after confirming a usable local Auth environment; the first useful journal remains J04.
+Provider/media feasibility tasks R01–R07 and the journal itself remain pending. The first useful journal target remains J04.

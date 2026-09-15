@@ -237,7 +237,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f05"></a>
 ### F05: Sign in to the journal shell
 
-- [ ] **Outcome:** Connect the first web flow to the real identity API.
+- [x] **Outcome:** Connect the first web flow to the real identity API.
 
 **Acceptance:**
 
@@ -255,7 +255,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f06"></a>
 ### F06: Handle expired and ended sessions
 
-- [ ] **Outcome:** Keep account transitions predictable and private.
+- [x] **Outcome:** Keep account transitions predictable and private.
 
 **Acceptance:**
 
@@ -275,7 +275,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f07"></a>
 ### F07: Automate the first authenticated journey
 
-- [ ] **Outcome:** Establish browser verification on a functioning flow.
+- [x] **Outcome:** Establish browser verification on a functioning flow.
 
 **Acceptance:**
 
@@ -283,6 +283,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Run focused API tests and the critical browser journey in CI, with no production keys or data; capture failure artifacts without tokens.
 
 **Verify:** Execute from a clean test environment and prove an unauthenticated private API call fails independently of the UI guard.
+
+**Evidence:** [Fresh GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34921267658) passed the real Supabase/browser job, all 39 API tests, web unit/build/type/lint checks and contract checks. See [web access checkpoint](web-access-checkpoint.md) for lifecycle, accessibility and configuration limits.
 
 **Dependencies:** [F06](#f06). **Size:** M.
 
@@ -1266,7 +1268,7 @@ This is the same work being replanned. Completed P1a is BASE; open product/resea
 | D6 architecture | Direction accepted in ADR 0005; F01, R07 and E04/E05 settle execution details |
 | D7 phased backlog | This plan is produced for review; completion of planning does not complete feature tasks |
 | P0 inputs | F01, R01–R07 and the decision gates |
-| P1a / P1b | BASE complete / F01–F07 pending |
+| P1a / P1b | BASE and F01–F07 complete |
 | P2 private journal | J01–J07 |
 | P3 rating/history | J08–J09 |
 | P4 occasions | O01–O05 |
