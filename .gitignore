@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.migrations.example
 *.pem
 *.key
 *.p12
