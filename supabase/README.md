@@ -15,13 +15,17 @@ Stop services with `npx --yes supabase@2.117.0 stop`; volumes are retained. Avoi
 
 The local API is on port 54321, Postgres on 54322, Studio on 54323, and the Mailpit email testing inbox on 54324. The six-digit email-code template expires after ten minutes. A hosted email provider is not configured. Google/Apple/Facebook registration and web sign-in are subsequent work; see [authentication setup](../docs/authentication.md).
 
-## Observed Docker Desktop limitation
+## Docker Desktop port binding
 
 On the current Windows host (Docker Engine 29.7.2), Supabase published its ports as `0.0.0.0`/`::` even with `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` on the requested network. This is observed behavior, not a claim about every Docker installation. The wrapper detects it, stops this project's services, retains volumes and exits unsuccessfully. Do not bypass the check or leave the development database/inbox exposed.
 
 A separate temporary `docker run --network wine-journal-local --publish 5432` probe reproduced the same result without Supabase; the probe was removed afterward. This points to the current Docker runtime's treatment of the network default, rather than an application authentication defect. Explicit `127.0.0.1` port publication works for the isolated database tests. Do not claim that the network option alone is effective without inspecting actual bindings.
 
-The local Auth/Postgres smoke tests succeeded before this guard was added. The guarded full stack is now stopped; persistent local development needs the Docker/CLI binding issue resolved and actual loopback bindings verified first. Independent API tests remain available: `uv run --project apps/api --locked python scripts/run_api_tests.py` creates a separate database with an explicit loopback port mapping, which was verified to work here. No Windows firewall or global Docker settings were modified.
+Resolved on this host by setting Docker Desktop's **Settings → Resources → Network → Port binding behavior → Localhost by default**, then restarting the idle engine. The installed setting is `PortBindingBehavior: "default-local-port-binding"` (previously absent, meaning the default). This is a machine-wide default for unspecified bindings; explicit network bindings remain possible. Revert through the same setting to **Open (Default)** if needed, but the Wine Journal guard will refuse unsafe startup again.
+
+A disposable container then reported both `127.0.0.1` and `::1`. The guarded Supabase startup passed, all four published service ports were verified on loopback, existing roles/migration reapplied successfully, and the two-account real email-code smoke passed again. F02 is complete. No firewall rules, container data, or application credentials were changed by this fix.
+
+Independent API tests remain available: `uv run --project apps/api --locked python scripts/run_api_tests.py` creates a separate database with an explicit loopback port mapping. See [Docker Desktop networking](https://docs.docker.com/desktop/features/networking/) for its separate host port setting; do not assume that a bridge option overrides the Desktop default.
 
 The guard also stops the stack if port inspection or setup fails. If shutdown itself fails, it reports that explicitly; stop the Wine Journal containers before continuing. No failed check should be reclassified as a successful startup.
 
