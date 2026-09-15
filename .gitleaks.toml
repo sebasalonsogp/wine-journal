@@ -1,0 +1,11 @@
+title = "Wine Journal secret detection"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Architecture prose: SQLAlchemy/Alembic is a pair of product names."
+condition = "AND"
+regexTarget = "secret"
+paths = ['''^docs/decisions/0004-nextjs-and-portfolio-budget\.md$''']
+regexes = ['''^SQLAlchemy/Alembic$''']

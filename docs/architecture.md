@@ -6,7 +6,7 @@ The user has accepted feature/domain modules, lightweight internal layers and ex
 
 The [architecture alternatives review](architecture-options.md) tests this baseline against a Supabase-led backend, a consolidated Next application, coarse services and microservices, plus offline and asynchronous processing choices. It is a discussion document; alternatives do not replace this proposal without an explicit decision.
 
-Product authority: [story map](../tasks/story-map.md), [occasion journeys](../tasks/occasion-journeys.md), [wine identity research](../tasks/wine-identity.md), and [latest UX decisions](../tasks/ux-review-04.md). Supporting design: [data model](data-model.md), [API contracts](api-contracts.md), [current frontend decision](decisions/0004-nextjs-and-portfolio-budget.md), and [delivery tasks](../tasks/todo.md#proposed-implementation-sequence).
+Product authority: [story map](../tasks/story-map.md), [occasion journeys](../tasks/occasion-journeys.md), [wine identity research](../tasks/wine-identity.md), and [latest UX decisions](../tasks/ux-review-04.md). Supporting design: [data model](data-model.md), [API contracts](api-contracts.md), [current frontend decision](decisions/0004-nextjs-and-portfolio-budget.md), and [delivery tasks](../tasks/todo.md#phase-1).
 
 ## Recommendation
 

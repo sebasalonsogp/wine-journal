@@ -1,13 +1,13 @@
 # Wine Journal phased implementation plan
 
-Status: proposed execution plan for review, September 14, 2026. The repository scaffold is complete; product features remain unimplemented. This planning change creates no application code, migrations, services or deployments.
+Status: implementation underway, September 14, 2026. F01–F07 are complete: local startup, API identity/account boundaries, connected web sign-in/session recovery and real browser CI. The journal remains unimplemented. See the [web access checkpoint](web-access-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 remaining bounded tasks**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: seven complete and 52 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 ## Starting point
 
-- **Implemented:** Next.js startup screen, FastAPI liveness endpoint, domain/workflow folders, lockfiles, generated contract/types, initial tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
-- **Not implemented:** real sign-in, application database schema, private journal, providers, uploads, workers or deployment. Docker/local Supabase startup still needs verification.
+- **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
+- **Not implemented:** live social-provider activation, private journal, wine providers, uploads, workers or deployment. Local email Auth/API and the web session lifecycle pass; the full local stack now starts with verified loopback bindings.
 - **Architecture:** domain-oriented modular Python core, thin Next routes around workflow features, shared Postgres transactions for journal changes, and durable supporting work when needed. A folder is not a microservice; neither iOS nor background processing requires a service-per-feature design.
 - **Budget and capture:** local/free-first; online saves are the baseline. Failed online forms preserve recoverable input; automatic offline synchronization is a later product decision.
 - **Design:** implement the reviewed Stitch direction and [UX review 04](ux-review-04.md). Browse Wines is first in navigation; My Wines is the first private-journal destination.
@@ -70,7 +70,7 @@ Record completion only with evidence. A mock is appropriate for deterministic pr
 
 | Gate | Resolve before | Current position / required decision |
 | --- | --- | --- |
-| G1 — Authentication | F03/F05 | F01 selects one real sign-in/recovery method, allowed callback/return paths and delivery setup. Guest lookup stays available. |
+| G1 — Authentication | F03/F05 | F01 is settled: email codes plus Google, Apple and Facebook via Supabase (ADR 0006). F05/F06 implement secure web sessions/callbacks and enable only registered, verified providers. Guest lookup stays available. |
 | G2 — Journal controls | J01/J08/J10/O01 | Confirm minimum manual identity, rating scale/clear/history-erasure behavior, small initial sort/filter set and occasion title/date defaults. Wine/date-only save, separate release identity and wine-level rating history are already fixed. |
 | G3 — Media limits | M02/V01 | R04/R05 establish decoder/transcoder feasibility; choose byte/pixel/duration/account limits, original-versus-derivative retention and clear recovery behavior against R07 resource limits. iPhone support and bounded private video remain in scope. |
 | G4 — Lookup coverage and market | C01/C04/C06/C08 | R01–R03/R06 define the first catalog/market, supported samples, provider coverage/limits, candidate ambiguity and source handling. Record a curated real-data fallback where viable; no invented coverage or live availability. |
@@ -109,7 +109,7 @@ The task-specific Verify paragraph defines what must be proven. Apply the releva
 | Editorial/docs-only change | Source/link/consistency review. Do not invent unit tests for static wording or repeatedly rebuild unchanged app code. |
 | Release/operations | Actual export/deletion/restore/restart/rollback drills and measured workload results. Screenshots and health responses alone do not establish readiness. |
 
-Current commands are documented in [development.md](../docs/development.md). From apps/api, run `uv run --locked pytest`, Ruff and mypy with the documented paths; narrow pytest to the affected tests once they exist. From apps/web, use `npm run lint`, `npm run typecheck`, `npm run format:check` and the build as appropriate. F07 introduces and documents the actual browser-test commands; do not pretend an unimplemented test script already exists. At phase exits, run relevant complete suites, contract drift checks and affected builds; repeat only after relevant changes or new concerns.
+Current commands are documented in [development.md](../docs/development.md). From apps/api, use the disposable database runner for full integration coverage, or narrow pytest/Ruff/mypy for affected changes. From apps/web, use `npm test`, `npm run test:e2e`, lint, typecheck, formatting and the build as appropriate. Browser tests require local Supabase; their fixtures refuse hosted configuration. At phase exits, run relevant complete suites, contract drift checks and affected builds; repeat only after relevant changes or new concerns.
 
 **Definition of done for a task:** acceptance is satisfied, relevant tests/checks pass, the previous working flow still works, private data boundaries hold, contracts/docs are updated, and evidence/remaining limits are recorded. New critical paths include safe diagnostic context when introduced; E05 verifies operation across the assembled system rather than adding all observability at the end.
 
@@ -145,7 +145,7 @@ Commercial licensing procurement remains deferred per the user's direction. Basi
 
 ## First work package
 
-Start **F01, F02, R01 and R04** as independent decision/setup/evidence work; this is an ordering option, not a request to spawn agents. Continue F03/F04 once the sign-in choice and database fixture are ready, then F05–F07. R02/R03 use the common bottle set; R05/R07 investigate video and runtime viability while the manual journal progresses.
+The web checkpoint delivered F01–F07 and closed Phase 1 with fresh browser CI. Next implement J01–J04 for the first useful private journal. **R01 and R04 remain pending independent evidence work**; they were not marked complete by the access implementation. R02/R03 use the common bottle set, and R05/R07 investigate video and runtime viability while the manual journal progresses.
 
 The first user-visible implementation target is **J04: save wine/date and reopen it after reload**. J05–J10 then make that flow useful for repeat drinking and changing opinions. Do not start a public feed or generalized recommendation/service infrastructure while this basic journey is incomplete.
 
