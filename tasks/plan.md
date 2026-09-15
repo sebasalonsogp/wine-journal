@@ -1,14 +1,171 @@
-# Wine Journal: product and architecture plan
+# Wine Journal phased implementation plan
 
-Status: working draft for discussion, not an approved specification or implementation commitment.
+Status: proposed execution plan for review, September 14, 2026. The repository scaffold is complete; product features remain unimplemented. This planning change creates no application code, migrations, services or deployments.
 
-Current phase: repository scaffolding under `repo/`, explicitly authorized after UX and architecture review. [Architecture](../docs/architecture.md) and [ADR 0005](../docs/decisions/0005-repository-foundation.md) record the accepted direction. The [data model](../docs/data-model.md) and [API contracts](../docs/api-contracts.md) remain detailed implementation proposals. Story scope remains in [story-map.md](story-map.md); the latest accepted UX refinements are in [UX review 04](ux-review-04.md).
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 remaining bounded tasks**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
-Accepted baseline: Next.js/React/TypeScript and FastAPI, with SQLAlchemy/Alembic and Supabase Postgres/Auth/private Storage added as their slices begin. The backend remains a modular monolith with domain modules and lightweight layers. Supporting workers can execute independently. The initial scaffold does not implement the full data model or finalize remaining product controls. Implementation sequencing is in [todo.md](todo.md#proposed-implementation-sequence).
+## Starting point
 
-Latest UX additions: official-place search plus personal labels; creating an occasion inline while logging; adding new wines through lookup/manual creation during occasion creation; optional personal bottle-cover photos; proposed Browse Wines and Guides destinations. Basic catalog browsing and a small curated guide set are MVP proposals; personalized recommendations, public trends, and profile-driven learning remain later directions. No Google Places integration or recommendation engine is being built in this design phase.
+- **Implemented:** Next.js startup screen, FastAPI liveness endpoint, domain/workflow folders, lockfiles, generated contract/types, initial tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
+- **Not implemented:** real sign-in, application database schema, private journal, providers, uploads, workers or deployment. Docker/local Supabase startup still needs verification.
+- **Architecture:** domain-oriented modular Python core, thin Next routes around workflow features, shared Postgres transactions for journal changes, and durable supporting work when needed. A folder is not a microservice; neither iOS nor background processing requires a service-per-feature design.
+- **Budget and capture:** local/free-first; online saves are the baseline. Failed online forms preserve recoverable input; automatic offline synchronization is a later product decision.
+- **Design:** implement the reviewed Stitch direction and [UX review 04](ux-review-04.md). Browse Wines is first in navigation; My Wines is the first private-journal destination.
 
-Based on `../notes.md` and the brainstorming conversation. Initial provider research was checked September 13, 2026; architecture sources were checked September 14, 2026, America/New_York. The repository now contains an initial web/API foundation. No cloud services have been purchased or integrated.
+<a id="phased-roadmap"></a>
+## Phased roadmap
+
+| Phase | Working outcome | Task IDs | Exit evidence |
+| --- | --- | --- | --- |
+| 0 — Foundation | Runnable, versioned scaffold | BASE — complete | Existing local builds/tests and initial GitHub CI |
+| Early feasibility lane | Measured provider, media and hosting decisions | R01–R07 | Reproducible reports; each gates only its dependent work |
+| 1 — Access | Real sign-in, account ownership and local data/test environment | F01–F07 | Two-account auth journey; migration/privilege and token tests |
+| 2 — Private wine journal | Manual wine/date capture, repeats, later edits, ratings/history, search/sort | J01–J10 | Save → reload → repeat → edit → rate → find, without any occasion |
+| 3 — Occasions | Optional multi-wine groups and both creation directions | O01–O05 | Three wines/four entries, nested rollback, safe link/unlink/delete |
+| 4 — Photo scrapbook | Private photos, manual bottle covers, occasion albums and wine highlights | M01–M08 | Exact gallery eligibility plus interrupted-upload/worker/deletion recovery |
+| 5 — Assisted lookup | Guest specs/search, barcode and photo recognition, corrections and official places | C01–C08 | Physical-phone capture and measured match/fallback/privacy cases |
+| 6 — Complete media and learning | Bounded iPhone video, optional prompts, Guides and private taste summaries | V01–V02, L01–L03 | Real playback, accessible guidance and fixture-backed profile counts |
+| 7 — Portfolio release | Export/deletion, restore, deployment, operations and final UX/performance checks | E01–E09 | Reproducible release demonstration and recovery/privacy evidence |
+
+**Milestones:** Phase 2 is the first useful personal journal. Phase 4 adds the core scrapbook experience. Phases 5 and 6 together complete the planned feature set. Phase 7 establishes a portfolio release that can responsibly retain user memories. An earlier milestone is not silently relabeled the full MVP.
+
+The table is the recommended walkthrough order, not an all-or-nothing serial dependency chain. C01/C02 may start after J01/J04 and the necessary fixtures; L01 may start after note editing; R work can proceed alongside authentication. Exact task dependencies in todo.md are authoritative. Do not make manual capture wait for universal catalog coverage.
+
+## Dependency map
+
+```mermaid
+flowchart TD
+    Base[Completed scaffold] --> Access[Phase 1: identity and data boundary]
+    Base --> Risk[Early provider/media/hosting experiments]
+    Access --> Journal[Phase 2: manual private journal]
+    Journal --> Occasions[Phase 3: optional occasions]
+    Occasions --> Photos[Phase 4: photos and scrapbooks]
+    Journal --> Catalog[Phase 5: guest catalog and corrections]
+    Catalog --> Identify[Phase 5: barcode / photo / places]
+    Risk -. provider evidence .-> Identify
+    Risk -. photo evidence .-> Photos
+    Photos --> Video[Phase 6: bounded video]
+    Risk -. video evidence .-> Video
+    Journal --> Learn[Phase 6: prompts and profile]
+    Catalog --> Learn
+    Identify --> Release[Phase 7: recovery and portfolio release]
+    Video --> Release
+    Learn --> Release
+    Risk -. hosting evidence .-> Release
+```
+
+This is a dependency summary, not a deployment diagram. The web, API and worker still follow the accepted architecture.
+
+## Delivery discipline
+
+Build one behavior through the layers it needs. Shared foundations such as token verification, migrations and the job runner are explicit enabling tasks; do not build the entire planned schema or every API before a user can save and retrieve a wine. Add feature libraries, models and abstractions when their task uses them.
+
+Each task has an outcome, at most two acceptance bullets, specific verification, dependencies, relative size and primary change areas. S is a narrow change or decision; M is one bounded behavior/enabler, generally one or two focused work blocks. At task start, confirm concrete files and tests; split work that exceeds about five handwritten source files or two blocks instead of disguising a large implementation as one checkbox. These are planning estimates, not promises of hours.
+
+Checkpoints occur after approximately three tasks and at phase exits. They are opportunities to demonstrate working behavior and collect feedback, not automatic new permission requests after every edit. Actual product decisions, scope changes and paid-service choices remain explicit. Stop a dependent feature when its required decision or feasibility result is missing, while continuing independent work.
+
+Record completion only with evidence. A mock is appropriate for deterministic provider failure tests; it does not prove live barcode/photo recognition. A failed feasibility experiment can complete its evidence task while leaving the dependent integration blocked. Never substitute a placeholder route or passing empty test for implemented behavior.
+
+## Decision gates
+
+| Gate | Resolve before | Current position / required decision |
+| --- | --- | --- |
+| G1 — Authentication | F03/F05 | F01 selects one real sign-in/recovery method, allowed callback/return paths and delivery setup. Guest lookup stays available. |
+| G2 — Journal controls | J01/J08/J10/O01 | Confirm minimum manual identity, rating scale/clear/history-erasure behavior, small initial sort/filter set and occasion title/date defaults. Wine/date-only save, separate release identity and wine-level rating history are already fixed. |
+| G3 — Media limits | M02/V01 | R04/R05 establish decoder/transcoder feasibility; choose byte/pixel/duration/account limits, original-versus-derivative retention and clear recovery behavior against R07 resource limits. iPhone support and bounded private video remain in scope. |
+| G4 — Lookup coverage and market | C01/C04/C06/C08 | R01–R03/R06 define the first catalog/market, supported samples, provider coverage/limits, candidate ambiguity and source handling. Record a curated real-data fallback where viable; no invented coverage or live availability. |
+| G5 — Learning/profile breadth | L01–L03 | Select a small guide set, optional prompts and transparent aggregation rules; TP-02 explicit likes/dislikes is optional OPT-01 until selected. |
+| G6 — Operating promise | E03–E09 | R07 selects a viable runtime arrangement and budget. Agree backup retention/recovery targets, expected demo availability and workload before measuring or claiming them. Weekly capacity remains unknown, so no calendar deadline is invented. |
+
+Existing acceptance examples guide these decisions; they are not all finalized controls. A new decision that changes an accepted architectural boundary gets an ADR; ordinary UI wording and threshold choices go into the relevant story/task.
+
+## Scope that each phase must preserve
+
+1. Lookup and drinking are different actions. Guests can inspect details; saving requires an account.
+2. A consumed calendar date is distinct from record creation time. Optional time/place never require an occasion.
+3. Named offerings and their vintages/releases remain distinct. A barcode, label or name is not a primary key or guaranteed vintage match.
+4. A wine has one current personal rating and dated revisions; another glass is another entry, not another rating vote.
+5. Occasion-first and wine-first capture share draft behavior and atomic journal saves. Existing-entry context is preserved when linked.
+6. Covers, recognition uploads, entry attachments and general occasion attachments have distinct purposes. Gallery queries deduplicate eligible references rather than copying memories.
+7. Private journal data remains private. Public reviews and invited participants require deliberate future publication/access models.
+8. Both recognition routes, optional beginner guidance, photos and bounded private video remain part of the planned product; failures or cost constraints require a recorded decision, not a silent omission.
+
+The baseline includes useful supporting proposals such as recovery, safe media retry, export/deletion, basic Browse, a small Guides collection and link/unlink management. Their exact UX breadth is reviewed at the gates. Full provisional-record merges, live retailer comparison and explicit extra preference controls are not smuggled into the baseline.
+
+<a id="verification-protocol"></a>
+## Verification protocol
+
+The task-specific Verify paragraph defines what must be proven. Apply the relevant checks below rather than running every expensive check for every copy edit.
+
+| Change | Required evidence |
+| --- | --- |
+| API/domain behavior | Focused pytest cases plus Ruff and Python types. Transactions, constraints, ownership, idempotency and races use real disposable Postgres, not SQLite substitutes. |
+| Database migration | Fresh migration and representative upgrade; verify runtime grants/constraints and document rollback compatibility. Run migrations once per deployment, not on API startup. |
+| Web behavior | Type/lint checks and focused interaction tests for behavior; use Playwright for critical connected journeys after F07. Keyboard, mobile and empty/error states are part of the task. |
+| Contract change | Regenerate OpenAPI and TypeScript types, inspect the diff and update the consumer in the same slice. CI detects drift. Resolve the draft GET/bootstrap semantics in F04 before implementing them. |
+| Upload or worker change | Local Storage/Postgres integration, malformed/oversized input, two-account signing/attachment tests, restart/retry/late-upload cases and reference-aware cleanup. No exactly-once processing claim. |
+| iPhone/camera/media behavior | Real-device samples and Safari checks with device/OS/codec details. Browser simulation supplements physical checks; it does not replace them. |
+| Provider integration | Deterministic contract/failure tests plus a small real evaluation sample. Record provenance, unknown fields, latency and usage limits without committing secrets or private uploads. |
+| Editorial/docs-only change | Source/link/consistency review. Do not invent unit tests for static wording or repeatedly rebuild unchanged app code. |
+| Release/operations | Actual export/deletion/restore/restart/rollback drills and measured workload results. Screenshots and health responses alone do not establish readiness. |
+
+Current commands are documented in [development.md](../docs/development.md). From apps/api, run `uv run --locked pytest`, Ruff and mypy with the documented paths; narrow pytest to the affected tests once they exist. From apps/web, use `npm run lint`, `npm run typecheck`, `npm run format:check` and the build as appropriate. F07 introduces and documents the actual browser-test commands; do not pretend an unimplemented test script already exists. At phase exits, run relevant complete suites, contract drift checks and affected builds; repeat only after relevant changes or new concerns.
+
+**Definition of done for a task:** acceptance is satisfied, relevant tests/checks pass, the previous working flow still works, private data boundaries hold, contracts/docs are updated, and evidence/remaining limits are recorded. New critical paths include safe diagnostic context when introduced; E05 verifies operation across the assembled system rather than adding all observability at the end.
+
+## Cross-cutting regression fixtures
+
+Keep reusable fixtures small and explicit:
+
+- Two accounts; a guessed private ID or nested asset/entry from the other account.
+- Two vintages with similar labels; unknown versus verified non-vintage; one barcode resolving to multiple candidates.
+- One standalone glass; two intentional same-day entries; an old consumed date recorded today.
+- Current rating 4 → 4.5 without a new drink, if that scale is approved; stale and duplicate submissions.
+- An occasion with three releases and four entries, including a repeated wine.
+- The same occasion linked twice from one wine; one general photo; a different wine's entry-only photo; a cover; a repeated asset reference.
+- A lost save response, stale edit, failed upload, late upload after removal, and worker termination mid-processing.
+- Export/deletion/restore with real attachment relationships and an already-issued access capability.
+
+These cases are built with their owning slices and reused at phase gates. Avoid giant end-to-end tests that try to assert every domain rule at once.
+
+## Risks and responses
+
+| Risk | Response / owner |
+| --- | --- |
+| Free wine data cannot reliably resolve vintages | R01–R03 measure this early; C04/C06 preserve ambiguity and text/manual correction. A curated catalog may constrain real supported coverage, but cannot impersonate a universal live source. |
+| Free runtime cannot process chosen iPhone uploads | R04/R05/R07 measure before media integration; choose bounded inputs and a viable worker arrangement. Do not defer compatibility silently. |
+| Lost saves or inconsistent nested occasions | J02/O02/O03 use transactions and request-key tests; UI drafts survive recoverable failures. |
+| Accidental exposure across views or future sharing | Same-owner constraints plus API checks now; exact gallery fixtures in M06/M07; X2/X3 require explicit new public/membership models. |
+| Scope grows into a social network before the journal works | Private milestones remain separate; X1–X7 need activation and detailed planning. |
+| A polished prototype hides missing real integration | Phase exits demand actual persistence/device/provider evidence and label simulated demo paths. |
+| Free-service pauses, quotas or missing backups weaken the demo | R07/E03/E05/E09 define the actual operating promise; use disposable data until recovery is proven for relied-upon memories. |
+| Broad tasks or uncertain availability create false schedules | Re-slice oversized tasks, track actual effort through Phase 1 and the first complete J flow, then forecast from measured pace and weekly capacity. |
+
+Commercial licensing procurement remains deferred per the user's direction. Basic source attribution, practical access and quota checks still accompany an integration; the plan does not require paid services to begin.
+
+## First work package
+
+Start **F01, F02, R01 and R04** as independent decision/setup/evidence work; this is an ordering option, not a request to spawn agents. Continue F03/F04 once the sign-in choice and database fixture are ready, then F05–F07. R02/R03 use the common bottle set; R05/R07 investigate video and runtime viability while the manual journal progresses.
+
+The first user-visible implementation target is **J04: save wine/date and reopen it after reload**. J05–J10 then make that flow useful for repeat drinking and changing opinions. Do not start a public feed or generalized recommendation/service infrastructure while this basic journey is incomplete.
+
+## Later branches
+
+The ordered outlines and readiness checks are in [todo.md](todo.md#later-phases-separate-activation-decisions):
+
+- X1: calendar, want-to-try organization and deeper structured tasting.
+- X2: deliberate public wine reviews/profiles, recent feed and moderation.
+- X3: selected shared occasion notes/albums and participant permissions.
+- X4: explainable similarity, evidence-based trends and profile-linked guides.
+- X5: native iOS against the same backend contracts.
+- X6: unidentified durable drafts and true offline synchronization.
+- X7: separately scoped social interactions, public media and current merchant offers.
+
+They are not equally urgent or implementation-ready. Private collaboration and native iOS can precede a public feed; public trends cannot precede meaningful public activity. Extract a supporting service only for a measured workload, isolation or ownership need.
+
+## Retained product brief and research
+
+The sections below preserve the existing product reasoning. The roadmap and task IDs above are the execution source; [story-map.md](story-map.md) remains the scope source, and [architecture.md](../docs/architecture.md) remains the system-design source.
 
 ## Product problem
 
@@ -16,7 +173,7 @@ How might we help someone remember which wine they drank, what they thought of i
 
 The intended audience includes casual drinkers, enthusiasts/connoisseurs, and eventually people participating socially. The first concrete user is the creator: a casual drinker learning about wine, tracking experiences, and building a personal taste profile. Success means capturing and retrieving meaningful experiences with little effort while allowing more detailed notes as knowledge grows. The portfolio demonstration is: identify a bottle, confirm it, save a tasting with a photo, record a second encounter, revisit both experiences, and inspect a simple summary of preferences.
 
-Confirmed in the conversation: private journal first; public ratings, reviews, and a feed later; web first and iOS eventually; preference for a Python backend with a polished frontend and established technologies. The exact frameworks remain recommendations. Weekly time, monthly budget, initial country/retail market, private-media limits, and detailed rating/profile semantics are still open.
+Confirmed in the conversation: private journal first; public ratings, reviews, and a feed later; web first and iOS eventually; preference for a Python backend with a polished frontend and established technologies. Next.js and FastAPI are now recorded in ADR 0005 and the completed scaffold. Weekly time, monthly budget, initial country/retail market, private-media limits, and detailed rating/profile controls remain open.
 
 Further clarification: identification has two first-class paths: scan a barcode to bring up wine details automatically, or photograph/upload a bottle for image recognition/reverse lookup, with text search also available. The primary journal view is by wine, with all dated occasions and their places, personal notes, photos, and videos beneath it. Occasions is the secondary view; calendar remains a possible later navigator. PostgreSQL is recommended on technical fit; the current architecture proposes Supabase as its host plus Auth and Storage, subject to review and operating budget. Private video belongs in the journal scope; clip limits and processing strategy remain to be sized.
 
@@ -28,7 +185,7 @@ Latest occasion/view decisions: a drinking entry can stand alone with its own co
 
 Latest future idea: explore invited participants, shared occasion notes/reviews, and a common photo/video memory space later. Proposed UI naming is People / Invite people, with Participants for accepted members. This focused collaboration has its own stories SC-01 through SC-05 and need not depend on a public feed. Personal wine ratings and private observations remain separately owned; shared contributions and public publication are deliberate actions. No collaboration implementation is part of the private MVP.
 
-Latest identity/notes decisions: distinct offerings, vintages, and releases retain their identities; My Wines should offer intuitive sorting/filtering. The working recommendation is one current personal score/history per identifiable release, independent of how related records are grouped visually. [Wine identity research](wine-identity.md) uses Calculated Risk and other primary examples to inform this distinction. Free-form notes plus optional beginner guidance are now MVP direction; [tasting notes research](tasting-notes.md) proposes original prompts and boundaries. Exact layouts, prompt controls, rating scale, and correction conflicts remain to be reviewed. These product decisions do not initiate technical development.
+Latest identity/notes decisions: distinct offerings, vintages, and releases retain their identities; My Wines should offer intuitive sorting/filtering. The working recommendation is one current personal score/history per identifiable release, independent of how related records are grouped visually. [Wine identity research](wine-identity.md) uses Calculated Risk and other primary examples to inform this distinction. Free-form notes plus optional beginner guidance are now MVP direction; [tasting notes research](tasting-notes.md) proposes original prompts and boundaries. Exact layouts, prompt controls, rating scale, and correction conflicts remain to be reviewed. These product decisions guide the phased implementation above; this planning update does not begin feature implementation.
 
 ## Directions worth exploring
 
@@ -48,23 +205,23 @@ Direction following the user's clarification: the scrapbook, with the minimal bo
 | Capability | First usable journal | Portfolio MVP | Expansion |
 | --- | --- | --- | --- |
 | Account and private journal | Included | Included | Additional sign-in methods |
-| Manual wine entry and search | Included | Included | Catalog correction tooling |
+| Manual wine entry and search | Manual capture and private history search | Guest catalog search and safe private identity correction | Advanced merge/correction tooling |
 | Standalone drinking entries and optional occasions | Wine plus date without an event | Repeat entries with optional time/location; titled groups of one or several wine entries | Invited participants and shared contributions |
 | Personal wine rating with change history | Later slice after basic journal | Current chosen score and dated past scores | Richer preference analysis |
 | Personal notes and tasting guidance | Free-form notes | Optional beginner prompts and terminology help alongside free text | Detailed structured tasting assessment and comparison |
-| Photos/videos and a scrapbook reading experience | Photos first, bounded video in a later slice | Entry media without an occasion; optional occasion album/scrapbook | Shared albums and advanced layout editing, if useful |
+| Photos/videos and a scrapbook reading experience | Added after the first manual journal milestone | Entry media without an occasion; optional occasion album/scrapbook | Shared albums and advanced layout editing, if useful |
 | Wine-first library/history | Included | Primary view, sorted by latest consumed date | More filters and presentation options |
 | Occasion browsing | Optional title/date/time/location | Secondary core view for deliberately grouped dinners/visits | Shared participation and further presentation options |
 | Calendar view | Deferred | Later than both core views | Month/day navigation across all drinking entries, with occasion context where present |
 | Barcode identification | Later slice | Included: clear match opens details; ambiguity prompts selection/correction | More providers and code formats |
 | Label photo identification | Later slice | Included as a directly accessible path, assisted and correctable | Better matching after measurement |
 | Wine details and outbound purchase links | Manual or sourced fields | Best available sourced fields and links | Regional live offers and price comparison |
-| Taste profile | Basic counts after history exists | Favorite wines, grapes/regions tried and rated, and self-entered preferences with sample counts | Explainable similarities and richer taste analysis |
+| Taste profile | Basic counts after history exists | Current-rating and known-attribute summaries with sample counts; extra explicit preferences remain OPT-01 | Explainable similarities and richer taste analysis |
 | Public wine reviews | Deferred | Deferred, per user decision | Explicit publication of text/rating and public pages per wine; comments and broader forum later |
 | Public photo/video publication | Deferred | Deferred by recommendation | Explicit publication with moderation |
 | Personal video attachments | Later slice after photos | Bounded private clips on entries or occasions; formats, limits, and processing to scope | Shared contributions, richer editing, and longer clips |
 | Trending and similar wines | Deferred | Deferred; private profile only | Public activity ranking and explainable similarity |
-| iOS | Mobile browser | Responsive web, optional installability | Separate Expo/React Native client |
+| iOS | Mobile browser | Responsive web | Swift or React Native client selected in X5 |
 
 The earlier suggestion to defer all video was not an agreed requirement. Following the clarification, private video is part of the planned journal; implement it in a bounded slice with upload/playback acceptance criteria and an explicit processing decision. Public media/community remains later. Wine history and occasion media should receive enough attention that the MVP feels like a journal rather than a catalog form.
 
@@ -127,7 +284,7 @@ For the portfolio, prioritize free accessible sources and a small curated demons
 
 ## Suggested technology baseline
 
-The current recommendation is Next.js/React/TypeScript with App Router and TanStack Query for private client data, FastAPI/Pydantic, SQLAlchemy/Alembic, and Supabase Postgres/Auth/private Storage. Next owns web rendering and routing; Python owns journal rules and authorization. [ADR 0004](../docs/decisions/0004-nextjs-and-portfolio-budget.md) records why the small immediate Vite savings do not justify a planned migration for this project.
+The accepted direction is Next.js/React/TypeScript with App Router and TanStack Query for private client data, FastAPI/Pydantic, SQLAlchemy/Alembic, and Supabase Postgres/Auth/private Storage. Next owns web rendering and routing; Python owns journal rules and authorization. [ADR 0004](../docs/decisions/0004-nextjs-and-portfolio-budget.md) records why the small immediate Vite savings do not justify a planned migration for this project.
 
 The complete rationale, dependencies, folder structure, local/deployment plan, connection strategy, and operating constraints now live in [architecture.md](../docs/architecture.md). This is the current technical source, replacing the early alternatives in this section. Sign-in method, rating scale, free provider access/coverage and concrete media limits still require validation before their implementation slices. The budget direction is local/free-first, commercial licensing analysis is deferred, and common iPhone media compatibility is required.
 
@@ -225,18 +382,9 @@ Later, similarity can use grape/style, region, sweetness/body, and price band wi
 
 Trending can use recent distinct public contributors/reviews, a minimum sample size, and time decay. Repeated private tastings must not boost a public ranking. Collaborative filtering requires enough interaction data to validate; defer it until then.
 
-## Delivery sequence and decision gates
+## Delivery sequence reference
 
-1. **Discovery and feasibility:** refine the confirmed broad audience/private-first direction, use local/free-first budgeting, and check representative bottles and free provider access. Keep measured coverage/cost evidence proportional to a portfolio demo; commercial licensing work is deferred.
-2. **Manual journal:** sign in, manually find/create a wine, save a private encounter, retrieve it through My Wines. Add multi-wine occasions and repeat encounters with places, consumed-date sorting, editing, search/filtering, photos, occasion browsing, optional beginner note guidance, and simple preference summaries as small complete slices. The earliest usable milestone can precede the full portfolio MVP; the proposed implementation sequence is now in todo.md, with large slices split before execution.
-3. **Assisted capture:** integrate barcode lookup with automatic detail display for clear matches, then directly accessible photo capture/upload and OCR/recognition. Cover ambiguity, failure, correction, and text lookup paths. Demonstrate both supported and unknown bottles honestly.
-4. **Private portfolio MVP finish:** add bounded private video with reliable upload/playback, then polish mobile capture, release-aware wine history/sorting/filtering, occasion scrapbooks, optional note guidance, taste summaries, sourced details and links, onboarding, demo content, accessibility, deployment, and an architecture/tradeoff case study. Verify private access with a second account. Calendar remains a later option after both core views.
-5. **Public reviews and feed:** explicitly publish text/rating, browse reviews per wine and recent reviews, unpublish, and moderate. Verify that private entries and attachments remain inaccessible.
-6. **Further expansion:** choose based on observed use: calendar, shared occasion participants/albums/notes, richer media, similarity, deeper community, or native iOS. Shared occasions can be evaluated before a public feed; the sequence is not a commitment to public-first delivery. Avoid starting all expansions together.
-
-Each implementation slice must deliver a visible user outcome and include its API/data/UI and focused verification. Provider feasibility can be investigated early while the journal remains architecturally independent of it. Calendar dates and total effort should follow the weekly commitment and provider experiment; no delivery estimate has been agreed.
-
-Discovery tasks are tracked in `todo.md`. Implementation work has not been started.
+The earlier broad delivery sequence has been expanded into the [phased roadmap](#phased-roadmap) and [task backlog](todo.md). Their checkpoints and dependency IDs replace the previous milestone list; no unstarted story is treated as implemented.
 
 ## Budget and unresolved decisions
 
@@ -244,4 +392,4 @@ Separate fixed hosting/database cost, lookup/OCR request cost, media storage/egr
 
 Supabase currently lists a free tier with 1 GB storage and pausing after one inactive week, and Pro from $25/month. This matters for a portfolio link expected to remain available. Vercel Hobby is positioned for personal noncommercial use; confirm the appropriate plan if the product becomes commercial. Neither hosting estimate includes wine-provider costs. [Supabase pricing](https://supabase.com/pricing), [Vercel Hobby](https://vercel.com/docs/plans/hobby)
 
-Decisions to resolve next: private clip duration/size and processing limits; weekly time and budget; initial retail market; exact release-preserving library grouping/sort/filter controls; rating style/corrections; optional guidance controls; profile aggregation and sample-size wording; required match coverage; and how much of an experience a user may publish in the future. Broad audience, private-first scope, Python preference, two identification paths, unique wine releases, primary My Wines, secondary multi-wine occasion scrapbooks, free-form notes with optional beginner guidance, and eventual social/iOS expansion are established. Calendar is later; Supabase is now the proposed platform, with final hosting budget and operating choices open.
+Decisions to resolve next: private clip duration/size and processing limits; weekly time and budget; initial retail market; exact release-preserving library grouping/sort/filter controls; rating style/corrections; optional guidance controls; profile aggregation and sample-size wording; required match coverage; and how much of an experience a user may publish in the future. Broad audience, private-first scope, Python preference, two identification paths, unique wine releases, primary My Wines, secondary multi-wine occasion scrapbooks, free-form notes with optional beginner guidance, and eventual social/iOS expansion are established. Calendar is later; Supabase is the accepted platform direction, with final hosting budget and operating choices open.

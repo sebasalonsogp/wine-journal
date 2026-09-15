@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: proposed contract outline, September 14, 2026. No endpoints exist yet. Use this to implement slices and generate a concrete OpenAPI schema, not as a promise of already working services. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: proposed product contract outline, September 14, 2026. Only the scaffold's liveness endpoint is implemented; the routes below remain planned. The [phased implementation plan](../tasks/plan.md) sequences their delivery, and F04 resolves account-bootstrap/read semantics before that route is implemented. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ## Contract conventions
 

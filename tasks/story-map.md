@@ -22,7 +22,7 @@ Latest notes clarification: free-form notes and optional guided suggestions belo
 
 The existing technical discussion is in [plan.md](plan.md); [occasion journeys](occasion-journeys.md) map the two views and shared memories. This document is now the working source for story scope and product decisions. It does not turn earlier assistant recommendations into user-approved requirements.
 
-Current phase: after reviewing the connected prototype, the user requested architecture, system design and folder-structure planning. The current technical proposal is in [architecture.md](../docs/architecture.md); [UX review 04](ux-review-04.md) records the latest navigation, occasion wine cards and wine photo highlights. This story map remains the product scope source. Exact controls and unresolved requirements are not made final by the architecture draft; no application code is requested yet.
+Current phase: repository scaffolding is complete and the user requested a phased implementation plan. The [roadmap](plan.md#phased-roadmap), [task backlog](todo.md), and [coverage matrix](story-coverage.md) define proposed execution and verification. This story map remains the product scope source; unresolved controls stay open, and planning does not mark product features implemented.
 
 ## How we will work through the product
 
@@ -63,7 +63,7 @@ Stable capability IDs organize discussions and eventual specs; they do not presc
 | wine-guides | Learn about tasting, styles, pairings, and regions; explore related wines | Editorial content; wine-catalog for related links; taste-profile only for later personalized learning |
 | shared-occasions | Later: invite participants and contribute to selected shared occasion notes/media | account-access, tasting-journal, occasion-media; public-community only for separately published coauthored reviews |
 
-Discussion order: identify a wine -> record a drinking entry -> optionally group entries into an occasion -> attach memories -> revisit by wine -> understand preferences -> account/data controls -> later sharing/public/discovery experience. Technical build order is intentionally not fixed yet; core dependencies suggest account/catalog foundations, then journal, media/history/profile, and later shared or public capabilities. Private group collaboration need not depend on a public feed. Identification consumes catalog identity and can be added without redefining the journal.
+Discussion order: identify a wine -> record a drinking entry -> optionally group entries into an occasion -> attach memories -> revisit by wine -> understand preferences -> account/data controls -> later sharing/public/discovery experience. Technical build order is now proposed in the phased plan; task dependencies permit independent catalog, media research and guide work without waiting for unrelated features. Private group collaboration need not depend on a public feed. Identification consumes catalog identity and can be added without redefining the journal.
 
 Delivery channels such as mobile web and native iOS apply across these capabilities. They are not an extra journal database or a separate set of product rules.
 

@@ -60,9 +60,10 @@ API docs: `http://127.0.0.1:8000/docs`. Liveness: `http://127.0.0.1:8000/api/v1/
 
 Follow [development and verification](docs/development.md) for exact check commands and [local Supabase setup](supabase/README.md) when the database/auth slice starts.
 
-- [Product plan](tasks/plan.md), [story map](tasks/story-map.md), and [delivery tasks](tasks/todo.md)
+- [Phased implementation plan](tasks/plan.md), [59-task backlog](tasks/todo.md), and [story coverage](tasks/story-coverage.md)
+- [Product story map](tasks/story-map.md)
 - [Architecture and boundaries](docs/architecture.md), [alternatives review](docs/architecture-options.md)
 - [Logical data model](docs/data-model.md) and [planned API](docs/api-contracts.md)
 - [Design references](design/README.md) and [latest UX decisions](tasks/ux-review-04.md)
 
-The next product slice is sign-in and an empty private My Wines view. Auth method and the first account/schema migration need to be resolved there. Public reviews, collaboration, recommendations, calendar, and native iOS remain expansion directions.
+The first work package is F01/F02 plus the independent R01/R04 evidence tasks: settle sign-in, establish local data boundaries, prepare bottle fixtures and test iPhone photos. The first complete journal target is J04: save wine/date and reopen it after reload. Public reviews, collaboration, recommendations, calendar, and native iOS remain expansion directions.
