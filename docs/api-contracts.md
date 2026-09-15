@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: proposed product contract outline, September 14, 2026. Only the scaffold's liveness endpoint is implemented; the routes below remain planned. The [phased implementation plan](../tasks/plan.md) sequences their delivery, and F04 resolves account-bootstrap/read semantics before that route is implemented. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, `POST /api/v1/me` and `GET /api/v1/me` are implemented; other product routes below remain planned. The [phased implementation plan](../tasks/plan.md) sequences their delivery. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ## Contract conventions
 
@@ -18,7 +18,8 @@ Status: proposed product contract outline, September 14, 2026. Only the scaffold
 | Browse/search catalog | `GET /wine-releases?q=&sort=&cursor=` | Guest; approved sourced records only |
 | Read wine specs | `GET /wine-releases/{id}` | Guest; source/freshness, unknown fields and permissible outbound links |
 | Identify barcode/photo | `POST /identifications` | Guest with rate/spend limits; bounded JSON barcode input or bounded multipart photo, discriminated by content type |
-| Bootstrap own profile | `GET /me` | Auth; resolve/create app identity idempotently, return account state |
+| Bootstrap own profile | `POST /me` | Implemented; auth; body `{}` only; atomically create/reuse identity, return `id`, `state`, `createdAt`; always 200 on success |
+| Read own profile | `GET /me` | Implemented; auth; read only, 404 if no application account, 403 if disabled |
 | My Wines | `GET /me/wines?sort=LAST_CONSUMED&cursor=` | Auth; latest consumed date, counts, current rating and cover |
 | Personal wine detail | `GET /me/wines/{id}` | Auth; personal record plus bounded entry/gallery previews and source links |
 | Save entry | `POST /entries` | Auth; catalog/personal selection or inline manual wine; optional existing/new occasion |
@@ -41,6 +42,8 @@ Status: proposed product contract outline, September 14, 2026. Only the scaffold
 | Export/delete account | `POST /me/exports`, `DELETE /me` | Auth; durable jobs and explicit destructive-action UX before real-user launch |
 
 Guides are initially build-time editorial content, so they need no API/CMS. Public reviews, feed, participants, and recommendation endpoints are intentionally unspecified until their product phase.
+
+Account bootstrap is safe to retry because `(auth_issuer, auth_subject)` is unique and creation uses `INSERT ... ON CONFLICT DO NOTHING` inside a transaction. It does not use a caller-supplied owner or general idempotency-key table. Neither bootstrap nor GET reactivates a disabled account. Successful account responses and errors are `Cache-Control: no-store`; errors contain a generated `requestId` also returned as `X-Request-ID`. Missing/invalid tokens return 401; missing/unavailable identity infrastructure returns 503. Error payloads exclude raw validation input and internal SQL/provider details.
 
 ## Wine-first capture example
 
