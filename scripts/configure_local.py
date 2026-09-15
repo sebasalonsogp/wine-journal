@@ -68,7 +68,7 @@ def main() -> None:
     )
     web = ROOT / "apps/web/.env.local"
     if not web.exists():
-        public_key = status.get("PUBLISHABLE_KEY") or status["ANON_KEY"]
+        public_key = status["PUBLISHABLE_KEY"]
         write_new(
             web,
             f"SUPABASE_URL={status['API_URL']}\n"
