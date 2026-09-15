@@ -177,7 +177,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f02"></a>
 ### F02: Establish the local data boundary
 
-- [ ] **Outcome:** Make real Postgres and application migrations usable in development and CI.
+- [x] **Outcome:** Make real Postgres and application migrations usable in development and CI.
 
 **Acceptance:**
 
@@ -186,7 +186,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Verify:** Run migration from empty Postgres and verify runtime grants; CI uses disposable Postgres, never hosted personal data.
 
-**Progress:** F02a schema/roles/migrations and F02b isolated integration/CI verification passed. The [CI run](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed all 38 API tests. F02c remains open: resolve Docker's ignored default port-binding option and verify the full Supabase stack stays on loopback. The guarded stack is stopped with volumes retained. F03/F04 used the completed data/identity foundations; F05 still needs this local-startup follow-up.
+**Progress:** F02a schema/roles/migrations and F02b isolated integration/CI verification passed. The [CI run](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed all 38 API tests. F02c also passed after selecting Docker Desktop's localhost-default port binding: the disposable probe and all Supabase published ports report loopback, guarded startup/migration succeeds, and the real two-account email-code smoke passes. See [local setup](../supabase/README.md).
 
 **Dependencies:** [BASE](#base). **Size:** M.
 
