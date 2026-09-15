@@ -2,7 +2,7 @@
 
 A private journal for the wines you discover and the memories around them. Record a wine and date quickly, then return to add notes, a personal rating, photos, or video. My Wines is the primary view; optional occasions group several wines into a scrapbook. Guest lookup is separate from recording consumption.
 
-**Stage:** repository foundation. The Next.js startup page and FastAPI liveness endpoint run locally. Product screens, authentication, persistence, recognition, and media processing are not implemented yet. The [connected design walkthrough](design/prototype-v3/walkthrough.html) is the interactive UX reference and uses simulated data.
+**Stage:** first access/backend checkpoint. FastAPI verifies Supabase access tokens and supports private account creation/reads backed by Postgres migrations. Local email-code sign-in has been exercised with real Supabase tokens. The web sign-in screens, connected journal, social-provider registrations, recognition and media remain upcoming. The [connected design walkthrough](design/prototype-v3/walkthrough.html) uses simulated data.
 
 ## Repository map
 
@@ -18,11 +18,11 @@ apps/
     tests/e2e/          Browser journeys added with working features
   api/                  Python/FastAPI application
     src/wine_journal/   Core, accounts, catalog, identification, journal, media, integrations
-    migrations/         Reserved for Alembic; no migrations exist yet
+    migrations/         Alembic environment and initial accounts migration
     tests/              Unit and HTTP/integration checks
 contracts/              Generated OpenAPI snapshot
 supabase/               Local service configuration; no hosted project
-scripts/                Contract export
+scripts/                Local setup, isolated tests, credential checks and contract export
 docs/                   Architecture, data/API designs, setup, decisions
 tasks/                  Product stories, UX decisions, implementation backlog
 design/                 Preserved Stitch exports and connected walkthrough
@@ -33,7 +33,7 @@ This is one repository with two runtime projects. Use npm inside `apps/web` and 
 
 ## Run locally
 
-Prerequisites: Node.js 24 LTS with npm, Python 3.12, and uv. The lockfiles capture package versions. The scaffold needs no cloud accounts or environment variables.
+Prerequisites: Node.js 24 LTS with npm, Python 3.12, and uv. Docker is needed for local Supabase and database integration tests. The startup screen and liveness check still need no cloud account or credentials.
 
 From the repository root:
 
@@ -54,11 +54,13 @@ Open `http://localhost:3000`. In a second terminal, start the API:
 uv run --directory apps/api --locked uvicorn wine_journal.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-API docs: `http://127.0.0.1:8000/docs`. Liveness: `http://127.0.0.1:8000/api/v1/health/live`. The startup page does not call the API yet. Optional per-app environment templates are provided; actual secrets stay untracked.
+API docs: `http://127.0.0.1:8000/docs`. Liveness: `http://127.0.0.1:8000/api/v1/health/live`. The startup page does not call the API yet. For real local authentication/database setup, follow [Supabase setup](supabase/README.md), including the Docker port-binding check.
+
+This repository is public. Read [security and environment configuration](docs/security.md) before adding credentials. Real local values are generated into ignored files; GitHub secret scanning, push protection, and CI secret/file checks provide additional safeguards.
 
 ## Verify and continue
 
-Follow [development and verification](docs/development.md) for exact check commands and [local Supabase setup](supabase/README.md) when the database/auth slice starts.
+Follow [development and verification](docs/development.md) for exact check commands and [the access checkpoint](tasks/access-checkpoint.md) for evidence and remaining setup work.
 
 - [Phased implementation plan](tasks/plan.md), [59-task backlog](tasks/todo.md), and [story coverage](tasks/story-coverage.md)
 - [Product story map](tasks/story-map.md)
@@ -66,4 +68,4 @@ Follow [development and verification](docs/development.md) for exact check comma
 - [Logical data model](docs/data-model.md) and [planned API](docs/api-contracts.md)
 - [Design references](design/README.md) and [latest UX decisions](tasks/ux-review-04.md)
 
-The first work package is F01/F02 plus the independent R01/R04 evidence tasks: settle sign-in, establish local data boundaries, prepare bottle fixtures and test iPhone photos. The first complete journal target is J04: save wine/date and reopen it after reload. Public reviews, collaboration, recommendations, calendar, and native iOS remain expansion directions.
+Next is the F05 web sign-in shell, followed by F06 session recovery and F07 browser automation. Resolve the local Docker binding issue before leaving development Auth/Postgres services running. R01/R04 provider/media evidence remains independent work. The first complete journal target is still J04: save wine/date and reopen it after reload.
