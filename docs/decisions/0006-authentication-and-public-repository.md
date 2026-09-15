@@ -1,6 +1,6 @@
 # ADR 0006: Managed multi-provider identity and public-repository safeguards
 
-Status: Accepted direction, September 14, 2026. Web integration and social-provider activation remain subsequent work.
+Status: Accepted and implemented for local email/web sessions, September 14, 2026. Live social-provider activation remains external setup work.
 
 ## Context
 
@@ -26,6 +26,6 @@ Alembic owns the unexposed `app` schema. `wine_migrator` owns its DDL; `wine_api
 
 ## Evidence and limits
 
-See [access checkpoint](../../tasks/access-checkpoint.md) for verification. Local email OTP and the API boundary have been exercised; the web UI and actual social-provider callbacks have not. Hosted email delivery, provider registrations, production rate limits and deployment remain explicit setup work. Docker Desktop's observed port-binding behavior is documented in [local setup](../../supabase/README.md); the startup wrapper stops the stack if it cannot verify loopback bindings.
+See [access checkpoint](../../tasks/access-checkpoint.md) and [web access checkpoint](../../tasks/web-access-checkpoint.md) for verification. Local email OTP, the web UI/session lifecycle and the API boundary have been exercised; actual social-provider callbacks have not. Hosted email delivery, provider registrations, production rate limits and deployment remain explicit setup work. Docker Desktop's separate localhost-default setting resolved the local binding issue; the startup wrapper still stops the stack if it cannot verify loopback bindings.
 
 References: [email OTP](https://supabase.com/docs/guides/auth/auth-email-passwordless), [JWT verification](https://supabase.com/docs/guides/auth/jwts), [Google](https://supabase.com/docs/guides/auth/social-login/auth-google), [Apple](https://supabase.com/docs/guides/auth/social-login/auth-apple), [Facebook](https://supabase.com/docs/guides/auth/social-login/auth-facebook).
