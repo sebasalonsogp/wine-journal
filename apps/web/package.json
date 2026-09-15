@@ -9,6 +9,7 @@
     "lint": "eslint . --max-warnings 0",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/unit/*.test.ts",
+    "test:e2e": "playwright test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate:api": "openapi-typescript ../../contracts/openapi.json -o src/lib/api/schema.d.ts"
