@@ -1,13 +1,13 @@
 # Wine Journal phased implementation plan
 
-Status: proposed execution plan for review, September 14, 2026. The repository scaffold is complete; product features remain unimplemented. This planning change creates no application code, migrations, services or deployments.
+Status: implementation underway, September 14, 2026. F01, F03 and F04 are complete. F02's schema/role/CI work is verified; safe persistent local Supabase startup remains open because of the observed Docker port-binding issue. The web sign-in experience and journal remain unimplemented. See the [access checkpoint](access-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 remaining bounded tasks**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: three complete and 56 remaining (including partially completed F02)**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 ## Starting point
 
-- **Implemented:** Next.js startup screen, FastAPI liveness endpoint, domain/workflow folders, lockfiles, generated contract/types, initial tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
-- **Not implemented:** real sign-in, application database schema, private journal, providers, uploads, workers or deployment. Docker/local Supabase startup still needs verification.
+- **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
+- **Not implemented:** web sign-in/session UI, live social-provider integration, private journal, wine providers, uploads, workers or deployment. Local email Auth/API smoke passed; the full local stack is now stopped by the binding guard. Its safe persistent startup remains an F02 follow-up.
 - **Architecture:** domain-oriented modular Python core, thin Next routes around workflow features, shared Postgres transactions for journal changes, and durable supporting work when needed. A folder is not a microservice; neither iOS nor background processing requires a service-per-feature design.
 - **Budget and capture:** local/free-first; online saves are the baseline. Failed online forms preserve recoverable input; automatic offline synchronization is a later product decision.
 - **Design:** implement the reviewed Stitch direction and [UX review 04](ux-review-04.md). Browse Wines is first in navigation; My Wines is the first private-journal destination.
@@ -70,7 +70,7 @@ Record completion only with evidence. A mock is appropriate for deterministic pr
 
 | Gate | Resolve before | Current position / required decision |
 | --- | --- | --- |
-| G1 — Authentication | F03/F05 | F01 selects one real sign-in/recovery method, allowed callback/return paths and delivery setup. Guest lookup stays available. |
+| G1 — Authentication | F03/F05 | F01 is settled: email codes plus Google, Apple and Facebook via Supabase (ADR 0006). F05/F06 implement secure web sessions/callbacks and enable only registered, verified providers. Guest lookup stays available. |
 | G2 — Journal controls | J01/J08/J10/O01 | Confirm minimum manual identity, rating scale/clear/history-erasure behavior, small initial sort/filter set and occasion title/date defaults. Wine/date-only save, separate release identity and wine-level rating history are already fixed. |
 | G3 — Media limits | M02/V01 | R04/R05 establish decoder/transcoder feasibility; choose byte/pixel/duration/account limits, original-versus-derivative retention and clear recovery behavior against R07 resource limits. iPhone support and bounded private video remain in scope. |
 | G4 — Lookup coverage and market | C01/C04/C06/C08 | R01–R03/R06 define the first catalog/market, supported samples, provider coverage/limits, candidate ambiguity and source handling. Record a curated real-data fallback where viable; no invented coverage or live availability. |
@@ -145,7 +145,7 @@ Commercial licensing procurement remains deferred per the user's direction. Basi
 
 ## First work package
 
-Start **F01, F02, R01 and R04** as independent decision/setup/evidence work; this is an ordering option, not a request to spawn agents. Continue F03/F04 once the sign-in choice and database fixture are ready, then F05–F07. R02/R03 use the common bottle set; R05/R07 investigate video and runtime viability while the manual journal progresses.
+The initial backend checkpoint delivered F01/F03/F04 and the database/CI portion of F02. Finish F02's safe local-startup follow-up before F05's connected web sign-in work, then F06–F07. **R01 and R04 remain pending independent evidence work**; they were not marked complete by the access implementation. R02/R03 use the common bottle set, and R05/R07 investigate video and runtime viability while the manual journal progresses.
 
 The first user-visible implementation target is **J04: save wine/date and reopen it after reload**. J05–J10 then make that flow useful for repeat drinking and changing opinions. Do not start a public feed or generalized recommendation/service infrastructure while this basic journey is incomplete.
 
