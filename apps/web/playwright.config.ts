@@ -5,6 +5,7 @@ process.env.PLAYWRIGHT_NO_COPY_PROMPT = "1";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  globalSetup: "./tests/e2e/local-only.ts",
   fullyParallel: false,
   workers: 1,
   retries: 0,

@@ -1,8 +1,9 @@
 # Web access checkpoint
 
-September 14, 2026. F02 local startup and F05/F06 web access are implemented. F07's browser suite and CI job are implemented; the first fresh GitHub run is pending verification.
+September 14, 2026. F01–F07 are complete. [Fresh GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34921267658) passed for code commit `9bf7965`: all 39 API tests, five web unit tests, three real browser scenarios, web build/type/lint, dependency audits and generated contract checks. The earlier [secret-check run](https://github.com/sebasalonsogp/wine-journal/actions/runs/34920880315) passed; staged/history scans are repeated before each publish.
 
 - Docker Desktop's separate localhost-default port setting resolved persistent local startup. The four Supabase published ports were inspected on `127.0.0.1`/`::1`; migration and real OTP/API smoke passed again.
+- Fresh CI also exposed a first-run signing-key bootstrap cycle: the CLI tried to load the configured key before generating it. Key generation now runs in an empty temporary directory, with a regression test, and fresh Linux Supabase startup passes.
 - Email code request/verify, retry/recovery, account bootstrap/read, sign-out, and account switching run against real local Supabase and FastAPI. Social provider initiation/callback code is present behind configuration, but Google/Apple/Facebook are not activated or claimed live.
 - The UI inherits the reviewed palette and navigation: Browse Wines first, then My Wines, Occasions, Guides, with My Wines the initial private destination. Account details identify the signed-in email. Empty states do not fabricate wines, occasions or public ratings.
 - HTTP-only cookies hold refresh credentials. Short-lived access tokens stay in instance memory; no localStorage/sessionStorage. Origin/body checks, fixed internal return paths, no-store headers, safe errors and bounded refresh are verified. A browser test caught and now guards a cross-tab sign-out race.
@@ -11,4 +12,4 @@ September 14, 2026. F02 local startup and F05/F06 web access are implemented. F0
 
 No hosted SMTP, social-provider credentials, deployment, journal persistence, media or wine-data provider was configured. An issued API JWT may remain valid until expiry after sign-out; refresh revocation and local state clearing do not provide immediate bearer-token revocation. Production abuse limits, stricter script CSP and release-specific token policies remain explicit release work.
 
-Next: first private journal slice J01–J04, retaining the independent provider/media feasibility lane. F07 is only marked complete after fresh browser CI passes.
+Next: first private journal slice J01–J04, retaining the independent provider/media feasibility lane. Social-provider registration/activation remains separate from the completed local email access phase.

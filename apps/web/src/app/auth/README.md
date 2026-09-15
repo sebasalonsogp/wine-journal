@@ -1,3 +1,3 @@
 # Authentication routes
 
-Sign-in and callback pages belong here once the sign-in method is selected. Use `features/auth` for the workflow. No authentication is implemented in this scaffold.
+Thin sign-in/callback/session routes delegate to `features/auth`. Email-code sign-in is connected; OAuth entry/callback is available only for configured providers. Cookie-backed handlers require the configured Origin, validate inputs, and never cache session responses. Business APIs remain in FastAPI.
