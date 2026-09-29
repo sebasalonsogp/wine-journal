@@ -1,8 +1,9 @@
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Self
 from uuid import UUID
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic.alias_generators import to_camel
 
 from wine_journal.catalog.schemas import ManualWine
@@ -29,6 +30,47 @@ class EntryResponse(BaseModel):
     user_wine_id: UUID
     consumed_date: date
     created_at: datetime
+    local_time: time | None = None
+    timezone: str | None = None
+    location_label: str | None = None
+    notes: str | None = None
+    version: int = 1
+
+
+class EditEntry(BaseModel):
+    model_config = ConfigDict(extra="forbid", alias_generator=to_camel)
+
+    version: int = Field(gt=0, strict=True)
+    consumed_date: date | None = None
+    local_time: time | None = None
+    timezone: str | None = Field(default=None, max_length=100)
+    location_label: str | None = Field(default=None, max_length=200)
+    notes: str | None = Field(default=None, max_length=10000)
+
+    @field_validator("local_time")
+    @classmethod
+    def local_minute(cls, value: time | None) -> time | None:
+        if value and (value.tzinfo is not None or value.second or value.microsecond):
+            raise ValueError("Use a local time with minute precision and no offset.")
+        return value
+
+    @field_validator("timezone")
+    @classmethod
+    def known_timezone(cls, value: str | None) -> str | None:
+        if value is not None:
+            try:
+                ZoneInfo(value)
+            except (ZoneInfoNotFoundError, ValueError):
+                raise ValueError("Use an IANA timezone name.") from None
+        return value
+
+    @model_validator(mode="after")
+    def valid_patch(self) -> Self:
+        if self.model_fields_set == {"version"}:
+            raise ValueError("Provide a field to edit.")
+        if "consumed_date" in self.model_fields_set and self.consumed_date is None:
+            raise ValueError("The drinking date cannot be cleared.")
+        return self
 
 
 class WineResponse(BaseModel):
