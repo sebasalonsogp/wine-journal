@@ -9,13 +9,46 @@ from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.database import database_session
 from wine_journal.core.errors import ErrorResponse
 from wine_journal.journal import queries
-from wine_journal.journal.schemas import EntryPage, EntryResponse, SaveEntry, WinePage, WineResponse
+from wine_journal.journal.edits import edit_entry, read_entry
+from wine_journal.journal.schemas import (
+    EditEntry,
+    EntryPage,
+    EntryResponse,
+    SaveEntry,
+    WinePage,
+    WineResponse,
+)
 from wine_journal.journal.service import save_entry
 
 router = APIRouter(
     tags=["journal"],
     responses={status: {"model": ErrorResponse} for status in (401, 403, 404, 409, 422, 500, 503)},
 )
+
+
+@router.get("/entries/{entry_id}", response_model=EntryResponse)
+def entry_details(
+    entry_id: UUID,
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> EntryResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return EntryResponse.model_validate(
+        read_entry(session, read_account(session, principal).id, entry_id)
+    )
+
+
+@router.patch("/entries/{entry_id}", response_model=EntryResponse)
+def update_entry(
+    entry_id: UUID,
+    body: EditEntry,
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> EntryResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return edit_entry(session, principal, entry_id, body)
 
 
 @router.post("/entries", response_model=EntryResponse)
