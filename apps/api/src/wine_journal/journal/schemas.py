@@ -85,6 +85,8 @@ class WineResponse(BaseModel):
     edition: str | None
     last_consumed_date: date | None
     entry_count: int
+    current_rating: float | None
+    rating_version: int
 
 
 class WinePage(BaseModel):

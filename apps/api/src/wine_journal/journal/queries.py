@@ -31,7 +31,21 @@ def decode_cursor(value: str, scope: str, owner: UUID) -> tuple[date | None, UUI
 
 def wine_query(
     owner: UUID,
-) -> Select[tuple[UUID, UUID, str, str | None, str, int | None, str | None, date | None, int]]:
+) -> Select[
+    tuple[
+        UUID,
+        UUID,
+        str,
+        str | None,
+        str,
+        int | None,
+        str | None,
+        date | None,
+        int,
+        float | None,
+        int,
+    ]
+]:
     history = (
         select(
             DrinkingEntry.user_wine_id,
@@ -53,6 +67,8 @@ def wine_query(
             WineRelease.edition,
             history.c.last_date.label("last_consumed_date"),
             func.coalesce(history.c.entry_count, 0).label("entry_count"),
+            (UserWine.rating_units / 2.0).label("current_rating"),
+            UserWine.rating_version,
         )
         .join(WineRelease, UserWine.release_id == WineRelease.id)
         .join(WineDefinition, WineRelease.definition_id == WineDefinition.id)

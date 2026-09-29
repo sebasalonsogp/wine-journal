@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, and `GET/PATCH/DELETE /entries/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, `GET/PATCH/DELETE /entries/{id}`, and rating changes/history/erasure are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -11,6 +11,14 @@ Successful creation and replay both return 200 with the original entry ID, perso
 My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines sorts latest consumed date descending, then ID ascending; empty histories follow dated wines. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
 
 Creation remains date-only; it creates no occasion, rating or media and returns no fabricated rating/cover data.
+
+### Implemented wine ratings (J08–J09)
+
+Wine list/detail responses include nullable `currentRating` (1–5) and integer `ratingVersion` (initially 0). `PUT /me/wines/{id}/rating` requires `{score, version}`: score is null or 1–5 in half-point steps, version is the nonnegative integer previously read. Extra fields and string/bool scores are rejected. Success returns `{score, version}`. Matching current score/version is a no-op; stale versions return 409 `RATING_CONFLICT` before comparing the value. Lock waits are capped at three seconds and return 409 `RATING_BUSY`. Clients refetch current state before explicitly choosing to retry; they must not automatically adopt a new version.
+
+`GET /me/wines/{id}/rating-history` accepts `limit` (1–100, default 20) and optional `beforeVersion` (positive integer, exclusive). It returns `{items: [{score, version, changedAt}], nextBeforeVersion}` ordered by version descending. Change timestamps come from the server. Pagination is scoped by the authorized wine, remains stable across new revisions, and is a live view when history is erased.
+
+Clearing uses PUT with `score: null`, creating a dated null revision when previously rated. `DELETE /me/wines/{id}/rating-history?version=<current>` clears score and revisions together and returns `{score: null, version: <incremented>}`. Erasure never resets the version, even when already empty. The browser requires a separate explicit confirmation. Rating mutations do not add, edit or remove drinking entries. Responses are no-store; missing/foreign wines return 404. See the [rating checkpoint](../tasks/rating-checkpoint.md).
 
 ### Implemented entry enrichment (J06)
 

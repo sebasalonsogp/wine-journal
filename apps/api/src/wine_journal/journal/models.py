@@ -23,6 +23,8 @@ class UserWine(Base):
     __table_args__ = (
         UniqueConstraint("owner_id", "id", name="uq_user_wines_owner"),
         UniqueConstraint("owner_id", "release_id", name="uq_user_wines_release"),
+        CheckConstraint("rating_units BETWEEN 2 AND 10", name="ck_wine_rating"),
+        CheckConstraint("rating_version >= 0", name="ck_wine_rating_version"),
         ForeignKeyConstraint(
             ["owner_id", "release_id"], ["app.wine_releases.owner_id", "app.wine_releases.id"]
         ),
@@ -31,6 +33,25 @@ class UserWine(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     owner_id: Mapped[UUID] = mapped_column()
     release_id: Mapped[UUID] = mapped_column()
+    rating_units: Mapped[int | None] = mapped_column()
+    rating_version: Mapped[int] = mapped_column(server_default="0")
+
+
+class RatingRevision(Base):
+    __tablename__ = "rating_revisions"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["owner_id", "user_wine_id"], ["app.user_wines.owner_id", "app.user_wines.id"]
+        ),
+        CheckConstraint("rating_units BETWEEN 2 AND 10", name="ck_revision_rating"),
+        CheckConstraint("version > 0", name="ck_revision_version"),
+        {"schema": "app"},
+    )
+    user_wine_id: Mapped[UUID] = mapped_column(primary_key=True)
+    version: Mapped[int] = mapped_column(primary_key=True)
+    owner_id: Mapped[UUID] = mapped_column()
+    rating_units: Mapped[int | None] = mapped_column()
+    changed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class DrinkingEntry(Base):
