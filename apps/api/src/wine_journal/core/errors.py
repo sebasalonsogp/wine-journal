@@ -28,6 +28,7 @@ class ApiError(Exception):
     status: int
     code: str
     message: str
+    retry_after: int | None = None
 
 
 def error_response(request_id: str, status: int, code: str, message: str) -> JSONResponse:
@@ -83,7 +84,10 @@ class RequestContextMiddleware:
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def application_error(request: Request, exc: ApiError) -> JSONResponse:
-        return error_response(request.state.request_id, exc.status, exc.code, exc.message)
+        response = error_response(request.state.request_id, exc.status, exc.code, exc.message)
+        if exc.retry_after is not None:
+            response.headers["Retry-After"] = str(exc.retry_after)
+        return response
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:

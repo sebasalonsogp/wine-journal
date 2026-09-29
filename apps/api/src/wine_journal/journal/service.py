@@ -62,6 +62,6 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
     except OperationalError as error:
         if getattr(error.orig, "sqlstate", None) == "55P03":
             raise ApiError(
-                409, "SAVE_BUSY", "A save is in progress. Retry with the same key."
+                409, "SAVE_BUSY", "A save is in progress. Retry with the same key.", retry_after=3
             ) from None
         raise
