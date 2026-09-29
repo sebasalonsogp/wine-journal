@@ -23,3 +23,5 @@ npm run start
 Thin files in `src/app` compose screens from `src/features`. Shared UI belongs in `src/components`; infrastructure belongs in `src/lib` and does not import features. Business rules and private data authorization live in FastAPI. Supabase refresh credentials stay in HTTP-only cookies; short-lived access tokens live in memory. TanStack Query caches account-scoped read models, never tokens. Session-storage capture drafts contain product fields and a retry key, are bound to a verified owner after sign-in, and clear on sign-out. See [browser tests](tests/e2e/README.md) and [authentication](../../docs/authentication.md).
 
 Generate API types with `npm run generate:api` after exporting the backend schema. Do not edit `src/lib/api/schema.d.ts` manually. See [the root README](../../README.md) for the complete repository map and setup.
+
+Wine history offers an inline editor for date, optional local time/timezone, custom place and notes. Owner/entry-specific tab drafts survive reload; version conflicts show the saved entry beside the draft before replacement. Calendar dates are displayed without changing them to the viewer's timezone.

@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Twelve of 59 tasks are complete; 47 remain.** F01–F07 cover access; J01–J05 deliver manual capture, repeats and persisted history. J06 entry enrichment is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Thirteen of 59 tasks are complete; 46 remain.** F01–F07 cover access; J01–J06 deliver manual capture, repeats, persisted history and versioned entry enrichment. J07 safe entry removal is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -394,7 +394,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j06"></a>
 ### J06: Enrich an existing entry
 
-- [ ] **Outcome:** Let users fill in memories without logging another drink.
+- [x] **Outcome:** Let users fill in memories without logging another drink.
 
 **Acceptance:**
 
@@ -408,6 +408,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Primary change areas:** apps/api/src/wine_journal/journal edit use case and schemas; apps/web/src/features/capture; edit tests.
 
 **Stories:** TJ-03, TJ-04.
+
+**Evidence:** [J06 checkpoint](entry-edit-checkpoint.md), with separate API/migration and browser-editor slices. Real concurrent updates, explicit conflict resolution, draft recovery and original-entry-ID preservation are verified.
 
 **Checkpoint after J04, J05, J06:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
 

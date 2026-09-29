@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, and paginated entry history are implemented under `/api/v1`. The remaining product routes and richer fields below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, and `GET/PATCH /entries/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -10,7 +10,15 @@ Successful creation and replay both return 200 with the original entry ID, perso
 
 My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines sorts latest consumed date descending, then ID ascending; empty histories follow dated wines. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
 
-The current subset creates no occasion, rating, notes or media, and returns no fabricated rating/cover data. Those fields and workflows arrive in their own planned slices.
+Creation remains date-only; it creates no occasion, rating or media and returns no fabricated rating/cover data.
+
+### Implemented entry enrichment (J06)
+
+`GET /entries/{id}` returns the owned entry and its version. `PATCH /entries/{id}` requires the integer `version` read by the editor and at least one changed field: `consumedDate`, `localTime`, `timezone`, `locationLabel` or `notes`. Omitted fields stay unchanged; null clears optional fields. Date cannot be null. Time and timezone must be set/cleared together in the resulting record. Local time uses minute precision, with no UTC offset; timezone is an IANA identifier. They record civil context without deriving a unique instant, preserving unknown time and calendar dates while traveling. Labels allow 200 characters; plain-text notes allow 10,000.
+
+Updates preserve the ID and creation timestamp, increment the version, and use an atomic version predicate. A stale write returns 409 `EDIT_CONFLICT`; a bounded lock timeout returns 409 `EDIT_BUSY`. Neither silently overwrites. Read the latest entry, keep the user's draft, and obtain an explicit replacement choice before retrying against its version. A lost success response is recovered through the same comparison flow. Read/write ownership and active-account checks remain mandatory; inaccessible entries return 404. Runtime SQL UPDATE privileges cover editable columns and version only.
+
+The browser stores edit drafts under owner/entry-specific session keys, clears them on sign-out, and invalidates affected read models after success. Explicit clearing and an empty location/note input persist as null. Official venue lookup remains future work.
 
 ## Contract conventions
 
