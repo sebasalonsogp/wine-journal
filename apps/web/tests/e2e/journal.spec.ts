@@ -313,3 +313,88 @@ test("entry edits survive reload, retain a stale draft, and require explicit con
   await expect(page.getByTestId("drinking-entry")).not.toContainText("My unfinished memory");
   await second.close();
 });
+
+test("delete confirmation, stale entry protection and retry preserve the wine after the last entry", async ({
+  page,
+  request,
+  context,
+}, testInfo) => {
+  await page.goto("/auth/sign-in?next=%2Fcapture");
+  await finishSignIn(page, request);
+  await page.getByLabel("Wine name", { exact: true }).fill("Wine to keep");
+  await page.getByLabel("Date tried").fill("2026-09-01");
+  await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  await page.getByRole("link", { name: "Log this wine again" }).click();
+  await page.getByLabel("Date tried").fill("2026-09-29");
+  await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(2);
+  const wineUrl = page.url();
+  const newest = page.getByTestId("drinking-entry").first();
+  await newest.getByRole("button", { name: "Delete entry", exact: true }).click();
+  const confirmation = page.getByRole("dialog", { name: "Delete this drinking entry?" });
+  await expect(confirmation).toContainText("Wine to keep");
+  await expect(confirmation.getByRole("button", { name: "Keep entry" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(confirmation).toHaveCount(0);
+  await expect(newest.getByRole("button", { name: "Delete entry", exact: true })).toBeFocused();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(2);
+
+  // Make the snapshot stale while the confirmation stays open.
+  const second = await context.newPage();
+  await second.goto(wineUrl);
+  await second
+    .getByTestId("drinking-entry")
+    .first()
+    .getByRole("button", { name: "Edit entry", exact: true })
+    .click();
+  await second.getByLabel("Notes", { exact: true }).fill("Saved from another tab");
+  await newest.getByRole("button", { name: "Delete entry", exact: true }).click();
+  await second.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(second.getByTestId("drinking-entry").first()).toContainText(
+    "Saved from another tab",
+  );
+  await confirmation.getByRole("button", { name: "Delete this entry", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "This entry changed" })).toBeVisible();
+  await expect(newest).toContainText("Saved from another tab");
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(2);
+  await newest.getByRole("button", { name: "Delete entry", exact: true }).click();
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await expect(confirmation).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath(`delete-${width}.png`) });
+  }
+  const audit = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(audit.violations.map((issue) => issue.id)).toEqual([]);
+  await confirmation.getByRole("button", { name: "Delete this entry", exact: true }).click();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Your drinking history" })).toBeFocused();
+  await page.reload();
+  await expect(page.getByTestId("drinking-entry").locator("time")).toHaveAttribute(
+    "datetime",
+    "2026-09-01",
+  );
+
+  let interrupted = false;
+  await page.route("**/api/v1/entries/*", async (route) => {
+    if (route.request().method() === "DELETE" && !interrupted) {
+      interrupted = true;
+      expect((await route.fetch()).status()).toBe(200);
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page.getByRole("button", { name: "Delete entry", exact: true }).click();
+  await confirmation.getByRole("button", { name: "Delete this entry", exact: true }).click();
+  await expect(confirmation.getByRole("alert")).toContainText("couldn’t confirm the deletion");
+  await confirmation.getByRole("button", { name: "Delete this entry", exact: true }).click();
+  await expect(page.getByText("No drinking entries yet.", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Back to My wines" }).click();
+  await expect(page.locator(".wine-card")).toHaveCount(1);
+  await expect(page.locator(".wine-card")).toContainText("0 entries");
+  await expect(page.locator(".wine-card")).toContainText("No drinking entries yet");
+  await page.locator(".wine-card").click();
+  await expect(page.getByText("No drinking entries yet.", { exact: true })).toBeVisible();
+  await second.close();
+});

@@ -59,7 +59,9 @@ export function WineDetail({ wineId }: { wineId: string }) {
             </section>
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">
-                <h2 id="history-title">Your drinking history</h2>
+                <h2 id="history-title" tabIndex={-1}>
+                  Your drinking history
+                </h2>
                 <span>
                   {wine.entryCount} {wine.entryCount === 1 ? "entry" : "entries"}
                 </span>
@@ -82,7 +84,10 @@ export function WineDetail({ wineId }: { wineId: string }) {
                       )}
                       {entry.locationLabel && <p>{entry.locationLabel}</p>}
                       {entry.notes && <p className="entry-notes">{entry.notes}</p>}
-                      <EntryEditor entry={entry} />
+                      <EntryEditor
+                        entry={entry}
+                        label={`${wine.name} · ${dateLabel(entry.consumedDate)}`}
+                      />
                     </li>
                   ))}
                 </ol>

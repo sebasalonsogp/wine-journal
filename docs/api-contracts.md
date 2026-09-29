@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, and `GET/PATCH /entries/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, and `GET/PATCH/DELETE /entries/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -21,6 +21,14 @@ Updates preserve the ID and creation timestamp, increment the version, and use a
 The browser stores edit drafts under owner/entry-specific session keys, clears them on sign-out, and invalidates affected read models after success. Explicit clearing and an empty location/note input persist as null. Official venue lookup remains future work.
 
 ## Contract conventions
+
+### Implemented entry removal (J07)
+
+`DELETE /entries/{id}?version=1` requires the viewed version as a positive integer query parameter. Success returns 200 `{id}`. Missing/inaccessible entries, including a repeated deletion, return 404; a version race returns 409 `DELETE_CONFLICT` and a bounded lock wait returns 409 `DELETE_BUSY`. The caller must review and reconfirm after a conflict. The browser reconciles a 404 by refreshing history, allowing recovery after a lost success response.
+
+Deletion removes only the owned entry. Wine identity and personal wine record survive, with `entryCount: 0` and `lastConsumedDate: null` after the last encounter is removed. Creation receipts for that entry are reduced to a deletion marker in the same transaction, retaining only the request-key claim/hash to prevent resurrection. Replaying that original create request returns 409 `ENTRY_REMOVED`; no deleted entry details are returned. This deletion transaction will own attachment-cleanup job creation when media is implemented.
+
+### Shared conventions
 
 - REST JSON under `/api/v1`. JSON uses `camelCase`, enums use uppercase values, UUIDs are strings. Python names remain `snake_case` via schema aliases.
 - Required ownership comes from a verified bearer access token, never request `ownerId`. Guest endpoints return public catalog data only; private manual identities are accessed through owner-only routes.
