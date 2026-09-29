@@ -9,8 +9,10 @@ from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.database import database_session
 from wine_journal.core.errors import ErrorResponse
 from wine_journal.journal import queries
+from wine_journal.journal.deletion import delete_entry
 from wine_journal.journal.edits import edit_entry, read_entry
 from wine_journal.journal.schemas import (
+    DeletedEntry,
     EditEntry,
     EntryPage,
     EntryResponse,
@@ -24,6 +26,18 @@ router = APIRouter(
     tags=["journal"],
     responses={status: {"model": ErrorResponse} for status in (401, 403, 404, 409, 422, 500, 503)},
 )
+
+
+@router.delete("/entries/{entry_id}", response_model=DeletedEntry)
+def remove_entry(
+    entry_id: UUID,
+    version: Annotated[int, Query(ge=1)],
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> DeletedEntry:
+    response.headers["Cache-Control"] = "no-store"
+    return DeletedEntry(id=delete_entry(session, principal, entry_id, version))
 
 
 @router.get("/entries/{entry_id}", response_model=EntryResponse)

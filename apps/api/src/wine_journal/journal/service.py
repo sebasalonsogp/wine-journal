@@ -34,6 +34,8 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
                         409, "SAVE_CONFLICT", "This save key belongs to different input."
                     )
                 assert intent.response is not None
+                if intent.response.get("deleted") is True:
+                    raise ApiError(409, "ENTRY_REMOVED", "This saved entry has been deleted.")
                 return EntryResponse.model_validate(intent.response)
             if body.manual_wine is not None:
                 release = create_manual_release(session, owner.id, body.manual_wine)

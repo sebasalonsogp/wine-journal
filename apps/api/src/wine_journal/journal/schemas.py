@@ -92,6 +92,10 @@ class WinePage(BaseModel):
     nextCursor: str | None
 
 
+class DeletedEntry(BaseModel):
+    id: UUID
+
+
 class EntryPage(BaseModel):
     items: list[EntryResponse]
     nextCursor: str | None
