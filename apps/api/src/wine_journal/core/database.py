@@ -1,11 +1,24 @@
+from collections.abc import Iterator
+
+from fastapi import Request
 from pydantic import SecretStr
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.engine import make_url
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+
+from wine_journal.core.errors import ApiError
 
 
 class Base(DeclarativeBase):
     pass
+
+
+def database_session(request: Request) -> Iterator[Session]:
+    factory: sessionmaker[Session] | None = request.app.state.session_factory
+    if factory is None:
+        raise ApiError(503, "DATABASE_UNAVAILABLE", "The journal is not configured.")
+    with factory() as session:
+        yield session
 
 
 def database_engine(url: SecretStr, *, role: str = "wine_api") -> Engine:

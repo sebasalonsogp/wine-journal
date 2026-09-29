@@ -1,26 +1,18 @@
-from collections.abc import Iterator
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, Response
-from sqlalchemy.orm import Session, sessionmaker
+from fastapi import APIRouter, Depends, Response
+from sqlalchemy.orm import Session
 
 from wine_journal.accounts import service
 from wine_journal.accounts.schemas import AccountResponse, BootstrapAccount
 from wine_journal.core.auth import Principal, require_principal
-from wine_journal.core.errors import ApiError, ErrorResponse
+from wine_journal.core.database import database_session
+from wine_journal.core.errors import ErrorResponse
 
 router = APIRouter(
     tags=["accounts"],
     responses={status: {"model": ErrorResponse} for status in (401, 403, 404, 422, 500, 503)},
 )
-
-
-def database_session(request: Request) -> Iterator[Session]:
-    factory: sessionmaker[Session] | None = request.app.state.session_factory
-    if factory is None:
-        raise ApiError(503, "DATABASE_UNAVAILABLE", "The journal is not configured.")
-    with factory() as session:
-        yield session
 
 
 @router.post("/me", response_model=AccountResponse)

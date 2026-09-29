@@ -1,8 +1,10 @@
 from alembic import context
 
 from wine_journal.accounts.models import AppUser
+from wine_journal.catalog import models as catalog_models  # noqa: F401
 from wine_journal.core.config import MigrationSettings
 from wine_journal.core.database import database_engine
+from wine_journal.journal import models as journal_models  # noqa: F401
 
 target_metadata = AppUser.metadata
 
