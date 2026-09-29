@@ -56,7 +56,11 @@ export function AppHeader({
               key={href}
               href={href}
               prefetch={false}
-              aria-current={path === href ? "page" : undefined}
+              aria-current={
+                path === href || (href === "/my-wines" && path.startsWith("/my-wines/"))
+                  ? "page"
+                  : undefined
+              }
             >
               {title}
             </Link>

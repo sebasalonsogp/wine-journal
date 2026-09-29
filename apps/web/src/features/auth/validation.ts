@@ -1,10 +1,21 @@
 export const providers = ["google", "apple", "facebook", "x"] as const;
 export type AuthProvider = (typeof providers)[number];
 
-const destinations = new Set(["/my-wines", "/occasions", "/profile", "/browse", "/guides"]);
+const destinations = new Set([
+  "/my-wines",
+  "/occasions",
+  "/profile",
+  "/browse",
+  "/guides",
+  "/capture",
+]);
 
 export function returnPath(value: unknown): string {
-  return typeof value === "string" && destinations.has(value) ? value : "/my-wines";
+  return typeof value === "string" &&
+    (destinations.has(value) ||
+      /^\/my-wines\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value))
+    ? value
+    : "/my-wines";
 }
 
 export function enabledProviders(value: string): AuthProvider[] {

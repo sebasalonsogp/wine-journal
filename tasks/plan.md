@@ -1,8 +1,8 @@
 # Wine Journal phased implementation plan
 
-Status: implementation underway, September 29, 2026. F01–F07 and J01–J03 are complete: authentication plus private wine identities, transactional entry saves, and paginated history APIs. J04, connecting manual capture and history to the web UI, remains next. See the [manual journal checkpoint](manual-journal-checkpoint.md) for verification and the current local Docker startup limitation.
+Status: implementation underway, September 29, 2026. F01–F07 and J01–J05 are complete: authentication, private wine/date capture, repeat drinking and paginated history now work through the browser and API. J06 entry enrichment is next. See the [manual web checkpoint](manual-web-checkpoint.md); local Docker/Supabase startup is restored.
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: ten complete and 49 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: twelve complete and 47 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 ## Starting point
 
@@ -145,9 +145,9 @@ Commercial licensing procurement remains deferred per the user's direction. Basi
 
 ## First work package
 
-The web checkpoint delivered F01–F07 and closed Phase 1. J01–J03 now provide the private journal API. Next implement J04 to connect manual capture, list, and detail screens. **R01 and R04 remain pending independent evidence work**; they were not marked complete by the access implementation. R02/R03 use the common bottle set, and R05/R07 investigate video and runtime viability while the manual journal progresses.
+The web checkpoint delivered F01–F07 and closed Phase 1. J01–J05 now provide manual capture, repeat entries, list/detail screens and their API. Next implement J06 entry enrichment. **R01 and R04 remain pending independent evidence work**; they were not marked complete by the access implementation. R02/R03 use the common bottle set, and R05/R07 investigate video and runtime viability while the manual journal progresses.
 
-The first user-visible implementation target is **J04: save wine/date and reopen it after reload**. J05–J10 then make that flow useful for repeat drinking and changing opinions. Do not start a public feed or generalized recommendation/service infrastructure while this basic journey is incomplete.
+The first user-visible implementation target, **J04: save wine/date and reopen it after reload**, and J05 repeat drinking are complete. J06–J10 add enrichment, ratings and finding wines. Public-feed and recommendation infrastructure remain later work.
 
 ## Later branches
 

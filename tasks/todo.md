@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Ten of 59 tasks are complete; 49 remain.** F01–F07 cover access; J01–J03 cover the private journal API. J04 connects the manual capture and history UI next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Twelve of 59 tasks are complete; 47 remain.** F01–F07 cover access; J01–J05 deliver manual capture, repeats and persisted history. J06 entry enrichment is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -353,12 +353,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** HB-01, HB-02, WC-06, AC-03.
 
-**Checkpoint after J01, J02, J03:** Completed backend evidence and local runtime limitations are recorded in [manual journal checkpoint](manual-journal-checkpoint.md). J04 remains unchecked until the real save/reload browser journey is implemented.
+**Checkpoint after J01, J02, J03:** Completed backend evidence and local runtime limitations are recorded in [manual journal checkpoint](manual-journal-checkpoint.md). J04/J05 browser evidence is now recorded in [manual web checkpoint](manual-web-checkpoint.md).
 
 <a id="j04"></a>
 ### J04: Save and revisit a first wine
 
-- [ ] **Outcome:** Deliver the first complete manual journal journey.
+- [x] **Outcome:** Deliver the first complete manual journal journey.
 
 **Acceptance:**
 
@@ -376,7 +376,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j05"></a>
 ### J05: Log the same wine again
 
-- [ ] **Outcome:** Separate repeat drinking from new wine identity.
+- [x] **Outcome:** Separate repeat drinking from new wine identity.
 
 **Acceptance:**
 

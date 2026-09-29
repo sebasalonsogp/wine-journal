@@ -11,8 +11,8 @@ export default function BrowsePage() {
           a wine without an account.
         </p>
         <p className="availability-note">Wine lookup is coming in a later update.</p>
-        <Link className="button" href="/my-wines" prefetch={false}>
-          Open my journal
+        <Link className="button" href="/capture" prefetch={false}>
+          Add wine manually
         </Link>
       </section>
     </main>
