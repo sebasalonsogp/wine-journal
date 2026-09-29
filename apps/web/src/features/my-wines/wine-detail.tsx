@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { EntryEditor } from "@/features/capture/entry-editor";
+import { WineRating } from "./wine-rating";
 import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
 
 export function WineDetail({ wineId }: { wineId: string }) {
@@ -57,6 +58,7 @@ export function WineDetail({ wineId }: { wineId: string }) {
                 </Link>
               </div>
             </section>
+            <WineRating key={wine.id} wine={wine} />
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">
                 <h2 id="history-title" tabIndex={-1}>

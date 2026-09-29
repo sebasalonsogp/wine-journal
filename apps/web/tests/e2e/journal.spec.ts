@@ -2,6 +2,90 @@ import { test, expect, type APIRequestContext, type Page } from "@playwright/tes
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 
+test("wine ratings preserve history, resolve stale drafts and confirm erasure", async ({
+  page,
+  request,
+  context,
+}, testInfo) => {
+  test.setTimeout(90000);
+  await page.goto("/auth/sign-in?next=%2Fcapture");
+  await finishSignIn(page, request);
+  await page.getByLabel("Wine name", { exact: true }).fill("Calculated Risk Cabernet Sauvignon");
+  await page.getByLabel("Date tried").fill("2026-09-12");
+  await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByTestId("current-rating")).toHaveText("Not rated yet");
+  await page.getByLabel("Your score", { exact: true }).selectOption("4");
+  await page.getByRole("button", { name: "Save rating", exact: true }).click();
+  await expect(page.getByTestId("current-rating")).toHaveText("4 / 5");
+  await page.getByLabel("Your score", { exact: true }).selectOption("4.5");
+  await page.getByRole("button", { name: "Save rating", exact: true }).click();
+  await expect(page.getByTestId("current-rating")).toHaveText("4.5 / 5");
+  await page.reload();
+  await expect(page.getByTestId("current-rating")).toHaveText("4.5 / 5");
+  await page.getByRole("button", { name: "View rating history" }).click();
+  await expect(page.locator(".rating-revisions li")).toHaveCount(2);
+  await expect(page.locator(".rating-revisions li").first()).toContainText("4.5 / 5");
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await page.screenshot({ path: testInfo.outputPath(`rating-${width}.png`), fullPage: true });
+  }
+  const audit = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(audit.violations.map((issue) => issue.id)).toEqual([]);
+
+  const wineUrl = page.url();
+  await page.getByLabel("Your score", { exact: true }).selectOption("3.5");
+  const second = await context.newPage();
+  await second.goto(wineUrl);
+  // Discard a copied sessionStorage draft before choosing a different opinion.
+  await second.getByLabel("Your score", { exact: true }).selectOption("5");
+  await second.getByRole("button", { name: "Save rating", exact: true }).click();
+  await expect(second.getByTestId("current-rating")).toHaveText("5 / 5");
+  await page.bringToFront();
+  await page.reload();
+  await expect(page.getByLabel("Your score", { exact: true })).toHaveValue("3.5");
+  await expect(page.locator(".rating-conflict")).toContainText("5 / 5");
+  await expect(page.getByRole("button", { name: "Save rating", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Keep my choice to save" }).click();
+  await page.getByRole("button", { name: "Save rating", exact: true }).click();
+  await expect(page.getByTestId("current-rating")).toHaveText("3.5 / 5");
+  await second.close();
+
+  let dropped = false;
+  await page.route("**/api/v1/me/wines/*/rating", async (route) => {
+    if (route.request().method() === "PUT" && !dropped) {
+      dropped = true;
+      expect((await route.fetch()).status()).toBe(200);
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page.getByRole("button", { name: "Clear rating", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "couldn’t confirm" })).toBeVisible();
+  await expect(page.getByTestId("current-rating")).toHaveText("Not rated yet");
+  await page.getByRole("button", { name: "Discard my choice" }).click();
+  await page.getByRole("button", { name: "View rating history" }).click();
+  await expect(page.locator(".rating-revisions li")).toHaveCount(5);
+  await expect(page.locator(".rating-revisions li").first()).toContainText("Rating cleared");
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await page.getByRole("button", { name: "Delete rating history", exact: true }).click();
+  await expect(page.locator(".rating-revisions li")).toHaveCount(5);
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Delete rating history", exact: true }).click();
+  await expect(page.getByText("No rating history yet.", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  await page.reload();
+  await expect(page.getByTestId("current-rating")).toHaveText("Not rated yet");
+  await page.getByRole("button", { name: "View rating history" }).click();
+  await expect(page.getByText("No rating history yet.", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Back to My wines" }).click();
+  await expect(page.locator(".wine-card")).toContainText("Not rated yet");
+});
+
 async function finishSignIn(page: Page, request: APIRequestContext) {
   const email = `journal-${crypto.randomUUID()}@example.test`;
   await page.getByLabel("Email address").fill(email);
