@@ -28,8 +28,10 @@ export function authConfig() {
   // This web boundary needs only a publishable key, never a service-role JWT.
   if (!key?.startsWith("sb_publishable_")) throw new Error("Configure a Supabase publishable key.");
   const site = origin(process.env.WINE_JOURNAL_SITE_URL);
+  const supabase = origin(process.env.SUPABASE_URL);
   return {
-    supabase: origin(process.env.SUPABASE_URL),
+    supabase,
+    localInbox: site === "http://localhost:3000" && supabase === "http://127.0.0.1:54321",
     key,
     site,
     api: origin(process.env.WINE_JOURNAL_API_URL),

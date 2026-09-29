@@ -33,7 +33,7 @@ export function AppHeader({
   onSignOut,
   signingOut = false,
 }: {
-  signedIn?: boolean;
+  signedIn?: boolean | null;
   onSignOut?: () => void;
   signingOut?: boolean;
 }) {
@@ -63,7 +63,9 @@ export function AppHeader({
           ))}
         </nav>
         <div className="account-nav">
-          {signedIn ? (
+          {signedIn === null ? (
+            <span role="status">Checking session…</span>
+          ) : signedIn ? (
             <>
               <Link
                 href="/profile"

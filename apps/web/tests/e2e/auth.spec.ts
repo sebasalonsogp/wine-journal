@@ -29,6 +29,10 @@ async function mailCode(request: APIRequestContext, email: string): Promise<stri
 async function signIn(page: Page, request: APIRequestContext) {
   const email = `wine-e2e-${crypto.randomUUID()}@example.test`;
   await page.goto("/auth/sign-in");
+  await expect(page.getByRole("link", { name: "local testing inbox" })).toHaveAttribute(
+    "href",
+    "http://127.0.0.1:54324",
+  );
   await page.getByLabel("Email address").fill(email);
   await page.getByRole("button", { name: "Send me a code", exact: true }).click();
   await expect(page.getByLabel("Verification code")).toBeVisible();
@@ -168,6 +172,28 @@ test("real email sign-in, current account, refresh, two-account switch, cross-ta
       .then((values) => values.some((value) => value.name.startsWith("wine-journal-session"))),
   ).toBe(false);
   await secondTab.close();
+});
+
+test("public navigation and existing browser tabs reflect sign-in and sign-out", async ({
+  page,
+  request,
+  context,
+}) => {
+  const browseTab = await context.newPage();
+  await browseTab.goto("/browse");
+  await expect(browseTab.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await signIn(page, request);
+  await expect(browseTab.getByRole("link", { name: "My account", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Browse wines", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Sign out", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Guides", exact: true }).click();
+  await expect(page.getByRole("link", { name: "My account", exact: true })).toBeVisible();
+  await browseTab.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(browseTab.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await browseTab.close();
 });
 
 test("invalid code keeps recovery usable; desktop and mobile UI are accessible and fit", async ({

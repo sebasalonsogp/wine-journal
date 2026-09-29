@@ -24,6 +24,7 @@ test("return destinations never accept external URLs, encoded redirects or arbit
   }
   assert.equal(returnPath("/occasions"), "/occasions");
   assert.deepEqual(enabledProviders("apple,unknown, google,google"), ["google", "apple"]);
+  assert.deepEqual(enabledProviders("instagram,twitter,x,x"), ["x"]);
 });
 
 test("cookie-backed requests require the exact configured Origin", () => {

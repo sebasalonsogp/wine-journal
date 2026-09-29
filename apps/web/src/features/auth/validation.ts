@@ -1,4 +1,4 @@
-export const providers = ["google", "apple", "facebook"] as const;
+export const providers = ["google", "apple", "facebook", "x"] as const;
 export type AuthProvider = (typeof providers)[number];
 
 const destinations = new Set(["/my-wines", "/occasions", "/profile", "/browse", "/guides"]);
