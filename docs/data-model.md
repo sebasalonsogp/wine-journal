@@ -2,6 +2,10 @@
 
 Status: proposed logical model, September 14, 2026. This is not migration SQL. Exact fields are added with their feature slices. Identity examples and terminology follow [wine identity research](../tasks/wine-identity.md); architecture and access policy are in [architecture.md](architecture.md).
 
+Implementation checkpoint, September 29: migrations 0002/0003 add private wine definitions/releases, personal wine records, date-only entries and transactional save intents. All implemented wine identities require an owner; nullable/shared catalog ownership remains a future migration with explicit visibility rules. Optional catalog facts, occasions, rating revisions and media below remain proposed. Save intents contain a request hash and the original response, and commit in the same transaction as the entry. Runtime grants allow only the reads/inserts and save-intent completion needed now.
+
+Rollback: migration downgrades remove the new tables in dependency order and destroy their data. They are verified only against disposable test databases. For a populated journal, roll back application code while retaining the additive schema; do not downgrade the database to undo a deployment. Existing access-only code remains compatible with the new tables. No local persistent journal data was migrated during this checkpoint because Docker startup is currently unavailable.
+
 ## Core relationships
 
 ```mermaid

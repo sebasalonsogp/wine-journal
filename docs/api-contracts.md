@@ -1,6 +1,16 @@
 # Wine Journal API contracts
 
-Status: liveness, `POST /api/v1/me` and `GET /api/v1/me` are implemented; other product routes below remain planned. The [phased implementation plan](../tasks/plan.md) sequences their delivery. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, and paginated entry history are implemented under `/api/v1`. The remaining product routes and richer fields below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+
+### Implemented manual-journal subset (J01–J03)
+
+`POST /entries` requires a UUID `Idempotency-Key` header and `{consumedDate, manualWine}` or `{consumedDate, releaseId}`, exactly one wine selector. Manual wine requires `name`, with optional `producer`, `vintageStatus`, `year`, and `edition`. `YEAR` requires a year; all other vintage states forbid it. Existing releases must belong to the caller. A manual save creates a fresh private identity without matching by name. Repeating a known release reuses its personal wine record.
+
+Successful creation and replay both return 200 with the original entry ID, personal wine ID, consumed date and creation timestamp. Changed input under the same key returns 409 `SAVE_CONFLICT`; a competing transaction that exceeds the three-second lock wait returns 409 `SAVE_BUSY` with `Retry-After: 3`. Retry with the same key. Save intents currently remain for the lifetime of the data (no 24-hour cleanup job); account deletion must include them when implemented.
+
+My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines sorts latest consumed date descending, then ID ascending; empty histories follow dated wines. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
+
+The current subset creates no occasion, rating, notes or media, and returns no fabricated rating/cover data. Those fields and workflows arrive in their own planned slices.
 
 ## Contract conventions
 

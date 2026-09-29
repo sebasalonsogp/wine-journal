@@ -5,6 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -153,5 +154,34 @@ def test_atomic_failure_rolls_back_manual_wine(
                 )
                 == 0
             )
+    finally:
+        engine.dispose()
+
+
+def test_inflight_save_returns_bounded_retry(database_urls: dict[str, SecretStr]) -> None:
+    engine = database_engine(database_urls["runtime"])
+    principal = Principal("https://busy.test", uuid4())
+    app = create_app(Settings.model_construct(database_url=database_urls["runtime"]))
+    app.dependency_overrides[require_principal] = lambda: principal
+    try:
+        with TestClient(app) as client:
+            owner_id = UUID(client.post("/api/v1/me", json={}).json()["id"])
+            key = uuid4()
+            with engine.connect() as connection:
+                transaction = connection.begin()
+                connection.execute(
+                    insert(EntrySave).values(owner_id=owner_id, key=key, request_hash="pending")
+                )
+                try:
+                    result = client.post(
+                        "/api/v1/entries",
+                        json={"consumedDate": "2026-09-01", "manualWine": {"name": "Busy wine"}},
+                        headers={"Idempotency-Key": str(key)},
+                    )
+                    assert result.status_code == 409
+                    assert result.json()["error"]["code"] == "SAVE_BUSY"
+                    assert result.headers["retry-after"] == "3"
+                finally:
+                    transaction.rollback()
     finally:
         engine.dispose()
