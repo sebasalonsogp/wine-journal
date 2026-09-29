@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AppHeader } from "@/components/app-header";
 import { authRequest, RequestFailure } from "@/lib/session/http";
+import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 
 export function PublicHeader() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -34,7 +35,10 @@ export function PublicHeader() {
     }
     const authChannel = new BroadcastChannel("wine-journal-auth");
     channel.current = authChannel;
-    authChannel.onmessage = () => void check();
+    authChannel.onmessage = (event) => {
+      if (event.data === "signed-out") clearPrivateDrafts();
+      void check();
+    };
     const visible = () => {
       if (document.visibilityState === "visible") void check();
     };
@@ -61,9 +65,11 @@ export function PublicHeader() {
     ++revision.current;
     try {
       await authRequest("/auth/sign-out", {});
+      clearPrivateDrafts();
       ++revision.current;
       setSignedIn(false);
       channel.current?.postMessage("signed-out");
+      window.location.replace("/browse");
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Please try signing out again.");
     } finally {

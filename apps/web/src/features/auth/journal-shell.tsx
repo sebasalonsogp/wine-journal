@@ -7,8 +7,15 @@ import { AppHeader } from "@/components/app-header";
 import { createTransport, type Account } from "@/lib/api/transport";
 import { authRequest, RequestFailure } from "@/lib/session/http";
 import { returnPath } from "./validation";
+import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 
 const AccountContext = createContext<Account | null>(null);
+const TransportContext = createContext<ReturnType<typeof createTransport> | null>(null);
+export function useJournalApi() {
+  const transport = useContext(TransportContext);
+  if (!transport) throw new Error("Journal API requires the private shell.");
+  return transport;
+}
 export function useAccount() {
   return useContext(AccountContext);
 }
@@ -56,6 +63,7 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
       transport.clear();
       queries.clear();
       if (event.data === "signed-out") {
+        clearPrivateDrafts();
         window.location.replace("/auth/sign-in?error=session");
       } else {
         window.location.reload();
@@ -77,6 +85,7 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
     setError("");
     try {
       await authRequest("/auth/sign-out", {});
+      clearPrivateDrafts();
       transport.clear();
       queries.clear();
       authChannel.current?.postMessage("signed-out");
@@ -116,7 +125,9 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
           </button>
         </main>
       ) : (
-        <AccountContext value={account.data}>{children}</AccountContext>
+        <AccountContext value={account.data}>
+          <TransportContext value={transport}>{children}</TransportContext>
+        </AccountContext>
       )}
     </>
   );

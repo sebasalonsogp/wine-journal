@@ -1,4 +1,4 @@
-import createClient from "openapi-fetch";
+import createClient, { type Client } from "openapi-fetch";
 import type { paths, components } from "./schema";
 import { authRequest, RequestFailure } from "@/lib/session/http";
 
@@ -10,6 +10,10 @@ type Session = {
   apiUrl: string;
 };
 export type Account = components["schemas"]["AccountResponse"] & { email: string | null };
+type Operation<T> = (
+  api: Client<paths>,
+  signal: AbortSignal,
+) => Promise<{ data?: T; response: Response }>;
 
 // One instance per mounted private shell. Tokens stay in memory, never query caches.
 export function createTransport() {
@@ -39,38 +43,63 @@ export function createTransport() {
     return pending;
   }
 
+  async function call<T>(operation: Operation<T>): Promise<T> {
+    const started = generation;
+    let rejected: string | undefined;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const credentials = await session(rejected);
+      const api = createClient<paths>({
+        baseUrl: credentials.apiUrl,
+        headers: { Authorization: `Bearer ${credentials.accessToken}` },
+        credentials: "omit",
+        cache: "no-store",
+      });
+      let result;
+      try {
+        result = await operation(api, AbortSignal.timeout(10000));
+      } catch {
+        throw new RequestFailure(
+          503,
+          "We couldn't confirm the request. Check your connection and try again.",
+        );
+      }
+      if (started !== generation) throw new RequestFailure(401, "Your session has ended.");
+      if (result.data !== undefined) return result.data;
+      if (result.response.status === 401 && attempt === 0) {
+        rejected = credentials.accessToken;
+        continue;
+      }
+      throw new RequestFailure(
+        result.response.status,
+        result.response.status === 403
+          ? "This account is unavailable. You can sign out and use another account."
+          : result.response.status === 404
+            ? "This wine is unavailable. Return to My wines to choose another."
+            : result.response.status === 422
+              ? "Check the wine and date, then try again."
+              : "We couldn't complete the request. Please try again.",
+      );
+    }
+    throw new RequestFailure(401, "Your session has ended.");
+  }
+
   return {
+    call,
     clear() {
       generation++;
       current = undefined;
     },
     async account(): Promise<Account> {
-      let rejected: string | undefined;
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const credentials = await session(rejected);
-        const api = createClient<paths>({
-          baseUrl: credentials.apiUrl,
-          headers: { Authorization: `Bearer ${credentials.accessToken}` },
-          credentials: "omit",
-          cache: "no-store",
-        });
-        const options = { signal: AbortSignal.timeout(10000) };
+      // Recheck the cookie session on focus, including OAuth changes in another tab.
+      current = undefined;
+      const data = await call(async (api, signal) => {
+        const options = { signal };
         let result = await api.GET("/api/v1/me", options);
         if (result.response.status === 404)
           result = await api.POST("/api/v1/me", { ...options, body: {} });
-        if (result.data) return { ...result.data, email: credentials.email };
-        if (result.response.status === 401 && attempt === 0) {
-          rejected = credentials.accessToken;
-          continue;
-        }
-        throw new RequestFailure(
-          result.response.status,
-          result.response.status === 403
-            ? "This account is unavailable. You can sign out and use another account."
-            : "We couldn't open your journal. Please try again.",
-        );
-      }
-      throw new RequestFailure(401, "Your session has ended.");
+        return result;
+      });
+      return { ...data, email: (current as Session | undefined)?.email ?? null };
     },
   };
 }
