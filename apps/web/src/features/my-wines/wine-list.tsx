@@ -58,6 +58,11 @@ export function WineList() {
                     {wine.producer && <p className="wine-producer">{wine.producer}</p>}
                     <h2>{wine.name}</h2>
                     <p className="wine-release">{releaseLabel(wine)}</p>
+                    <p className="wine-card-rating">
+                      {wine.currentRating === null
+                        ? "Not rated yet"
+                        : `My rating: ${wine.currentRating} / 5`}
+                    </p>
                     <div className="wine-card-history">
                       <p>
                         {wine.lastConsumedDate

@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Fourteen of 59 tasks are complete; 45 remain.** F01–F07 cover access; J01–J07 deliver manual capture, repeats, persisted history and versioned entry enrichment. J08 wine-level ratings are next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Sixteen of 59 tasks are complete; 43 remain.** F01–F07 cover access; J01–J09 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion and current wine ratings with revision history. J10 search/filter/sort is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -15,7 +15,7 @@ Before executing a task, list its concrete files and test cases. If it requires 
 - [x] Architecture, story map, Stitch sources and the connected walkthrough are versioned in the private [repository](https://github.com/sebasalonsogp/wine-journal).
 - [x] Local lint/types/builds, two API smoke tests, browser smoke and the [initial Linux CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34895334930) passed.
 
-This records the original scaffold milestone. Subsequent access/database evidence is recorded under F01–F04 and in the [access checkpoint](access-checkpoint.md). The private journal and hosted deployment remain unimplemented. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
+This records the original scaffold milestone. Subsequent access/database evidence is recorded under F01–F04 and in the [access checkpoint](access-checkpoint.md). Private journal implementation follows below; hosted deployment remains upcoming. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
 
 ## Early feasibility lane: Start alongside Phase 1
 
@@ -436,7 +436,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j08"></a>
 ### J08: Store the current rating and revisions
 
-- [ ] **Outcome:** Implement wine-level rating changes under the confirmed rating decision.
+- [x] **Outcome:** Implement wine-level rating changes under the confirmed wine-level semantics and stated default scale.
 
 **Acceptance:**
 
@@ -454,7 +454,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j09"></a>
 ### J09: Show current rating and history
 
-- [ ] **Outcome:** Make changing opinions understandable in the wine view.
+- [x] **Outcome:** Make changing opinions understandable in the wine view.
 
 **Acceptance:**
 
@@ -469,7 +469,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TP-04, HB-01.
 
-**Checkpoint after J07, J08, J09:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after J07, J08, J09:** Complete. The [rating checkpoint](rating-checkpoint.md) records the default scale, clear/erase semantics, storage/API/browser slices, concurrency and interrupted-response evidence. Entry deletion evidence remains in the [J07 checkpoint](entry-deletion-checkpoint.md). Profile-query invalidation will be added with L03; no taste-profile query exists yet.
 
 <a id="j10"></a>
 ### J10: Search and sort My Wines
