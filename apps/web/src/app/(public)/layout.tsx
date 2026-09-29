@@ -1,8 +1,8 @@
-import { AppHeader } from "@/components/app-header";
+import { PublicHeader } from "@/features/auth/public-header";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <AppHeader />
+      <PublicHeader />
       {children}
     </>
   );

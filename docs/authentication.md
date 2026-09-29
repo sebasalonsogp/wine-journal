@@ -27,7 +27,13 @@ The selected methods are email verification codes plus Google, Apple and Faceboo
 
 Register only the intended local/staging/production destinations; no wildcard or caller-supplied redirect host. The Supabase provider callback and the web app's post-auth callback are different URLs. The web implementation must validate return destinations against known internal routes, use the SDK's PKCE/state/nonce protections, and keep an interrupted capture separate from credentials.
 
-`WINE_JOURNAL_OAUTH_PROVIDERS` is a comma-separated allowlist of `google,apple,facebook`. It defaults to empty and controls both visible buttons and accepted OAuth initiation requests. Enable a provider only after its corresponding integration is configured and verified.
+`WINE_JOURNAL_OAUTH_PROVIDERS` is a comma-separated allowlist of `google,apple,facebook,x`. It defaults to empty and controls both visible buttons and accepted OAuth initiation requests. Enable a provider only after its corresponding integration is configured and verified.
+
+X / Twitter uses the supported `x` OAuth 2.0 provider, not legacy `twitter`. Register an X OAuth application, configure email access and the exact Supabase callback, and store client credentials in Supabase before activation. See [Supabase X setup](https://supabase.com/docs/guides/auth/social-login/auth-twitter). No social providers are activated by this change.
+
+Instagram was requested but is not enabled as consumer sign-in: [Meta's Instagram Login API](https://www.postman.com/meta/instagram/folder/1z5vxzu/instagram-api-with-instagram-login) targets Business/Creator accounts and is not a built-in Supabase social provider. Revisit it as an optional professional-account connection if sharing/import requirements call for it.
+
+Local Supabase captures email in [Mailpit](http://127.0.0.1:54324), not a real mailbox. Request a code, open the newest message for the email entered, and enter its six digits within ten minutes. The sign-in screen explains this only for the configured local web/Supabase origins. Hosted delivery requires SMTP configuration and testing.
 
 ## Web session boundary
 

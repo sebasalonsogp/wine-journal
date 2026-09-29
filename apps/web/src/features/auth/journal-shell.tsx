@@ -52,10 +52,14 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const channel = new BroadcastChannel("wine-journal-auth");
     authChannel.current = channel;
-    channel.onmessage = () => {
+    channel.onmessage = (event) => {
       transport.clear();
       queries.clear();
-      window.location.replace("/auth/sign-in?error=session");
+      if (event.data === "signed-out") {
+        window.location.replace("/auth/sign-in?error=session");
+      } else {
+        window.location.reload();
+      }
     };
     const restore = (event: PageTransitionEvent) => {
       if (event.persisted) window.location.reload();
@@ -85,7 +89,11 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <AppHeader signedIn onSignOut={signOut} signingOut={ending} />
+      <AppHeader
+        signedIn={account.isPending ? null : Boolean(account.data) && !account.error}
+        onSignOut={signOut}
+        signingOut={ending}
+      />
       {error && (
         <p role="alert" className="page-error">
           {error}

@@ -54,6 +54,7 @@ export default async function SignInPage({
           <SignInForm
             next={returnPath(params.next)}
             providers={config.providers}
+            localInbox={config.localInbox}
             initialError={error}
           />
         ) : (

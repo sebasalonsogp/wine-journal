@@ -5,16 +5,18 @@ import { useEffect, useRef, useState } from "react";
 import { authRequest } from "@/lib/session/http";
 import type { AuthProvider } from "./validation";
 
-const labels = { google: "Google", apple: "Apple", facebook: "Facebook" };
+const labels = { google: "Google", apple: "Apple", facebook: "Facebook", x: "X / Twitter" };
 
 export function SignInForm({
   next,
   providers,
   initialError,
+  localInbox,
 }: {
   next: string;
   providers: AuthProvider[];
   initialError: string;
+  localInbox: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -50,7 +52,11 @@ export function SignInForm({
     await authRequest("/auth/otp/request", { email });
     setStage("code");
     setCooldown(60);
-    setNotice("A new code is on its way. Check your inbox and spam folder.");
+    setNotice(
+      localInbox
+        ? "Your code is in the local testing inbox. Open the newest message for your email."
+        : "A new code is on its way. Check your inbox and spam folder.",
+    );
   }
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,6 +88,16 @@ export function SignInForm({
           </>
         )}
       </p>
+      {localInbox && (
+        <p className="form-footnote">
+          Local preview: codes go to the{" "}
+          <a href="http://127.0.0.1:54324" target="_blank" rel="noopener noreferrer">
+            local testing inbox (opens a new tab)
+          </a>
+          , not your regular email inbox. Open the newest message for your email and copy its
+          six-digit code here.
+        </p>
+      )}
       {providers.length > 0 && stage === "email" && (
         <div className="social-options">
           {providers.map((provider) => (
