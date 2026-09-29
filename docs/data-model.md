@@ -2,9 +2,9 @@
 
 Status: proposed logical model, September 14, 2026. This is not migration SQL. Exact fields are added with their feature slices. Identity examples and terminology follow [wine identity research](../tasks/wine-identity.md); architecture and access policy are in [architecture.md](architecture.md).
 
-Implementation checkpoint, September 29: migrations 0002/0003 add private wine definitions/releases, personal wine records, date-only entries and transactional save intents. All implemented wine identities require an owner; nullable/shared catalog ownership remains a future migration with explicit visibility rules. Optional catalog facts, occasions, rating revisions and media below remain proposed. Save intents contain a request hash and the original response, and commit in the same transaction as the entry. Runtime grants allow only the reads/inserts and save-intent completion needed now.
+Implementation checkpoint, September 29: migrations 0002–0006 add private wine definitions/releases, personal wine records, entries with optional time/timezone/place/notes, versioned entry edits/deletion, transactional save intents, and current ratings with revisions. All implemented wine identities require an owner; shared catalog ownership remains a future migration with explicit visibility rules. Optional catalog facts, occasions and media below remain proposed. Save intents commit with entry creation; deletion replaces the original receipt with a tombstone. Runtime updates are restricted to editable columns; rating revisions can be inserted/read/deleted, never edited in place.
 
-Rollback: migration downgrades remove the new tables in dependency order and destroy their data. They are verified only against disposable test databases. For a populated journal, roll back application code while retaining the additive schema; do not downgrade the database to undo a deployment. Existing access-only code remains compatible with the new tables. No local persistent journal data was migrated during this checkpoint because Docker startup is currently unavailable.
+Rollback: migration downgrades remove feature columns/tables and destroy their data. They are verified only against disposable test databases. For a populated journal, roll back application code while retaining the additive schema; do not downgrade the database to undo a deployment. Earlier application code remains compatible with the additive schema. Local Docker/Supabase is running and has been upgraded without resetting existing journal data.
 
 ## Core relationships
 
@@ -43,7 +43,7 @@ A wine definition is a named offering, such as a producer's specific Cabernet se
 | `entry_media`, `occasion_media` | Typed foreign keys to parent and asset, owner, caption and ordering. Each parent/asset pair is unique. They identify context, not a copy of the stored object. |
 | `wine_covers` | One row per user wine; asset FK; owner. It does not make the asset an album memory. |
 
-The proposed score representation is 1–5 in half steps, stored as integers 2–10 to avoid floating-point comparisons. The prototype uses that scale, but the user has not finalized it; settle before the rating migration. `null` means unrated, never zero. Free-text wine summary notes are optional; encounter observations remain on entries.
+The implemented default score is 1–5 in half steps, stored as integers 2–10. This follows the prototype and the stated implementation assumption; the optional scale question did not receive a new preference. The API exchanges the displayed numeric score, not storage units. `null` means unrated, never zero. Free-text wine summary notes remain proposed; encounter observations live on entries.
 
 Provisional wine identity requires only a recognizable user-entered name; producer, year, region, and other facts can be unknown. Manual creation makes an owner-only definition/release, even when a similar shared offering exists. This small amount of duplication avoids silently inserting incomplete claims into public catalog data. An unknown-vintage record is not the same as a verified non-vintage release.
 
@@ -73,9 +73,9 @@ The full merge tool can follow initial correction support. Until then, offer ent
 
 ### Rating transaction
 
-Lock the owner-scoped user-wine row, check the expected rating version, append the new revision, and update current score/version in the same transaction. Identical score submissions are a no-op. Conflicting edits return the latest state for review. The current score is the user's most recent choice; a history revision does not create an additional public vote or drinking event.
+Lock the owner-scoped user-wine row with a three-second lock timeout, check the expected rating version, append the new revision, and update current score/version in the same transaction. Identical score submissions with the current version are a no-op. A stale version returns 409 even if its score matches; the browser reloads current state for review. The current score is the user's most recent choice; a revision does not create an additional public vote or drinking event.
 
-Proposed removal behavior: clearing the current rating appends a null revision and preserves history. A separate explicit “Delete rating history” operation removes revisions and clears current score atomically. Full account deletion removes both. Distinguish changing an opinion from erasing data in the UI.
+Implemented removal behavior: clearing the current rating appends a null revision and preserves history. Clearing an already-unrated wine is a no-op. A separate confirmed “Delete rating history” operation removes all revisions and clears current score atomically. Erasure increments the version even when history is already empty; the counter never resets, so old tabs cannot reuse a pre-erasure version. A lost success response is reconciled by reading the latest state, never by silently overwriting it. Full account deletion will remove both when that feature lands.
 
 ## How the two scrapbook views work
 

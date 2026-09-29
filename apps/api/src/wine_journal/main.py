@@ -11,6 +11,7 @@ from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
 from wine_journal.core.errors import RequestContextMiddleware, install_error_handlers
 from wine_journal.core.health import router as health_router
+from wine_journal.journal.rating_routes import router as rating_router
 from wine_journal.journal.routes import router as journal_router
 
 
@@ -45,6 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(health_router, prefix="/api/v1")
     application.include_router(accounts_router, prefix="/api/v1")
     application.include_router(journal_router, prefix="/api/v1")
+    application.include_router(rating_router, prefix="/api/v1")
     install_error_handlers(application)
     return application
 
