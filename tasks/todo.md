@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 14, 2026. **Three of 59 tasks are complete; 56 remain, including partially completed F02.** F01/F03/F04 form the first backend checkpoint; the web sign-in UI is still pending. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Ten of 59 tasks are complete; 49 remain.** F01–F07 cover access; J01–J03 cover the private journal API. J04 connects the manual capture and history UI next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -302,7 +302,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j01"></a>
 ### J01: Represent private wine identities
 
-- [ ] **Outcome:** Add only the wine identity records needed for manual capture.
+- [x] **Outcome:** Add only the wine identity records needed for manual capture.
 
 **Acceptance:**
 
@@ -320,7 +320,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j02"></a>
 ### J02: Persist a minimal drinking entry
 
-- [ ] **Outcome:** Implement the reliable save boundary before the capture UI.
+- [x] **Outcome:** Implement the reliable save boundary before the capture UI.
 
 **Acceptance:**
 
@@ -338,7 +338,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j03"></a>
 ### J03: Read private wine history
 
-- [ ] **Outcome:** Provide bounded read models for the wine-first experience.
+- [x] **Outcome:** Provide bounded read models for the wine-first experience.
 
 **Acceptance:**
 
@@ -353,7 +353,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** HB-01, HB-02, WC-06, AC-03.
 
-**Checkpoint after J01, J02, J03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after J01, J02, J03:** Completed backend evidence and local runtime limitations are recorded in [manual journal checkpoint](manual-journal-checkpoint.md). J04 remains unchecked until the real save/reload browser journey is implemented.
 
 <a id="j04"></a>
 ### J04: Save and revisit a first wine
