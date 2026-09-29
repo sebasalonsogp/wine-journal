@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
+import { EntryEditor } from "@/features/capture/entry-editor";
 import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
 
 export function WineDetail({ wineId }: { wineId: string }) {
@@ -74,7 +75,14 @@ export function WineDetail({ wineId }: { wineId: string }) {
                   {entries.map((entry) => (
                     <li key={entry.id} data-testid="drinking-entry">
                       <time dateTime={entry.consumedDate}>{dateLabel(entry.consumedDate)}</time>
-                      <p>Everyday entry · no occasion</p>
+                      {entry.localTime && (
+                        <p>
+                          {entry.localTime.slice(0, 5)} · {entry.timezone}
+                        </p>
+                      )}
+                      {entry.locationLabel && <p>{entry.locationLabel}</p>}
+                      {entry.notes && <p className="entry-notes">{entry.notes}</p>}
+                      <EntryEditor entry={entry} />
                     </li>
                   ))}
                 </ol>

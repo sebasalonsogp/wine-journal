@@ -255,7 +255,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
               <p className="form-footnote">Your input will be kept while you sign in.</p>
             )}
             <p className="form-footnote">
-              Saved entries stay private. Notes, ratings and memories will follow in a later update.
+              Saved entries stay private. You can add notes, time and location after saving.
             </p>
           </form>
         )

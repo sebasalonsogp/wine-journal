@@ -19,4 +19,12 @@ PATCH requires the version read by the editor. Omitted fields stay unchanged; ex
 
 Operate mode; extend the existing wine history. Each dated row exposes Edit entry inline, using the existing cream, burgundy and olive palette and labelled form controls. Keep the date first, optional time alongside it on desktop, and place/notes below. Conflict review shows the saved fields beneath the unchanged draft, with explicit keep-latest or replace actions. No modal or new navigation section. Check both phone and desktop layouts and keyboard/accessibility states in one bounded inspection.
 
-Browser verification in progress.
+## Browser verification and verdict
+
+The editor passes reload/draft retention, two-tab stale editing with explicit replacement, the unchanged entry ID, clearing optional fields, and recovery after a PATCH commits but its response is dropped. The seven existing browser journeys remain green; the editor adds the eighth. Eleven web unit tests pass. Type/lint/format/build checks pass, and axe reports no violations on the populated conflict form.
+
+Phone (390 px) and desktop (1440 px) screenshots were inspected in one batch. The correction pass aligned desktop form rows and clipped the unfocused skip link correctly on long pages; a second batch confirmed both. No new visual world or raster assets were introduced. Existing design tokens and bottle placeholders are preserved. Verdict: J06 complete. J07 removal is next; official-place lookup, ratings, guided tasting and media remain their own planned tasks.
+
+Edit drafts are tab-scoped, keyed by verified owner and entry ID. When browser storage is blocked the editor warns to save before leaving/switching tabs; full offline sync is not implemented. No passwords, keys, real notes or inbox contents are retained in test artifacts. Secret and browser-bundle scans gate publication.
+
+References: [Pydantic explicit-field serialization](https://docs.pydantic.dev/latest/concepts/serialization/) supports omission handling; [Python IANA timezone support](https://docs.python.org/3/library/zoneinfo.html) explains the cross-platform tzdata dependency.

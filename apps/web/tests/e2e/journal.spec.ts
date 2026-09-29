@@ -217,3 +217,99 @@ test("wine cards and drinking history load subsequent real pages", async ({ page
   await expect(page.getByTestId("drinking-entry")).toHaveCount(21);
   await expect(page.getByRole("button", { name: "Load more entries" })).toHaveCount(0);
 });
+
+test("entry edits survive reload, retain a stale draft, and require explicit conflict resolution", async ({
+  page,
+  request,
+  context,
+}, testInfo) => {
+  await page.goto("/auth/sign-in?next=%2Fcapture");
+  await finishSignIn(page, request);
+  await page.getByLabel("Wine name", { exact: true }).fill("Editing example wine");
+  let created: { id: string } = { id: "" };
+  await page.route("**/api/v1/entries", async (route) => {
+    const response = await route.fetch();
+    created = await response.json();
+    await route.fulfill({ response });
+  });
+  await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  const wineUrl = page.url();
+  await page.getByRole("button", { name: "Edit entry", exact: true }).click();
+  await page.getByLabel("Date tried", { exact: true }).fill("2026-01-01");
+  await page.getByLabel("Local time", { exact: true }).fill("00:15");
+  await page.getByLabel("Timezone", { exact: true }).fill("Pacific/Kiritimati");
+  await page.getByLabel("Location", { exact: true }).fill("A friend's house");
+  await page.getByLabel("Notes", { exact: true }).fill("My unfinished memory");
+  await page.reload();
+  await expect(page.getByLabel("Notes", { exact: true })).toHaveValue("My unfinished memory");
+
+  const second = await context.newPage();
+  await second.goto(wineUrl);
+  await second.getByRole("button", { name: "Edit entry", exact: true }).click();
+  await second.getByLabel("Notes", { exact: true }).fill("Newer saved memory");
+  await second.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(second.getByTestId("drinking-entry")).toContainText("Newer saved memory");
+  await page.bringToFront();
+  await expect(page.getByLabel("Notes", { exact: true })).toHaveValue("My unfinished memory");
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "This entry has changed" })).toBeVisible();
+  await expect(page.locator(".edit-conflict")).toContainText("Newer saved memory");
+  await expect(page.getByLabel("Notes", { exact: true })).toHaveValue("My unfinished memory");
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await page.screenshot({
+      path: testInfo.outputPath(`edit-conflict-${width}.png`),
+      fullPage: true,
+    });
+  }
+  const audit = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(audit.violations.map((issue) => issue.id)).toEqual([]);
+  const changedResponse = page.waitForResponse(
+    (response) =>
+      response.url().endsWith(`/entries/${created.id}`) && response.request().method() === "PATCH",
+  );
+  await page
+    .getByRole("button", { name: "Save my changes over this version", exact: true })
+    .click();
+  const changed = await (await changedResponse).json();
+  expect(changed.id === created.id && changed.version === 3).toBe(true);
+  await page.reload();
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  await expect(page.getByTestId("drinking-entry").locator("time")).toHaveAttribute(
+    "datetime",
+    "2026-01-01",
+  );
+  await expect(page.getByTestId("drinking-entry")).toContainText("00:15");
+  await expect(page.getByTestId("drinking-entry")).toContainText("Pacific/Kiritimati");
+  await expect(page.getByTestId("drinking-entry")).toContainText("My unfinished memory");
+  await page.getByRole("button", { name: "Edit entry", exact: true }).click();
+  await page.getByLabel("Local time", { exact: true }).fill("");
+  await page.getByLabel("Location", { exact: true }).fill("");
+  await page.getByLabel("Notes", { exact: true }).fill("");
+  let interrupted = false;
+  await page.route("**/api/v1/entries/*", async (route) => {
+    if (route.request().method() === "PATCH" && !interrupted) {
+      interrupted = true;
+      expect((await route.fetch()).status()).toBe(200);
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "couldn’t confirm the update" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "This entry has changed" })).toBeVisible();
+  await page.getByRole("button", { name: "Use latest saved entry", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Edit entry", exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("drinking-entry")).not.toContainText("00:15");
+  await expect(page.getByTestId("drinking-entry")).not.toContainText("My unfinished memory");
+  await second.close();
+});
