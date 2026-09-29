@@ -20,7 +20,20 @@ def test_fresh_migration_can_downgrade_and_upgrade(
     migrate("downgrade", "base")
     with psycopg.connect(database_urls["admin"].get_secret_value()) as db:
         assert db.execute("SELECT to_regclass('app.app_users')").fetchone() == (None,)
-    migrate("upgrade", "head")
+    # Exercise upgrading an existing account database as well as a fresh install.
+    migrate("upgrade", "0001_accounts")
+    engine = database_engine(database_urls["runtime"])
+    account_id = uuid4()
+    try:
+        with Session(engine) as session, session.begin():
+            session.add(
+                AppUser(id=account_id, auth_issuer="https://upgrade.test", auth_subject=uuid4())
+            )
+        migrate("upgrade", "head")
+        with Session(engine) as session:
+            assert session.get(AppUser, account_id) is not None
+    finally:
+        engine.dispose()
     migrate("check")
 
 
