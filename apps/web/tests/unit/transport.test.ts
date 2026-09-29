@@ -61,3 +61,37 @@ test("an invalid refresh stops with 401 and a transient failure remains retryabl
     globalThis.fetch = original;
   }
 });
+
+test("clearing a transport rejects a late response from the previous session", async () => {
+  const original = globalThis.fetch;
+  let release: (response: Response) => void = () => {};
+  let started: () => void = () => {};
+  const reachedApi = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  globalThis.fetch = async (input) => {
+    if (input === "/auth/session")
+      return Response.json({
+        accessToken: "synthetic",
+        subject: "test",
+        expiresAt: Date.now() / 1000 + 3600,
+        apiUrl: "https://api.example.test",
+      });
+    started();
+    return new Promise<Response>((resolve) => {
+      release = resolve;
+    });
+  };
+  try {
+    const api = createTransport();
+    const pending = api.account();
+    await reachedApi;
+    api.clear();
+    release(
+      Response.json({ id: "old-account", state: "ACTIVE", createdAt: "2026-01-01T00:00:00Z" }),
+    );
+    await assert.rejects(pending, (error: RequestFailure) => error.status === 401);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
