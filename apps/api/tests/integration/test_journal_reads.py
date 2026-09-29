@@ -83,6 +83,11 @@ def test_history_sort_pagination_and_owner_isolation(database_urls: dict[str, Se
             assert wines.items[-1].last_consumed_date is None
             assert wines.items[-1].entry_count == 0
             assert wines.items[0].last_consumed_date == date(2026, 9, 1)
+            with Session(engine) as session:
+                dated = list_wines(session, owner_id, 2, None)
+                empty = list_wines(session, owner_id, 2, dated.nextCursor)
+                assert len(empty.items) == 1 and empty.items[0].last_consumed_date is None
+                assert empty.nextCursor is None
         finally:
             engine.dispose()
 
