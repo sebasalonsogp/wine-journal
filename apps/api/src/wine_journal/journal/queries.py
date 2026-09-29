@@ -13,18 +13,18 @@ from wine_journal.journal.schemas import EntryPage, EntryResponse, WinePage, Win
 
 
 def encode_cursor(scope: str, owner: UUID, consumed: date | None, identifier: UUID) -> str:
-    data = [scope, str(owner), (consumed or date.min).isoformat(), str(identifier)]
+    data = [scope, str(owner), consumed.isoformat() if consumed else None, str(identifier)]
     return base64.urlsafe_b64encode(json.dumps(data).encode()).decode()
 
 
-def decode_cursor(value: str, scope: str, owner: UUID) -> tuple[date, UUID]:
+def decode_cursor(value: str, scope: str, owner: UUID) -> tuple[date | None, UUID]:
     try:
         if len(value) > 512:
             raise ValueError
         fields = json.loads(base64.b64decode(value, altchars=b"-_", validate=True))
         if not isinstance(fields, list) or len(fields) != 4 or fields[:2] != [scope, str(owner)]:
             raise ValueError
-        return date.fromisoformat(fields[2]), UUID(fields[3])
+        return date.fromisoformat(fields[2]) if fields[2] is not None else None, UUID(fields[3])
     except (ValueError, TypeError, AttributeError):
         raise ApiError(422, "INVALID_CURSOR", "Reload this list to continue.") from None
 
@@ -70,14 +70,21 @@ def read_wine(session: Session, owner: UUID, wine_id: UUID) -> WineResponse:
 
 def list_wines(session: Session, owner: UUID, limit: int, cursor: str | None) -> WinePage:
     query = wine_query(owner)
-    last_date = func.coalesce(query.selected_columns.last_consumed_date, date.min)
+    last_date = query.selected_columns.last_consumed_date
     if cursor:
         consumed, identifier = decode_cursor(cursor, "wines", owner)
-        query = query.where(
-            or_(last_date < consumed, and_(last_date == consumed, UserWine.id > identifier))
-        )
+        if consumed is None:
+            query = query.where(last_date.is_(None), UserWine.id > identifier)
+        else:
+            query = query.where(
+                or_(
+                    last_date.is_(None),
+                    last_date < consumed,
+                    and_(last_date == consumed, UserWine.id > identifier),
+                )
+            )
     rows = (
-        session.execute(query.order_by(last_date.desc(), UserWine.id).limit(limit + 1))
+        session.execute(query.order_by(last_date.desc().nulls_last(), UserWine.id).limit(limit + 1))
         .mappings()
         .all()
     )
@@ -100,6 +107,8 @@ def list_entries(
     )
     if cursor:
         consumed, identifier = decode_cursor(cursor, scope, owner)
+        if consumed is None:
+            raise ApiError(422, "INVALID_CURSOR", "Reload this list to continue.")
         query = query.where(
             or_(
                 DrinkingEntry.consumed_date < consumed,
