@@ -2,6 +2,8 @@
 
 September 29, 2026. J01–J03 are implemented. J04 remains the next UI increment.
 
+Follow-up: J04/J05 and local Docker recovery are now complete. The [manual web checkpoint](manual-web-checkpoint.md) supersedes the pending-UI/runtime limitations below; this document preserves the backend checkpoint evidence.
+
 - J01: catalog models/schemas/service, migration 0002, and Postgres identity tests. Prove vintage distinctions, invalid combinations and owner isolation.
 - J02: journal models/schemas/service/routes, migration 0003, and save tests. Prove atomic saves, retry identity, concurrency, rollback and intentional repeated glasses.
 - J03: bounded journal queries and response schemas with read tests. Prove consumed-date sorting, pagination and cross-owner 404s.
