@@ -2,7 +2,7 @@
 
 A private journal for the wines you discover and the memories around them. Record a wine and date quickly, then return to add notes, a personal rating, photos, or video. My Wines is the primary view; optional occasions group several wines into a scrapbook. Guest lookup is separate from recording consumption.
 
-**Stage:** connected private journal. Email-code sign-in, manual wine/date capture, My Wines, paginated history, repeat drinking and editing notes/time/location work with local Supabase and FastAPI. Drafts survive interruptions; save retries prevent duplicates and stale edits require explicit review. Ratings, recognition, media and live social-provider registrations remain upcoming. The [connected design walkthrough](design/prototype-v3/walkthrough.html) remains a separate simulation; the application uses real persisted records.
+**Stage:** connected private journal. Email-code sign-in, manual capture, My Wines, paginated history, repeated drinking, entry editing and confirmed entry deletion work with local Supabase and FastAPI. Wine records survive their last entry being deleted. Drafts survive interruptions; save retries prevent duplicates and stale changes require review. Ratings, recognition, media and live social-provider registrations remain upcoming. The [connected design walkthrough](design/prototype-v3/walkthrough.html) remains a separate simulation; the application uses real persisted records.
 
 ## Repository map
 

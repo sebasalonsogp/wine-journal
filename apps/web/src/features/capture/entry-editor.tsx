@@ -14,8 +14,9 @@ import {
   type Entry,
 } from "./edit-draft";
 import { EntryFields } from "./entry-fields";
+import { EntryDeletion } from "./entry-deletion";
 
-export function EntryEditor({ entry }: { entry: Entry }) {
+export function EntryEditor({ entry, label }: { entry: Entry; label: string }) {
   const account = useAccount()!;
   const api = useJournalApi();
   const queries = useQueryClient();
@@ -94,7 +95,7 @@ export function EntryEditor({ entry }: { entry: Entry }) {
 
   if (!draft)
     return (
-      <>
+      <div className="entry-controls">
         <button
           className="text-button"
           onClick={() => {
@@ -104,8 +105,9 @@ export function EntryEditor({ entry }: { entry: Entry }) {
         >
           Edit entry
         </button>
+        <EntryDeletion entry={entry} label={label} />
         {notice && <p role="status">{notice}</p>}
-      </>
+      </div>
     );
 
   return (

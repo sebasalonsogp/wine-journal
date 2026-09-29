@@ -10,4 +10,6 @@ The journal scenarios exercise guest drafts through sign-in, committed saves wit
 
 Entry editing verifies draft recovery after reload, two simultaneous browser editors, explicit conflict review/replacement, the unchanged entry ID, date-line/local-time display, clearing optional details, and recovering an update whose success response was dropped. Desktop and phone screenshots use synthetic notes only; axe checks cover the populated conflict form.
 
+Deletion verifies dialog cancellation and keyboard focus, stale confirmation after an edit in another tab, deletion of one of two entries, a committed deletion with a dropped response and safe retry, and the preserved wine card after the final entry is removed. Confirmation screenshots and axe checks use synthetic data only.
+
 No traces, HAR, storage state, or videos are recorded. The pinned runner's automatic DOM snapshot feature is disabled. Explicit screenshots cover blank sign-in, synthetic wine lists/detail and capture forms, never code fields or account details. CI uploads only `auth-check-summary.json`, containing fixed test titles, statuses, durations and error counts. Do not broaden the artifact glob to `test-results/**`; local failure files may still include diagnostic data. Codes/tokens/cookies remain only in process memory and are never printed by fixtures.

@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Thirteen of 59 tasks are complete; 46 remain.** F01–F07 cover access; J01–J06 deliver manual capture, repeats, persisted history and versioned entry enrichment. J07 safe entry removal is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Fourteen of 59 tasks are complete; 45 remain.** F01–F07 cover access; J01–J07 deliver manual capture, repeats, persisted history and versioned entry enrichment. J08 wine-level ratings are next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -416,7 +416,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j07"></a>
 ### J07: Remove an entry safely
 
-- [ ] **Outcome:** Define deletion before media adds more references.
+- [x] **Outcome:** Define deletion before media adds more references.
 
 **Acceptance:**
 
@@ -430,6 +430,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Primary change areas:** apps/api/src/wine_journal/journal deletion; apps/web/src/features/my-wines and entry controls; deletion tests.
 
 **Stories:** TJ-04, AC-03.
+
+**Evidence:** [J07 checkpoint](entry-deletion-checkpoint.md) covers version-checked deletion, retained wine records, replay protection, confirmation/cancellation and interrupted-response recovery.
 
 <a id="j08"></a>
 ### J08: Store the current rating and revisions
