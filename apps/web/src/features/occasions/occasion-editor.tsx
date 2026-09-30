@@ -10,12 +10,12 @@ import {
   newOccasionDraft,
   occasionBody,
   occasionKey,
-  readOccasionDraft,
   storeOccasionDraft,
   type Occasion,
-  type OccasionDraft,
 } from "./occasion-draft";
 import { OccasionFields } from "./occasion-fields";
+import { newComposer, readComposer, composerBody, type Composer } from "./occasion-composer";
+import { StagedWines } from "./staged-wines";
 
 export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
   const account = useAccount()!;
@@ -23,8 +23,8 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
   const router = useRouter();
   const queries = useQueryClient();
   const key = occasionKey(account.id, occasion?.id);
-  const [draft, setDraft] = useState<OccasionDraft | null>(
-    () => readOccasionDraft(key) ?? (occasion ? null : newOccasionDraft()),
+  const [draft, setDraft] = useState<Composer | null>(
+    () => readComposer(key) ?? (occasion ? null : newComposer()),
   );
   const [latest, setLatest] = useState<Occasion | null>(null);
   const [busy, setBusy] = useState(false);
@@ -36,10 +36,13 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
     await Promise.all([
       queries.invalidateQueries({ queryKey: ["occasions", account.id] }),
       queries.invalidateQueries({ queryKey: ["occasion", account.id, occasion?.id] }),
+      queries.invalidateQueries({ queryKey: ["wines", account.id] }),
+      queries.invalidateQueries({ queryKey: ["wine", account.id] }),
+      queries.invalidateQueries({ queryKey: ["entries", account.id] }),
     ]);
   }
 
-  function change(next: OccasionDraft) {
+  function change(next: Composer) {
     setDraft(next);
     const stored = storeOccasionDraft(key, next);
     if (!stored)
@@ -48,7 +51,7 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
   }
 
   async function save(version: number | null) {
-    if (!draft || submitting.current) return;
+    if (!draft || draft.child || submitting.current) return;
     const next = { ...draft, version, attempted: true };
     if (!change(next) && !occasion) {
       setDraft({ ...next, attempted: false });
@@ -71,7 +74,7 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
         : await api.call((client, signal) =>
             client.POST("/api/v1/occasions", {
               params: { header: { "idempotency-key": next.intentKey } },
-              body,
+              body: composerBody(next),
               signal,
             }),
           );
@@ -98,7 +101,7 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
         }
       } else if (failure instanceof RequestFailure && failure.status === 422) {
         change({ ...next, attempted: false });
-        setError("Check the date, local time and timezone, then save again. Your notes are kept.");
+        setError("Check the occasion and wine details, then save again. Your draft is kept.");
       } else {
         setError(
           failure instanceof RequestFailure && [401, 403, 404].includes(failure.status)
@@ -117,7 +120,7 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
     return (
       <button
         className="button button-secondary"
-        onClick={() => change(newOccasionDraft(occasion))}
+        onClick={() => change(newComposer(newOccasionDraft(occasion)))}
       >
         Edit occasion
       </button>
@@ -138,7 +141,12 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
           This save may already have reached your journal. Retry with these same details to check.
         </p>
       )}
-      <OccasionFields draft={draft} disabled={busy || locked} change={change} />
+      <OccasionFields
+        draft={draft}
+        disabled={busy || locked}
+        change={(fields) => change({ ...draft, ...fields })}
+      />
+      {!occasion && <StagedWines draft={draft} disabled={busy || locked} change={change} />}
       {latest && (
         <section className="edit-conflict" aria-labelledby={`occasion-conflict-${latest.id}`}>
           <h3 id={`occasion-conflict-${latest.id}`}>This occasion has changed</h3>
@@ -192,7 +200,7 @@ export function OccasionEditor({ occasion }: { occasion?: Occasion }) {
       {notice && <p role="status">{notice}</p>}
       <div className="capture-actions">
         {!latest && (
-          <button type="submit" className="button" disabled={busy}>
+          <button type="submit" className="button" disabled={busy || Boolean(draft.child)}>
             {busy
               ? "Saving…"
               : locked
