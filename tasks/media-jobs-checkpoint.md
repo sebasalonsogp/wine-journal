@@ -20,6 +20,8 @@ Delivered September 30, 2026. This slice delivers the Postgres queue and separat
 
 The audit found advisories in PyJWT 2.14.0 and urllib3 2.7.0. A separate targeted dependency change raises PyJWT's minimum and lock to 2.15.0, and updates the development audit tool's transitive urllib3 to 2.8.0. No new package is introduced. The installed environment now reports no known vulnerabilities. See the upstream [PyJWT changelog](https://pyjwt.readthedocs.io/en/stable/changelog.html) and [urllib3 2.8.0 release](https://github.com/urllib3/urllib3/releases/tag/2.8.0).
 
+The first CI run also detected the newly indexed [Next.js ImageResponse advisory](https://github.com/vercel/next.js/security/advisories/GHSA-vcvr-r3jv-pc5j). The application has no `next/og` or `ImageResponse` use, but the affected framework version is still replaced: Next.js and its matching ESLint configuration advance from 16.3.5 to the fixed 16.3.6. The frozen reinstall disables package scripts; `npm audit` reports zero vulnerabilities. Frontend checks and the production browser suite are rerun for this framework patch.
+
 ## Limits and next step
 
 The production handler registry is empty; no upload UI, storage authorization or image processing is exposed yet. The demonstrated deduplication is for the synthetic test effect: actual media handlers must separately prove safe repeated storage/database writes. Queue fencing does not guarantee exactly-once external effects. Handlers must use bounded operations and renew between chunks; the runner cannot interrupt a hung Python handler. Resource limits, supervision, retention and cleanup follow their planned media/deployment tasks.
