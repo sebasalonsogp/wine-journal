@@ -1,7 +1,7 @@
 import hashlib
 from uuid import UUID
 
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
@@ -10,7 +10,8 @@ from wine_journal.accounts.service import read_account
 from wine_journal.catalog.service import create_manual_release, read_owned_release
 from wine_journal.core.auth import Principal
 from wine_journal.core.errors import ApiError
-from wine_journal.journal.models import DrinkingEntry, EntrySave, Occasion, UserWine
+from wine_journal.journal.entry_creation import insert_entry
+from wine_journal.journal.models import EntrySave, Occasion
 from wine_journal.journal.occasions import read_occasion
 from wine_journal.journal.schemas import EntryResponse, SaveEntry
 
@@ -55,26 +56,9 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
             else:
                 assert body.release_id is not None
                 release = read_owned_release(session, owner.id, body.release_id)
-            session.execute(
-                insert(UserWine)
-                .values(owner_id=owner.id, release_id=release.id)
-                .on_conflict_do_nothing(constraint="uq_user_wines_release")
+            entry = insert_entry(
+                session, owner.id, release.id, body.consumed_date, occasion_id, body.notes
             )
-            user_wine = session.scalar(
-                select(UserWine).where(
-                    UserWine.owner_id == owner.id, UserWine.release_id == release.id
-                )
-            )
-            assert user_wine is not None
-            entry = DrinkingEntry(
-                owner_id=owner.id,
-                user_wine_id=user_wine.id,
-                consumed_date=body.consumed_date,
-                occasion_id=occasion_id,
-                notes=body.notes,
-            )
-            session.add(entry)
-            session.flush()
             result = EntryResponse.model_validate(entry)
             intent.response = result.model_dump(mode="json", by_alias=True)
             return result
