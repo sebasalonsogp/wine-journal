@@ -1,15 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { EntryEditor } from "@/features/capture/entry-editor";
 import { WineRating } from "./wine-rating";
+import { readWineFilters, wineFilterQuery } from "./wine-filters";
 import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
 
 export function WineDetail({ wineId }: { wineId: string }) {
   const api = useJournalApi();
   const account = useAccount();
+  const filters = readWineFilters(useSearchParams());
   const wineQuery = useQuery({
     queryKey: ["wine", account?.id, wineId],
     queryFn: () =>
@@ -34,7 +37,7 @@ export function WineDetail({ wineId }: { wineId: string }) {
   const entries = history.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <main id="main" className="page-content">
-      <Link className="back-link" href="/my-wines">
+      <Link className="back-link" href={`/my-wines${wineFilterQuery(filters)}`}>
         Back to My wines
       </Link>
       {wineQuery.isPending ? (

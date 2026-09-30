@@ -2,6 +2,117 @@ import { test, expect, type APIRequestContext, type Page } from "@playwright/tes
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 
+test("wine search filters paginate, survive navigation and recover after a failed request", async ({
+  page,
+  request,
+}, testInfo) => {
+  await page.goto("/auth/sign-in");
+  await finishSignIn(page, request);
+  await expect(page).toHaveURL(/\/my-wines$/);
+  await expect(page.getByRole("heading", { name: "Your first page is waiting." })).toBeVisible();
+  await page.evaluate(async () => {
+    const session = await (
+      await fetch("/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      })
+    ).json();
+    const headers = {
+      Authorization: `Bearer ${session.accessToken}`,
+      "Content-Type": "application/json",
+    };
+    for (let index = 0; index < 23; index++) {
+      const saved = await fetch(`${session.apiUrl}/api/v1/entries`, {
+        method: "POST",
+        headers: { ...headers, "Idempotency-Key": crypto.randomUUID() },
+        body: JSON.stringify({
+          consumedDate: "2026-09-01",
+          manualWine: {
+            name: `Cellar selection ${String(index).padStart(2, "0")}`,
+            producer: index < 21 ? "Calculated Risk" : "Another estate",
+            edition: "Reserve",
+            vintageStatus: "YEAR",
+            year: 2021 + (index % 2),
+          },
+        }),
+      });
+      if (!saved.ok) throw new Error("Synthetic wine fixture failed; response withheld.");
+      if (index < 2) {
+        const wineId = (await saved.json()).userWineId;
+        const rated = await fetch(`${session.apiUrl}/api/v1/me/wines/${wineId}/rating`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ score: 4.5 + index / 2, version: 0 }),
+        });
+        if (!rated.ok) throw new Error("Synthetic rating fixture failed; response withheld.");
+      }
+    }
+  });
+  await page.reload();
+  await page.getByLabel("Search wines", { exact: true }).fill("risk reserve");
+  await page.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(page).toHaveURL(/q=risk\+reserve/);
+  await expect(page.locator(".wine-card")).toHaveCount(20);
+  await page.getByRole("button", { name: "Load more wines" }).click();
+  await expect(page.locator(".wine-card")).toHaveCount(21);
+  await page.getByLabel("Rating status").selectOption("RATED");
+  await page.getByLabel("Vintage type").selectOption("YEAR");
+  await page.getByLabel("Sort by").selectOption("RATING");
+  await page.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(page.locator(".wine-card")).toHaveCount(2);
+  await expect(page.locator(".wine-card").first()).toContainText("My rating: 5 / 5");
+  await expect(page.getByRole("button", { name: "Load more wines" })).toHaveCount(0);
+  const filteredUrl = page.url();
+  await page.reload();
+  await expect(page.getByLabel("Search wines", { exact: true })).toHaveValue("risk reserve");
+  await expect(page.getByLabel("Rating status")).toHaveValue("RATED");
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect(page.locator(".wine-card")).toHaveCount(2);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await page.screenshot({
+      path: testInfo.outputPath(`wine-filters-${width}.png`),
+      fullPage: true,
+    });
+  }
+  const audit = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(audit.violations.map((issue) => issue.id)).toEqual([]);
+  await page.locator(".wine-card").first().click();
+  await page.getByRole("button", { name: "Clear rating", exact: true }).click();
+  await expect(page.getByTestId("current-rating")).toHaveText("Not rated yet");
+  await page.getByRole("link", { name: "Back to My wines" }).click();
+  await expect(page).toHaveURL(filteredUrl);
+  await expect(page.locator(".wine-card")).toHaveCount(1);
+  await page.getByLabel("Search wines", { exact: true }).fill("No matching bottle");
+  await page.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "No wines match these filters." })).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(filteredUrl);
+  await expect(page.getByLabel("Search wines", { exact: true })).toHaveValue("risk reserve");
+  await expect(page.locator(".wine-card")).toHaveCount(1);
+  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
+  await expect(page.locator(".wine-card")).toHaveCount(20);
+  let failed = false;
+  await page.route("**/api/v1/me/wines?**", async (route) => {
+    if (!failed) {
+      failed = true;
+      await route.abort("failed");
+    } else await route.continue();
+  });
+  await page.getByLabel("Search wines", { exact: true }).fill("cellar");
+  await page.getByLabel("Sort by").selectOption("NAME");
+  await page.getByRole("button", { name: "Apply", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page.locator(".wine-card")).toHaveCount(20);
+  await expect(page.locator(".wine-card").first()).toContainText("Cellar selection 00");
+});
+
 test("wine ratings preserve history, resolve stale drafts and confirm erasure", async ({
   page,
   request,

@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Sixteen of 59 tasks are complete; 43 remain.** F01–F07 cover access; J01–J09 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion and current wine ratings with revision history. J10 search/filter/sort is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Seventeen of 59 tasks are complete; 42 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. Phase 2 is complete; O01 occasions are next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -474,7 +474,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j10"></a>
 ### J10: Search and sort My Wines
 
-- [ ] **Outcome:** Make the wine record useful once it grows.
+- [x] **Outcome:** Make the wine record useful once it grows.
 
 **Acceptance:**
 
@@ -488,6 +488,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Primary change areas:** apps/api/src/wine_journal/journal queries; apps/web/src/features/my-wines filters; query/browser tests.
 
 **Stories:** HB-03, HB-06, WC-06.
+
+**Evidence:** [J10 checkpoint](wine-search-checkpoint.md) records search/filter defaults, scoped cursor behavior, real pagination and navigation tests, and measured query plans for a synthetic multi-account library.
 
 **Phase 2 exit:** Save a manual wine/date, reload, log a second glass, backdate/edit an entry, change a release rating and inspect its history. Search/filter without mixing vintages. Retry and two-account cases pass; no occasion is required.
 
