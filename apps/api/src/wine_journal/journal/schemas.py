@@ -1,12 +1,12 @@
 from datetime import date, datetime, time
 from typing import Self
 from uuid import UUID
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic.alias_generators import to_camel
 
 from wine_journal.catalog.schemas import ManualWine
+from wine_journal.journal import validation
 
 
 class SaveEntry(BaseModel):
@@ -50,19 +50,12 @@ class EditEntry(BaseModel):
     @field_validator("local_time")
     @classmethod
     def local_minute(cls, value: time | None) -> time | None:
-        if value and (value.tzinfo is not None or value.second or value.microsecond):
-            raise ValueError("Use a local time with minute precision and no offset.")
-        return value
+        return validation.local_minute(value)
 
     @field_validator("timezone")
     @classmethod
     def known_timezone(cls, value: str | None) -> str | None:
-        if value is not None:
-            try:
-                ZoneInfo(value)
-            except (ZoneInfoNotFoundError, ValueError):
-                raise ValueError("Use an IANA timezone name.") from None
-        return value
+        return validation.known_timezone(value)
 
     @model_validator(mode="after")
     def valid_patch(self) -> Self:
