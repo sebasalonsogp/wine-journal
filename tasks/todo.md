@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Twenty-two of 59 tasks are complete; 37 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. Phase 4 is next, starting with M01 background jobs and R04 photo feasibility evidence. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 30, 2026. **Twenty-three of 59 tasks are complete; 36 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 photo feasibility is next, followed by M02 uploads and M03 processing. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -610,7 +610,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m01"></a>
 ### M01: Run durable background jobs
 
-- [ ] **Outcome:** Introduce the smallest reliable worker for media work.
+- [x] **Outcome:** Introduce the smallest reliable worker for media work. Delivered with migration 0011, transactional enqueue, fenced leases and a separate Python runner; [verification and limits](media-jobs-checkpoint.md).
 
 **Acceptance:**
 
