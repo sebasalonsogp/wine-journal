@@ -43,7 +43,7 @@ Memory sampling includes the Windows venv launcher's decoder child; measuring ju
 
 These are starting engineering defaults rather than a promise that every file under a limit will succeed. A complex 48 MP HEIC could exceed memory even though the synthetic JPEG did not. For free hosts with less memory, reduce the accepted pixel limit or use the local worker; do not silently remove the memory guard. The experiment's sampled kill guard is not a hard sandbox: M03 must use OS/container memory limits, bounded subprocesses and safe output publication. Native decoders must remain outside the API request process.
 
-Recommended original-retention policy: keep staging private while processing; make only validated derivatives viewable; delete the original after successful publication unless a later explicit original-download feature needs it. Failed/cancelled and abandoned uploads need expiry and idempotent cleanup in M08. Persist journal text independently of photo success. Validate account/global quotas against the actual storage plan before a hosted demo.
+Recommended original-retention policy: keep staging private while processing; make only validated derivatives viewable; delete the original after successful publication and after all upload grants have expired, unless a later explicit original-download feature needs it. M02a established a two-hour upload capability: deleting an object earlier could let that still-live grant recreate it, so keep its allowance reserved until safe cleanup. Failed/cancelled and abandoned uploads need expiry and idempotent cleanup in M08. Persist journal text independently of photo success. Validate account/global quotas against the actual storage plan before a hosted demo.
 
 Suggested recovery copy:
 

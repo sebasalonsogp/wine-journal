@@ -630,6 +630,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 - [ ] **Outcome:** Separate text persistence from upload lifecycle.
 
+**Slices:** M02a private Storage provisioning/client and real capability checks are complete; M02b owner-scoped assets, quota reservations, routes and two-account completion tests remain. See the [upload checkpoint](private-upload-checkpoint.md). The parent stays open until both slices meet the acceptance below.
+
 **Acceptance:**
 
 - Create private storage configuration and owner-scoped pending assets with quota reservation, random immutable keys and bounded signed upload capability.

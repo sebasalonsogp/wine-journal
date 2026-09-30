@@ -24,6 +24,12 @@ def main() -> None:
             private_values.append(password)
     signing = json.loads((ROOT / "supabase/signing_keys.json").read_text(encoding="utf-8"))
     private_values.extend(key["d"] for key in signing if "d" in key)
+    storage_config = ROOT / "apps/api/.env.storage"
+    if storage_config.exists():
+        storage_key = dotenv_values(storage_config).get("WINE_JOURNAL_STORAGE_SERVICE_KEY")
+        if not storage_key:
+            raise RuntimeError("Storage credentials are incomplete; values withheld.")
+        private_values.append(storage_key)
     files = list((ROOT / "apps/web/.next/static").rglob("*.js"))
     if not files or len(private_values) < 3:
         raise RuntimeError("Build assets and generated local credentials must exist.")
