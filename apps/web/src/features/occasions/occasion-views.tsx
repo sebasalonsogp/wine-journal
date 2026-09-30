@@ -5,6 +5,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { dateLabel, JournalError } from "@/features/my-wines/wine-display";
 import { OccasionEditor } from "./occasion-editor";
+import { OccasionWines } from "./occasion-wines";
 
 export function OccasionList() {
   const api = useJournalApi();
@@ -140,9 +141,9 @@ export function OccasionDetail({ occasionId }: { occasionId: string }) {
               )}
             </section>
             <OccasionEditor key={occasion.id} occasion={occasion} />
+            <OccasionWines key={`wines-${occasion.id}`} occasion={occasion} />
             <p className="occasion-availability">
-              You can link an occasion when logging a wine. Wine lists and photo memories here are
-              coming soon.
+              Photo memories for this occasion are coming soon.
             </p>
           </>
         )

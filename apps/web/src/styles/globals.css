@@ -1002,3 +1002,62 @@ h2 {
 .capture-occasion .capture-actions {
   margin-bottom: 1.5rem;
 }
+
+.staged-wines,
+.occasion-wines {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.staged-wine-list,
+.occasion-wine-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+}
+.staged-wine-list li,
+.staged-repeat {
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+}
+.staged-wine-list h3,
+.occasion-wine-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+}
+.staged-wine-editor {
+  margin-top: 1.25rem;
+}
+.staged-wine-editor .form-field {
+  margin-bottom: 1.25rem;
+}
+.staged-wines legend {
+  padding-right: 0.5rem;
+}
+.occasion-wine-list {
+  display: grid;
+  gap: 1rem;
+}
+.occasion-wine-card {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  color: var(--color-foreground);
+  text-decoration: none;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.occasion-wine-card .bottle-placeholder {
+  min-height: 7rem;
+  width: 5rem;
+}
+.occasion-wine-card p {
+  margin-top: 0.4rem;
+}
+.occasion-wine-card:hover {
+  border-color: var(--color-primary);
+}
