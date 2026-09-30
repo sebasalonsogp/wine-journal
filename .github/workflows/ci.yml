@@ -98,6 +98,10 @@ jobs:
         run: uv run --project apps/api --locked python scripts/configure_storage.py
       - name: Verify real private Storage capabilities and upload limits
         run: uv run --project apps/api --locked python scripts/smoke_local_storage.py
+      - name: Verify owned uploads with real Storage and disposable Postgres
+        env:
+          WINE_JOURNAL_TEST_STORAGE: "1"
+        run: uv run --project apps/api --locked python scripts/run_api_tests.py tests/integration/test_media_storage_flow.py -q --tb=short
       - run: npm run build --prefix apps/web
       - name: Check browser assets against generated private values
         run: uv run --project apps/api --locked python scripts/check_browser_secrets.py

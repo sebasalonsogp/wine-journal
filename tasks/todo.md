@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 30, 2026. **Twenty-four of 59 tasks are complete; 35 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. Next are M02 uploads and M03 processing. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 30, 2026. **Twenty-five of 59 tasks are complete; 34 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. M02 implements private upload authorization and quota reservations; uploads remain disabled until M03 photo processing, which is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -628,9 +628,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m02"></a>
 ### M02: Authorize staged private uploads
 
-- [ ] **Outcome:** Separate text persistence from upload lifecycle.
+- [x] **Outcome:** Separate text persistence from upload lifecycle.
 
-**Slices:** M02a private Storage provisioning/client and real capability checks are complete; M02b owner-scoped assets, quota reservations, routes and two-account completion tests remain. See the [upload checkpoint](private-upload-checkpoint.md). The parent stays open until both slices meet the acceptance below.
+**Slices:** M02a private Storage provisioning/client and M02b owner-scoped assets, quota reservations, routes and two-account completion tests are complete. See the [upload checkpoint](private-upload-checkpoint.md). Real local Storage and disposable database checks pass; keep the upload flag off until M03 registers the processor.
 
 **Acceptance:**
 
