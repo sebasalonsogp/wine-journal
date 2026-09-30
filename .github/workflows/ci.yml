@@ -61,7 +61,11 @@ jobs:
       - run: uv run --locked ruff check --config pyproject.toml . ../../scripts
       - run: uv run --locked ruff format --check --config pyproject.toml . ../../scripts
       - run: uv run --locked mypy
+      - name: Build isolated photo decoder from locked wheels
+        run: uv run --locked python ../../scripts/build_photo_decoder.py
       - name: Test with disposable Postgres and generated credentials
+        env:
+          WINE_JOURNAL_TEST_PHOTO_SANDBOX: "1"
         run: uv run --locked python ../../scripts/run_api_tests.py
       - run: uv build
       - run: uv run --locked python ../../scripts/export_openapi.py

@@ -1,9 +1,32 @@
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[4]
+
+
+@pytest.fixture(params=["experiment", "production"])
+def converter(
+    request: pytest.FixtureRequest,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Callable[[Path, Path], dict[str, object]]:
+    if request.param == "experiment":
+        monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+        from evaluate_photos import convert
+
+        return convert
+    from wine_journal.media.photos import convert as production_convert
+
+    def convert_to_files(source: Path, destination: Path) -> dict[str, object]:
+        result = production_convert(source.read_bytes())
+        destination.mkdir()
+        (destination / "display.jpg").write_bytes(result.display)
+        (destination / "thumbnail.webp").write_bytes(result.thumbnail)
+        return {"status": "READY"}
+
+    return convert_to_files
 
 
 @pytest.mark.parametrize("heif", [False, True])
@@ -26,10 +49,10 @@ def test_orientation_and_private_metadata(
     heif: bool,
     orientation: int,
     corners: str,
+    converter: Callable[[Path, Path], dict[str, object]],
 ) -> None:
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
     import pillow_heif
-    from evaluate_photos import convert
     from prepare_photo_samples import orientation_chart
 
     pillow_heif.register_heif_opener()
@@ -39,7 +62,7 @@ def test_orientation_and_private_metadata(
         assert 34853 in original.getexif()  # GPS exists before conversion.
         assert "xmp" in original.info
     destination = tmp_path / "outputs"
-    result = convert(source, destination)
+    result = converter(source, destination)
     assert result["status"] == "READY"
     palette = {"R": (255, 0, 0), "G": (0, 255, 0), "B": (0, 0, 255), "Y": (255, 255, 0)}
     for name in ("display.jpg", "thumbnail.webp"):
@@ -64,10 +87,13 @@ def test_orientation_and_private_metadata(
     "case", ["empty", "svg", "bytes", "pixels", "truncated", "truncated-heif", "profile"]
 )
 def test_rejection_never_publishes_outputs(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, case: str
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+    converter: Callable[[Path, Path], dict[str, object]],
 ) -> None:
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
-    from evaluate_photos import MAX_BYTES, Rejected, convert
+    from evaluate_photos import MAX_BYTES
 
     source = tmp_path / "input.jpg"
     expected = "INVALID_IMAGE"
@@ -97,8 +123,8 @@ def test_rejection_never_publishes_outputs(
         Image.new("RGB", (20, 20)).save(source, icc_profile=b"not-a-profile")
         expected = "COLOR_PROFILE"
     destination = tmp_path / "outputs"
-    with pytest.raises(Rejected, match=f"^{expected}$"):
-        convert(source, destination)
+    with pytest.raises(ValueError, match=f"^{expected}$"):
+        converter(source, destination)
     assert not destination.exists()
 
 

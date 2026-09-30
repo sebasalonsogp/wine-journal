@@ -2,6 +2,8 @@
 
 Completed September 30, 2026. **Pillow 12.3.0 + pillow-heif 1.8.0 is the selected candidate for the photo worker.** The tested Windows wheel bundles libheif 1.23.4. The experiment is isolated in development tools; it does not enable uploads, read application credentials or add a production handler. Storage authorization remains M02 and production processing remains M03.
 
+**Implementation follow-up:** M02 upload authorization is complete. [M03a](photo-processing-checkpoint.md) promotes conversion into a resource-limited container with derivative byte ceilings; publication and viewing remain M03b/M03c. The measurements and starting recommendations below are retained as the original R04 evidence.
+
 ## Evidence
 
 The [manifest](../assets/evaluation/photo-manifest.json) pins nine public upstream files by commit and SHA-256. Fourteen additional files are generated locally: eight JPEG orientations, one HEIC orientation, a synthetic 48 MP JPEG, byte/dimension violations, a disguised SVG and a deliberately truncated real HEIC. Inputs and derivatives stay in ignored `.tools/`; only source references and numeric results are committed.
