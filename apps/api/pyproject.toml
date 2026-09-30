@@ -41,7 +41,11 @@ files = ["src", "tests", "../../scripts"]
 dev = [
     "httpx>=0.28.1",
     "mypy>=2.3.1",
+    "pillow==12.3.0",
+    "pillow-heif==1.8.0",
     "pip-audit>=2.10.1",
+    "psutil>=7,<9",
     "pytest>=9.1.1",
     "ruff>=0.16.7",
+    "types-psutil>=7.2.2.20260906",
 ]
