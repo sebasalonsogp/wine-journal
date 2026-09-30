@@ -6,6 +6,7 @@ import { createTransport } from "@/lib/api/transport";
 import { RequestFailure } from "@/lib/session/http";
 import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 import { CaptureFields } from "./capture-fields";
+import { CaptureOccasion } from "./capture-occasion";
 import {
   entryBody,
   newDraft,
@@ -138,7 +139,14 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
       }
       active = { ...draft, ownerId: account.id, intentKey: draft.intentKey ?? crypto.randomUUID() };
       setDraft(active);
-      writeDraft(active);
+      if (!writeDraft(active)) {
+        active = { ...active, intentKey: null };
+        setDraft(active);
+        setError(
+          "Your browser couldn’t keep the save key. Enable session storage, then try again.",
+        );
+        return;
+      }
       const body = entryBody(active.fields);
       const entry = await api.call((client, signal) =>
         client.POST("/api/v1/entries", {
@@ -159,7 +167,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
             "Draft storage is blocked. Enable session storage in your browser before signing in.",
           );
       } else {
-        if (failure instanceof RequestFailure && failure.status === 422) {
+        if (failure instanceof RequestFailure && [404, 422].includes(failure.status)) {
           active = { ...active, intentKey: null };
           setDraft(active);
           writeDraft(active);
@@ -215,6 +223,26 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
             <fieldset disabled={busy || Boolean(draft.intentKey)}>
               <legend className="sr-only">Wine and drinking date</legend>
               <CaptureFields fields={draft.fields} change={change} />
+              <div className="form-field">
+                <label htmlFor="capture-notes">
+                  Quick notes <span>optional</span>
+                </label>
+                <textarea
+                  id="capture-notes"
+                  rows={3}
+                  maxLength={10000}
+                  value={draft.fields.notes}
+                  onChange={(event) => change({ notes: event.target.value })}
+                  placeholder="A first impression, or something to remember later"
+                />
+              </div>
+              <CaptureOccasion
+                key={draft.ownerId ?? "guest"}
+                fields={draft.fields}
+                change={change}
+                owner={draft.ownerId}
+                api={api}
+              />
             </fieldset>
             {error && (
               <p className="form-message" role="alert">
@@ -255,7 +283,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
               <p className="form-footnote">Your input will be kept while you sign in.</p>
             )}
             <p className="form-footnote">
-              Saved entries stay private. You can add notes, time and location after saving.
+              Saved entries stay private. You can add more notes, time and location later.
             </p>
           </form>
         )

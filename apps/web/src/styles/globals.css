@@ -986,3 +986,19 @@ h2 {
     gap: 0.5rem;
   }
 }
+.capture-occasion {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.capture-occasion h2 span {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+.capture-occasion > p {
+  margin: 0.75rem 0 1.25rem;
+}
+.capture-occasion .capture-actions {
+  margin-bottom: 1.5rem;
+}

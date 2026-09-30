@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Eighteen of 59 tasks are complete; 41 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01 adds private occasion creation, browsing and editing. O02, creating an occasion during wine capture, is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Nineteen of 59 tasks are complete; 40 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O02 add private occasions and existing/new occasion selection during wine capture. O03, adding wines from an occasion, is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -521,7 +521,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="o02"></a>
 ### O02: Create an occasion during wine capture
 
-- [ ] **Outcome:** Finish the wine-first creation loop.
+- [x] **Outcome:** Finish the wine-first creation loop.
 
 **Acceptance:**
 
@@ -535,6 +535,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Primary change areas:** apps/api/src/wine_journal/journal nested save; apps/web/src/features/capture; transaction and browser tests.
 
 **Stories:** TJ-10, TJ-05.
+
+**Evidence:** [O02 checkpoint](occasion-capture-checkpoint.md) records atomic entry/occasion saves, legacy retry compatibility, inline cancellation, independent notes/dates, paginated selection and browser recovery.
 
 <a id="o03"></a>
 ### O03: Add new wines from an occasion
