@@ -11,6 +11,7 @@ from wine_journal.core.errors import ErrorResponse
 from wine_journal.journal import occasions
 from wine_journal.journal.entry_associations import LinkEntry, set_occasion
 from wine_journal.journal.occasion_batch import CreateOccasion, OccasionWines
+from wine_journal.journal.occasion_deletion import delete_occasion
 from wine_journal.journal.occasion_schemas import (
     EditOccasion,
     OccasionPage,
@@ -23,6 +24,18 @@ router = APIRouter(
     tags=["journal"],
     responses={status: {"model": ErrorResponse} for status in (401, 403, 404, 409, 422, 500, 503)},
 )
+
+
+@router.delete("/occasions/{occasion_id}")
+def remove(
+    occasion_id: UUID,
+    version: Annotated[int, Query(gt=0)],
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> dict[str, UUID]:
+    response.headers["Cache-Control"] = "no-store"
+    return {"id": delete_occasion(session, principal, occasion_id, version)}
 
 
 @router.put("/occasions/{occasion_id}/entries/{entry_id}", response_model=EntryResponse)

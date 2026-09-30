@@ -1,16 +1,24 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing, grouped wine capture and entry link/unlink commands are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture and entry link/unlink commands are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ### Implemented occasions (O01)
 
 `POST /occasions` requires a UUID `Idempotency-Key` and `occasionDate`. Optional fields are `title`, `localTime`, `timezone`, `locationLabel` and `notes`; title/place are limited to 200 characters, notes to 10,000. Blank titles/places normalize to null. Local time and IANA timezone must be supplied or cleared together; time has minute precision and no UTC offset. Untitled occasions display their date. No wine entry is created implicitly.
 
-Creation returns 200 with the context, `id`, `version` and `createdAt`. A transactional receipt replays the original response for the same normalized body/key; changed input returns 409 `SAVE_CONFLICT`. A three-second lock timeout returns 409 `SAVE_BUSY` and `Retry-After: 3`. Receipts persist; future occasion/account deletion must remove private receipt content without allowing retries to resurrect deleted records.
+Creation returns 200 with the context, `id`, `version` and `createdAt`. A transactional receipt replays the original response for the same normalized body/key; changed input returns 409 `SAVE_CONFLICT`. A three-second lock timeout returns 409 `SAVE_BUSY` and `Retry-After: 3`. Receipts persist; occasion deletion now tombstones their private content without releasing the key claim. Future account deletion must also remove private receipt content without allowing resurrection.
 
 `GET /occasions` accepts `limit` (1–100, default 20) and an owner/route-bound cursor (maximum 512 characters). Sort is occasion date descending, ID ascending. It is a live paginated view; edits can move records between pages. `GET /occasions/{id}` reads one owned occasion.
 
-`PUT /occasions/{id}` replaces the editable context, requiring `occasionDate` and the positive integer `version` previously read. Omitted optional fields clear to null. ID/owner/creation timestamp are preserved; successful edits increment the version. Stale edits return 409 `EDIT_CONFLICT`; lock timeouts return 409 `EDIT_BUSY`. Clients keep their draft, read the latest context and require an explicit choice before replacing it. All routes require an active account, use no-store responses, and return 404 for absent/foreign occasions. Occasion deletion and media remain planned; entry association commands are described under O04.
+`PUT /occasions/{id}` replaces the editable context, requiring `occasionDate` and the positive integer `version` previously read. Omitted optional fields clear to null. ID/owner/creation timestamp are preserved; successful edits increment the version. Stale edits return 409 `EDIT_CONFLICT`; lock timeouts return 409 `EDIT_BUSY`. Clients keep their draft, read the latest context and require an explicit choice before replacing it. All routes require an active account, use no-store responses, and return 404 for absent/foreign occasions. Occasion deletion is described under O05 and entry association under O04; media remains planned.
+
+### Implemented occasion removal (O05)
+
+`DELETE /occasions/{occasion_id}?version=<positive integer>` requires the occasion version the user reviewed. Success returns 200 `{id}` with no-store headers. Missing/foreign occasions, including repeated deletion, return 404. Changed context returns 409 `DELETE_CONFLICT`; the three-second lock timeout returns 409 `DELETE_BUSY`. The browser requires confirmation, rereads stale context before a new confirmation, and treats 404 on a confirmed retry as already absent.
+
+The transaction locks the owned occasion, detaches its entries and increments their versions, redacts occasion receipts, then deletes only the occasion. Entry IDs, wine identity, consumed context, notes and ratings/revisions survive. Entry capture, batch additions and association commands take a compatible lock on their target occasion, so deletion cannot leave partial links or FK errors when they race. Concurrent occasion context edits remain version-checked.
+
+Creation and addition receipts for the deleted occasion become `{deleted: true}` while retaining their key/hash claims. Replaying their original request returns 409 `OCCASION_REMOVED`. Surviving entry receipts have the removed `occasionId` cleared; replay still returns the original entry without recreating its inline occasion. Receipt versions remain original creation versions, as with ordinary entry edits; read the entry before changing it. Database failure rolls back deletion, detachment and receipt cleanup together. Media does not exist yet; occasion-owned attachment cleanup and its warning must be added and reverified with M06.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -112,7 +120,7 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Delete rating history | `DELETE /me/wines/{id}/rating-history` | Auth; explicit erase action; clear score/history atomically |
 | Browse/create occasions | `GET`, `POST /occasions` | Implemented context and staged new entries |
 | List/add wines on an occasion | `GET`, `POST /occasions/{id}/wines` | Implemented grouped wine list and bounded transactional additions |
-| Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | GET/PUT context implemented; deletion and album previews are planned |
+| Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | Implemented; version-checked edits/deletion; deletion preserves drinking entries; albums planned |
 | Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Implemented; auth; version and prior-association checks; preserve consumed context |
 | Full memory galleries | `GET /me/wines/{id}/moments`, `GET /occasions/{id}/media` | Auth; paginated eligible assets, captions, source date and source link |
 | Upload initiation/completion | `POST /media/uploads`, `POST /media/{id}/complete` | Auth; per-account quota reservation, unique object key, owned staged asset |

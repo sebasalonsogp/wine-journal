@@ -45,7 +45,7 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
                 return EntryResponse.model_validate(intent.response)
             occasion_id = body.occasion_id
             if occasion_id is not None:
-                read_occasion(session, owner.id, occasion_id)
+                read_occasion(session, owner.id, occasion_id, lock=True)
             elif body.new_occasion is not None:
                 occasion = Occasion(owner_id=owner.id, **body.new_occasion.model_dump())
                 session.add(occasion)

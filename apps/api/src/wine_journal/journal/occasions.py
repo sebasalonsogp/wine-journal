@@ -20,10 +20,13 @@ from wine_journal.journal.occasion_schemas import (
 from wine_journal.journal.queries import decode_cursor, encode_cursor
 
 
-def read_occasion(session: Session, owner: UUID, occasion_id: UUID) -> Occasion:
-    row = session.scalar(
-        select(Occasion).where(Occasion.owner_id == owner, Occasion.id == occasion_id)
-    )
+def read_occasion(
+    session: Session, owner: UUID, occasion_id: UUID, *, lock: bool = False
+) -> Occasion:
+    query = select(Occasion).where(Occasion.owner_id == owner, Occasion.id == occasion_id)
+    if lock:
+        query = query.with_for_update(read=True, key_share=True)
+    row = session.scalar(query)
     if row is None:
         raise ApiError(404, "OCCASION_NOT_FOUND", "This occasion is unavailable.")
     return row
@@ -90,9 +93,11 @@ def save_occasion_wines(
                         409, "SAVE_CONFLICT", "This save key belongs to different input."
                     )
                 assert intent.response is not None
+                if intent.response.get("deleted") is True:
+                    raise ApiError(409, "OCCASION_REMOVED", "This saved occasion has been deleted.")
                 return OccasionResponse.model_validate(intent.response)
             if occasion_id is not None:
-                occasion = read_occasion(session, owner, occasion_id)
+                occasion = read_occasion(session, owner, occasion_id, lock=True)
             else:
                 assert isinstance(body, CreateOccasion)
                 occasion = Occasion(owner_id=owner, **body.model_dump(exclude={"wines"}))
