@@ -4,6 +4,7 @@ export type AuthProvider = (typeof providers)[number];
 const destinations = new Set([
   "/my-wines",
   "/occasions",
+  "/occasions/new",
   "/profile",
   "/browse",
   "/guides",
@@ -13,7 +14,9 @@ const destinations = new Set([
 export function returnPath(value: unknown): string {
   return typeof value === "string" &&
     (destinations.has(value) ||
-      /^\/my-wines\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value))
+      /^\/(?:my-wines|occasions)\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+        value,
+      ))
     ? value
     : "/my-wines";
 }

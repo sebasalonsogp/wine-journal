@@ -74,9 +74,9 @@ export function createTransport() {
         result.response.status === 403
           ? "This account is unavailable. You can sign out and use another account."
           : result.response.status === 404
-            ? "This wine is unavailable. Return to My wines to choose another."
+            ? "This record is unavailable. Return to your journal to choose another."
             : result.response.status === 422
-              ? "Check the wine and date, then try again."
+              ? "Check the details, then try again."
               : "We couldn't complete the request. Please try again.",
       );
     }

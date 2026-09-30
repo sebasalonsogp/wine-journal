@@ -693,6 +693,94 @@ h2 {
   background: var(--color-surface);
   font: inherit;
 }
+.occasion-list {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+  max-width: 58rem;
+}
+.occasion-card {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  text-decoration: none;
+}
+.occasion-card:hover {
+  border-color: var(--color-secondary);
+}
+.occasion-card time,
+.occasion-place {
+  color: var(--color-secondary);
+}
+.occasion-card h2 {
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.occasion-card p {
+  margin-top: 0.5rem;
+}
+.occasion-note-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: var(--color-muted-foreground);
+}
+.occasion-page {
+  max-width: 58rem;
+}
+.occasion-page > h1,
+.occasion-heading {
+  margin-top: 1.5rem;
+}
+.occasion-heading h1 {
+  overflow-wrap: anywhere;
+}
+.occasion-heading p {
+  margin-top: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.occasion-notes {
+  margin: 2rem 0;
+  max-width: 70ch;
+}
+.occasion-editor {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+.occasion-editor legend {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+.occasion-editor label span {
+  color: var(--color-muted-foreground);
+  font-weight: 400;
+}
+.occasion-availability {
+  color: var(--color-muted-foreground);
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+@media (max-width: 700px) {
+  .occasion-card {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 1.25rem;
+  }
+  .occasion-editor {
+    padding: 1.25rem;
+  }
+}
 .wine-filter-bar {
   padding-block: 1.25rem;
   border-block: 1px solid var(--color-border);
