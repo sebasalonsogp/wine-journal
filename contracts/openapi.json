@@ -1338,7 +1338,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "maxLength": 512,
+                  "maxLength": 2048,
                   "type": "string"
                 },
                 {
@@ -1346,6 +1346,65 @@
                 }
               ],
               "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 200,
+              "pattern": "^[^\\x00]*$",
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "LAST_CONSUMED",
+              "enum": [
+                "LAST_CONSUMED",
+                "NAME",
+                "RATING"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rating",
+            "required": false,
+            "schema": {
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "RATED",
+                "UNRATED"
+              ],
+              "title": "Rating",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "vintage",
+            "required": false,
+            "schema": {
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "YEAR",
+                "NON_VINTAGE",
+                "MULTI_VINTAGE",
+                "UNKNOWN"
+              ],
+              "title": "Vintage",
+              "type": "string"
             }
           }
         ],

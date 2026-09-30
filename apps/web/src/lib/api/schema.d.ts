@@ -913,6 +913,10 @@ export interface operations {
             query?: {
                 limit?: number;
                 cursor?: string | null;
+                q?: string;
+                sort?: "LAST_CONSUMED" | "NAME" | "RATING";
+                rating?: "ALL" | "RATED" | "UNRATED";
+                vintage?: "ALL" | "YEAR" | "NON_VINTAGE" | "MULTI_VINTAGE" | "UNKNOWN";
             };
             header?: never;
             path?: never;
