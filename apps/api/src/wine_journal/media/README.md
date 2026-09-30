@@ -1,5 +1,7 @@
 # Media jobs
 
+M03a now provides an isolated production converter through `photo_sandbox.PhotoSandbox`; it is not yet registered as a queue handler. See [the processing checkpoint](../../../../../tasks/photo-processing-checkpoint.md) for its build command, limits and verification. Keep uploads disabled while M03b/M03c implement publication and private viewing. The remaining M01 notes below describe the queue foundation.
+
 M01 implements durable background execution. Uploads, private object storage and image/video handlers are subsequent slices. There are no public job routes and no media handlers in the production registry yet. Unsupported kinds become terminal failures; no fake processing marks assets ready.
 
 `models.py` defines the queue; `jobs.py` implements transaction-aware enqueue, claiming, renewal and acknowledgement. `wine_journal.worker` is a separate process in this same Python project. It uses the existing restricted `wine_api` connection from the ignored API `.env`; it never loads migration/admin credentials. No new dependency, service or credential is required.
