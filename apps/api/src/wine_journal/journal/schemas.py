@@ -7,6 +7,7 @@ from pydantic.alias_generators import to_camel
 
 from wine_journal.catalog.schemas import ManualWine
 from wine_journal.journal import validation
+from wine_journal.journal.occasion_schemas import OccasionFields
 
 
 class SaveEntry(BaseModel):
@@ -15,11 +16,16 @@ class SaveEntry(BaseModel):
     consumed_date: date
     manual_wine: ManualWine | None = None
     release_id: UUID | None = None
+    occasion_id: UUID | None = None
+    new_occasion: OccasionFields | None = None
+    notes: str | None = Field(default=None, max_length=10000, pattern=r"^[^\x00]*$")
 
     @model_validator(mode="after")
     def exactly_one_wine(self) -> Self:
         if (self.manual_wine is None) == (self.release_id is None):
             raise ValueError("Choose an existing wine or enter a manual wine.")
+        if self.occasion_id is not None and self.new_occasion is not None:
+            raise ValueError("Choose an existing occasion or enter a new occasion, not both.")
         return self
 
 
@@ -35,6 +41,7 @@ class EntryResponse(BaseModel):
     location_label: str | None = None
     notes: str | None = None
     version: int = 1
+    occasion_id: UUID | None = None
 
 
 class EditEntry(BaseModel):

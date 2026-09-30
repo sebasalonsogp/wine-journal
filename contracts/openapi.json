@@ -288,6 +288,18 @@
             ],
             "title": "Notes"
           },
+          "occasionId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasionid"
+          },
           "timezone": {
             "anyOf": [
               {
@@ -777,6 +789,41 @@
                 "type": "null"
               }
             ]
+          },
+          "newOccasion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OccasionFields"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "pattern": "^[^\\x00]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "occasionId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasionid"
           },
           "releaseId": {
             "anyOf": [

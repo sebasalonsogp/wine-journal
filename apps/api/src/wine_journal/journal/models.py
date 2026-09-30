@@ -58,6 +58,12 @@ class DrinkingEntry(Base):
     __tablename__ = "drinking_entries"
     __table_args__ = (
         ForeignKeyConstraint(
+            ["owner_id", "occasion_id"],
+            ["app.occasions.owner_id", "app.occasions.id"],
+            name="fk_entry_occasion_owner",
+        ),
+        Index("ix_entries_occasion", "owner_id", "occasion_id"),
+        ForeignKeyConstraint(
             ["owner_id", "user_wine_id"], ["app.user_wines.owner_id", "app.user_wines.id"]
         ),
         Index("ix_entries_wine_date", "owner_id", "user_wine_id", "consumed_date", "id"),
@@ -69,6 +75,7 @@ class DrinkingEntry(Base):
     owner_id: Mapped[UUID] = mapped_column()
     user_wine_id: Mapped[UUID] = mapped_column()
     consumed_date: Mapped[date] = mapped_column()
+    occasion_id: Mapped[UUID | None] = mapped_column()
     local_time: Mapped[time | None] = mapped_column()
     timezone: Mapped[str | None] = mapped_column(String(100))
     location_label: Mapped[str | None] = mapped_column(String(200))

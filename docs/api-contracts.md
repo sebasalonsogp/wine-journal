@@ -20,7 +20,17 @@ Successful creation and replay both return 200 with the original entry ID, perso
 
 My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines defaults to latest consumed date descending, then ID ascending; empty histories follow dated wines. Additional sort/filter options are described below. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
 
-Creation remains date-only; it creates no occasion, rating or media and returns no fabricated rating/cover data.
+Minimal capture still needs only wine/date. It creates no occasion unless explicitly requested, no rating or media, and returns no fabricated rating/cover data.
+
+### Implemented wine-first occasion capture (O02)
+
+`POST /entries` additionally accepts optional `occasionId` or `newOccasion` (the two cannot both be non-null), plus optional plain-text `notes` (10,000 characters maximum, NUL excluded). `newOccasion` uses the same title/date/time/place/notes schema as standalone occasion creation. The drinking date and notes stay independent from occasion context; selecting an occasion never rewrites them.
+
+The entry, private manual wine if needed, optional new occasion and creation receipt commit in one transaction. Invalid nested context, inaccessible existing occasion (404) or database failure leaves no partial records. Existing occasions are read without modification; a same-owner composite FK enforces association ownership independently of route checks. One original entry save key protects the entire operation; there is no second occasion save request or receipt for nested creation. Concurrent retries return the same entry and occasion IDs.
+
+Entry creation/detail/history responses include nullable `occasionId`. For requests without the new optional fields, hashing preserves the pre-O02 normalized payload, so old unconfirmed saves remain replayable. Old receipts without `occasionId` decode as null. Changing occasion selection or notes under an already claimed key returns `SAVE_CONFLICT`. In the browser, nested fields are frozen after an uncertain save; definitive validation/404 failures allow correction. Drafts retain only bounded product fields, and creation requires successful storage of its retry key before sending a request.
+
+Entry editing does not change its association yet. Linking/unlinking previously saved entries and occasion-first batch capture remain future slices.
 
 ### Implemented My Wines search (J10)
 

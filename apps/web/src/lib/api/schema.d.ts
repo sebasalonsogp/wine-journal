@@ -297,6 +297,8 @@ export interface components {
             locationLabel?: string | null;
             /** Notes */
             notes?: string | null;
+            /** Occasionid */
+            occasionId?: string | null;
             /** Timezone */
             timezone?: string | null;
             /**
@@ -447,6 +449,11 @@ export interface components {
              */
             consumedDate: string;
             manualWine?: components["schemas"]["ManualWine"] | null;
+            newOccasion?: components["schemas"]["OccasionFields"] | null;
+            /** Notes */
+            notes?: string | null;
+            /** Occasionid */
+            occasionId?: string | null;
             /** Releaseid */
             releaseId?: string | null;
         };
