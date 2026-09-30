@@ -1,6 +1,6 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, `GET/PATCH/DELETE /entries/{id}`, rating changes/history/erasure, `GET/POST /occasions` and `GET/PUT /occasions/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing, grouped wine capture and entry link/unlink commands are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
 ### Implemented occasions (O01)
 
@@ -10,7 +10,7 @@ Creation returns 200 with the context, `id`, `version` and `createdAt`. A transa
 
 `GET /occasions` accepts `limit` (1–100, default 20) and an owner/route-bound cursor (maximum 512 characters). Sort is occasion date descending, ID ascending. It is a live paginated view; edits can move records between pages. `GET /occasions/{id}` reads one owned occasion.
 
-`PUT /occasions/{id}` replaces the editable context, requiring `occasionDate` and the positive integer `version` previously read. Omitted optional fields clear to null. ID/owner/creation timestamp are preserved; successful edits increment the version. Stale edits return 409 `EDIT_CONFLICT`; lock timeouts return 409 `EDIT_BUSY`. Clients keep their draft, read the latest context and require an explicit choice before replacing it. All routes require an active account, use no-store responses, and return 404 for absent/foreign occasions. Occasion deletion, entry links and media remain planned.
+`PUT /occasions/{id}` replaces the editable context, requiring `occasionDate` and the positive integer `version` previously read. Omitted optional fields clear to null. ID/owner/creation timestamp are preserved; successful edits increment the version. Stale edits return 409 `EDIT_CONFLICT`; lock timeouts return 409 `EDIT_BUSY`. Clients keep their draft, read the latest context and require an explicit choice before replacing it. All routes require an active account, use no-store responses, and return 404 for absent/foreign occasions. Occasion deletion and media remain planned; entry association commands are described under O04.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -30,7 +30,15 @@ The entry, private manual wine if needed, optional new occasion and creation rec
 
 Entry creation/detail/history responses include nullable `occasionId`. For requests without the new optional fields, hashing preserves the pre-O02 normalized payload, so old unconfirmed saves remain replayable. Old receipts without `occasionId` decode as null. Changing occasion selection or notes under an already claimed key returns `SAVE_CONFLICT`. In the browser, nested fields are frozen after an uncertain save; definitive validation/404 failures allow correction. Drafts retain only bounded product fields, and creation requires successful storage of its retry key before sending a request.
 
-Entry editing does not change its association yet. Linking/unlinking previously saved entries remains a future slice.
+Ordinary entry PATCH editing does not change its association. Use the dedicated association commands below.
+
+### Implemented entry association (O04)
+
+`PUT /occasions/{occasion_id}/entries/{entry_id}` requires `{version, previousOccasionId}`. Version is a strict positive integer; `previousOccasionId` is required and may be null. Both must match the owned entry before changing its association. This makes moving from another occasion an explicit command. Repeating the current association at the current version is a no-op; a stale version still conflicts.
+
+`DELETE /occasions/{occasion_id}/entries/{entry_id}?version=<positive integer>` unlinks only if the entry currently belongs to that occasion at the viewed version. Both commands return 200 with the current `EntryResponse` and no-store headers. A change increments the version and alters only the association; consumed context, notes, IDs, wine identity and wine ratings/history remain intact.
+
+Missing/foreign entries or occasions return 404; mismatched versions/associations or competing writes return 409 `LINK_CONFLICT`; the three-second lock timeout returns 409 `LINK_BUSY`. These commands do not use creation receipts. After a conflict or lost response, read `GET /entries/{id}` and require an explicit choice before resubmitting with its current version/association. The browser confirms moves and unlinking. Old-version retries cannot silently overwrite a later decision.
 
 ### Implemented occasion-first capture (O03)
 
@@ -102,10 +110,10 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Entry history | `GET /me/wines/{id}/entries` | Auth; paginated by consumed date with stable ties |
 | Change/read ratings | `PUT /me/wines/{id}/rating`, `GET /me/wines/{id}/rating-history` | Auth; expected rating version, current value/history |
 | Delete rating history | `DELETE /me/wines/{id}/rating-history` | Auth; explicit erase action; clear score/history atomically |
-| Browse/create occasions | `GET`, `POST /occasions` | Implemented context and staged new entries; linking previously saved entries is planned |
+| Browse/create occasions | `GET`, `POST /occasions` | Implemented context and staged new entries |
 | List/add wines on an occasion | `GET`, `POST /occasions/{id}/wines` | Implemented grouped wine list and bounded transactional additions |
 | Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | GET/PUT context implemented; deletion and album previews are planned |
-| Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Auth; preserve consumed context; reject conflicting association unless deliberately re-linked |
+| Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Implemented; auth; version and prior-association checks; preserve consumed context |
 | Full memory galleries | `GET /me/wines/{id}/moments`, `GET /occasions/{id}/media` | Auth; paginated eligible assets, captions, source date and source link |
 | Upload initiation/completion | `POST /media/uploads`, `POST /media/{id}/complete` | Auth; per-account quota reservation, unique object key, owned staged asset |
 | Asset status / viewing | `GET /media/{id}`, `POST /media/{id}/download-url` | Auth; viewing only for ready, authorized assets |
