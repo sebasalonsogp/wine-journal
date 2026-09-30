@@ -10,12 +10,17 @@ from wine_journal.accounts.service import read_account
 from wine_journal.catalog.service import create_manual_release, read_owned_release
 from wine_journal.core.auth import Principal
 from wine_journal.core.errors import ApiError
-from wine_journal.journal.models import DrinkingEntry, EntrySave, UserWine
+from wine_journal.journal.models import DrinkingEntry, EntrySave, Occasion, UserWine
+from wine_journal.journal.occasions import read_occasion
 from wine_journal.journal.schemas import EntryResponse, SaveEntry
 
 
 def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntry) -> EntryResponse:
-    digest = hashlib.sha256(body.model_dump_json().encode()).hexdigest()
+    # Preserve pre-occasion receipt hashes for unchanged, minimal capture requests.
+    absent = {
+        field for field in ("occasion_id", "new_occasion", "notes") if getattr(body, field) is None
+    }
+    digest = hashlib.sha256(body.model_dump_json(exclude=absent).encode()).hexdigest()
     try:
         with session.begin():
             session.execute(text("SET LOCAL lock_timeout = '3s'"))
@@ -37,6 +42,14 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
                 if intent.response.get("deleted") is True:
                     raise ApiError(409, "ENTRY_REMOVED", "This saved entry has been deleted.")
                 return EntryResponse.model_validate(intent.response)
+            occasion_id = body.occasion_id
+            if occasion_id is not None:
+                read_occasion(session, owner.id, occasion_id)
+            elif body.new_occasion is not None:
+                occasion = Occasion(owner_id=owner.id, **body.new_occasion.model_dump())
+                session.add(occasion)
+                session.flush()
+                occasion_id = occasion.id
             if body.manual_wine is not None:
                 release = create_manual_release(session, owner.id, body.manual_wine)
             else:
@@ -54,7 +67,11 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
             )
             assert user_wine is not None
             entry = DrinkingEntry(
-                owner_id=owner.id, user_wine_id=user_wine.id, consumed_date=body.consumed_date
+                owner_id=owner.id,
+                user_wine_id=user_wine.id,
+                consumed_date=body.consumed_date,
+                occasion_id=occasion_id,
+                notes=body.notes,
             )
             session.add(entry)
             session.flush()
