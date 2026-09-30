@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:3000"]
     database_url: SecretStr | None = None
     auth_issuer: str | None = None
+    media_uploads_enabled: bool = False
 
     @field_validator("auth_issuer")
     @classmethod

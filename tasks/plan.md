@@ -1,10 +1,10 @@
 # Wine Journal phased implementation plan
 
-Status: implementation underway, September 29, 2026. F01–F07 and J01–J07 are complete: authentication, private capture, repeats, paginated history and editing date/time/place/notes work through the browser and API. J08 wine-level ratings are next. See the [entry deletion checkpoint](entry-deletion-checkpoint.md); local Docker/Supabase startup is restored.
+Status: implementation underway, September 30, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02 establish durable jobs, photo-conversion evidence and private upload authorization. M03 photo processing is next; uploads remain disabled until its handler is ready. See the [upload checkpoint](private-upload-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: fourteen complete and 45 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 25 complete and 34 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
-## Starting point
+## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
 - **Not implemented:** live social-provider activation, private journal, wine providers, uploads, workers or deployment. Local email Auth/API and the web session lifecycle pass; the full local stack now starts with verified loopback bindings.

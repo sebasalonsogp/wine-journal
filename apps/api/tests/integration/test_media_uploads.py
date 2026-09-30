@@ -6,13 +6,15 @@ from unittest.mock import Mock, patch
 from uuid import UUID, uuid4
 
 import pytest
+from fastapi.testclient import TestClient
 from pydantic import SecretStr
 from sqlalchemy import Engine, func, select, text
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session
 
 from wine_journal.accounts.service import bootstrap_account
-from wine_journal.core.auth import Principal
+from wine_journal.core.auth import Principal, require_principal
+from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
 from wine_journal.core.errors import ApiError
 from wine_journal.integrations.storage import (
@@ -22,6 +24,7 @@ from wine_journal.integrations.storage import (
     StorageError,
     UploadCapability,
 )
+from wine_journal.main import create_app
 from wine_journal.media.models import Job, UploadAsset
 from wine_journal.media.schemas import UploadRequest
 from wine_journal.media.uploads import RESERVATION_BYTES, complete_upload, initiate_upload
@@ -297,3 +300,164 @@ def test_upload_migration_round_trip(migrate: Callable[..., None]) -> None:
     migrate("downgrade", "0011_media_jobs")
     migrate("upgrade", "head")
     migrate("check")
+
+
+def test_grant_reissue_racing_completion_still_records_retention(
+    uploads: tuple[Engine, Engine, Principal, Principal],
+) -> None:
+    engine, _, person, _ = uploads
+    storage, operation = provider(engine), uuid4()
+    with Session(engine) as session:
+        first = initiate_upload(session, person, operation, BODY, storage)
+        expiry = first.expires_at + timedelta(minutes=1)
+
+        def finish_before_sign_returns(key: str) -> UploadCapability:
+            with Session(engine) as competing:
+                complete_upload(competing, person, first.asset_id, provider(engine))
+            return UploadCapability(SecretStr("https://storage.test/" + key), expiry)
+
+        storage.sign_upload.side_effect = finish_before_sign_returns
+        with pytest.raises(ApiError) as failure:
+            initiate_upload(session, person, operation, BODY, storage)
+        assert failure.value.code == "UPLOAD_ALREADY_COMPLETED"
+        asset = session.get(UploadAsset, first.asset_id)
+        assert asset and asset.grant_expires_at == expiry and asset.unsettled_grants == 0
+        assert asset.state == "PROCESSING"
+
+
+def test_asset_count_quota_includes_uncertain_signing(
+    uploads: tuple[Engine, Engine, Principal, Principal],
+) -> None:
+    engine, _, person, _ = uploads
+    storage, operation = provider(engine), uuid4()
+    with Session(engine) as session:
+
+        def signed_but_unrecorded(key: str) -> UploadCapability:
+            # A provider link could exist even though its acknowledgement never commits.
+            raise StorageError("response lost")
+
+        storage.sign_upload.side_effect = signed_but_unrecorded
+        with pytest.raises(ApiError):
+            initiate_upload(session, person, operation, BODY, storage)
+        with (
+            patch("wine_journal.media.uploads.ACCOUNT_ASSETS", 1),
+            pytest.raises(ApiError) as quota,
+        ):
+            initiate_upload(session, person, uuid4(), BODY, provider(engine))
+        assert quota.value.code == "MEDIA_QUOTA_EXCEEDED"
+        assert initiate_upload(session, person, operation, BODY, provider(engine)).asset_id
+
+
+def test_upload_routes_auth_validation_feature_gate_and_privacy(
+    database_urls: dict[str, SecretStr],
+    uploads: tuple[Engine, Engine, Principal, Principal],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    engine, _, person, other = uploads
+    app = create_app(Settings.model_construct(database_url=database_urls["runtime"]))
+    storage = provider(engine)
+    headers = {"Idempotency-Key": str(uuid4())}
+    with TestClient(app) as client:
+        assert (
+            client.post(
+                "/api/v1/media/uploads", headers=headers, json=BODY.model_dump(by_alias=True)
+            ).status_code
+            == 401
+        )
+        assert client.post(f"/api/v1/media/{uuid4()}/complete", json={}).status_code == 401
+        app.dependency_overrides[require_principal] = lambda: person
+        assert (
+            client.post(
+                "/api/v1/media/uploads", headers=headers, json=BODY.model_dump(by_alias=True)
+            ).json()["error"]["code"]
+            == "MEDIA_UNAVAILABLE"
+        )
+        app.state.storage = storage
+        for bad in (
+            {"sizeBytes": 0, "contentType": "image/jpeg"},
+            {"sizeBytes": True, "contentType": "image/jpeg"},
+            {"sizeBytes": 20 * 1024 * 1024 + 1, "contentType": "image/jpeg"},
+            {"sizeBytes": 12, "contentType": "text/html"},
+            {**BODY.model_dump(by_alias=True), "ownerId": str(uuid4())},
+            {**BODY.model_dump(by_alias=True), "objectKey": "private"},
+        ):
+            assert (
+                client.post("/api/v1/media/uploads", headers=headers, json=bad).status_code == 422
+            )
+        assert (
+            client.post("/api/v1/media/uploads", json=BODY.model_dump(by_alias=True)).status_code
+            == 422
+        )
+        assert storage.sign_upload.call_count == 0
+        response = client.post(
+            "/api/v1/media/uploads", headers=headers, json=BODY.model_dump(by_alias=True)
+        )
+        assert response.status_code == 200 and response.headers["cache-control"] == "no-store"
+        result = response.json()
+        assert set(result) == {"assetId", "uploadUrl", "expiresAt", "method", "contentType"}
+        path = f"/api/v1/media/{result['assetId']}/complete"
+        assert client.post(path, json={"objectKey": "forged"}).status_code == 422
+        app.dependency_overrides[require_principal] = lambda: other
+        assert client.post(path, json={}).status_code == 404
+        app.dependency_overrides[require_principal] = lambda: person
+        response = client.post(path, json={})
+        assert response.status_code == 200 and response.headers["cache-control"] == "no-store"
+        assert response.json() == {"assetId": result["assetId"], "state": "PROCESSING"}
+        assert result["uploadUrl"] not in response.text + caplog.text
+
+
+def test_inactive_accounts_and_account_lock_timeout(
+    uploads: tuple[Engine, Engine, Principal, Principal],
+) -> None:
+    engine, admin, person, _ = uploads
+    storage = provider(engine)
+    with admin.begin() as connection:
+        connection.execute(
+            text("SELECT id FROM app.app_users WHERE auth_subject = :subject FOR UPDATE"),
+            {"subject": person.subject},
+        )
+        with Session(engine) as session, pytest.raises(ApiError) as busy:
+            initiate_upload(session, person, uuid4(), BODY, storage)
+        assert busy.value.code == "UPLOAD_BUSY"
+    with admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.app_users SET state = 'DISABLED' WHERE auth_subject = :subject"),
+            {"subject": person.subject},
+        )
+    with Session(engine) as session, pytest.raises(ApiError) as disabled:
+        initiate_upload(session, person, uuid4(), BODY, storage)
+    assert disabled.value.status == 403 and storage.sign_upload.call_count == 0
+
+
+def test_completion_rechecks_account_and_grant_reissue_does_not_shorten_expiry(
+    uploads: tuple[Engine, Engine, Principal, Principal],
+) -> None:
+    engine, admin, person, _ = uploads
+    storage, key = provider(engine), uuid4()
+    with Session(engine) as session:
+        first = initiate_upload(session, person, key, BODY, storage)
+        storage.sign_upload.side_effect = lambda key: UploadCapability(
+            SecretStr("https://storage.test/" + key), first.expires_at - timedelta(minutes=1)
+        )
+        initiate_upload(session, person, key, BODY, storage)
+        asset = session.get(UploadAsset, first.asset_id)
+        assert asset and asset.grant_expires_at == first.expires_at
+        session.rollback()
+
+        def disable(key: str) -> ObjectInfo:
+            assert not session.in_transaction()
+            with admin.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE app.app_users SET state = 'DISABLED' WHERE auth_subject = :subject"
+                    ),
+                    {"subject": person.subject},
+                )
+            return ObjectInfo(id=uuid4(), name=key, size=12, content_type="image/jpeg", etag="test")
+
+        storage.info.side_effect = disable
+        with pytest.raises(ApiError) as disabled:
+            complete_upload(session, person, first.asset_id, storage)
+        assert disabled.value.status == 403
+        asset = session.get(UploadAsset, first.asset_id)
+        assert asset and asset.state == "PENDING"

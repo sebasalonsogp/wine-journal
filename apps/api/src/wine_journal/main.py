@@ -11,20 +11,27 @@ from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
 from wine_journal.core.errors import RequestContextMiddleware, install_error_handlers
 from wine_journal.core.health import router as health_router
+from wine_journal.integrations.storage import Storage, StorageSettings
 from wine_journal.journal.occasion_routes import router as occasion_router
 from wine_journal.journal.rating_routes import router as rating_router
 from wine_journal.journal.routes import router as journal_router
+from wine_journal.media.routes import router as media_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings if settings is not None else Settings()
     engine = database_engine(settings.database_url) if settings.database_url else None
+    storage = (
+        Storage(StorageSettings.model_validate({})) if settings.media_uploads_enabled else None
+    )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         try:
             yield
         finally:
+            if storage is not None:
+                storage.close()
             if engine is not None:
                 engine.dispose()
 
@@ -35,6 +42,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.state.token_verifier = (
         TokenVerifier(settings.auth_issuer) if settings.auth_issuer else None
     )
+    application.state.storage = storage
     application.add_middleware(RequestContextMiddleware)
     application.add_middleware(
         CORSMiddleware,
@@ -49,6 +57,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(journal_router, prefix="/api/v1")
     application.include_router(rating_router, prefix="/api/v1")
     application.include_router(occasion_router, prefix="/api/v1")
+    application.include_router(media_router, prefix="/api/v1")
     install_error_handlers(application)
     return application
 
