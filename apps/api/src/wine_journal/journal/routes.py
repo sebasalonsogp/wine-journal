@@ -21,6 +21,7 @@ from wine_journal.journal.schemas import (
     WineResponse,
 )
 from wine_journal.journal.service import save_entry
+from wine_journal.journal.wine_filters import RatingFilter, VintageFilter, WineFilters, WineSort
 
 router = APIRouter(
     tags=["journal"],
@@ -83,10 +84,20 @@ def wines(
     session: Annotated[Session, Depends(database_session)],
     response: Response,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
-    cursor: Annotated[str | None, Query(max_length=512)] = None,
+    cursor: Annotated[str | None, Query(max_length=2048)] = None,
+    q: Annotated[str, Query(max_length=200, pattern=r"^[^\x00]*$")] = "",
+    sort: WineSort = "LAST_CONSUMED",
+    rating: RatingFilter = "ALL",
+    vintage: VintageFilter = "ALL",
 ) -> WinePage:
     response.headers["Cache-Control"] = "no-store"
-    return queries.list_wines(session, read_account(session, principal).id, limit, cursor)
+    return queries.list_wines(
+        session,
+        read_account(session, principal).id,
+        limit,
+        cursor,
+        WineFilters(q=q, sort=sort, rating=rating, vintage=vintage),
+    )
 
 
 @router.get("/me/wines/{wine_id}", response_model=WineResponse)

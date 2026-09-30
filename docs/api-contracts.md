@@ -8,9 +8,20 @@ Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detai
 
 Successful creation and replay both return 200 with the original entry ID, personal wine ID, consumed date and creation timestamp. Changed input under the same key returns 409 `SAVE_CONFLICT`; a competing transaction that exceeds the three-second lock wait returns 409 `SAVE_BUSY` with `Retry-After: 3`. Retry with the same key. Save intents currently remain for the lifetime of the data (no 24-hour cleanup job); account deletion must include them when implemented.
 
-My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines sorts latest consumed date descending, then ID ascending; empty histories follow dated wines. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
+My Wines and entry history accept `limit` (1–100, default 20) and `cursor`. Cursors are validated for the owner and route, not authorization credentials. My Wines defaults to latest consumed date descending, then ID ascending; empty histories follow dated wines. Additional sort/filter options are described below. Entry history uses consumed date descending then ID ascending. Date-only same-day entries have no inferred time. Lists are live views, not snapshots: concurrent edits may move records between pages. All responses are private/no-store and inaccessible IDs return 404.
 
 Creation remains date-only; it creates no occasion, rating or media and returns no fabricated rating/cover data.
+
+### Implemented My Wines search (J10)
+
+`GET /me/wines` additionally accepts:
+
+- `q`: at most 200 characters, NUL excluded. Case-insensitive literal matching across name, producer, edition and known year; each whitespace-separated word must match. `%` and `_` are escaped. No fuzzy or accent-insensitive matching is claimed.
+- `sort`: `LAST_CONSUMED` (default), `NAME` (case-insensitive A–Z), or `RATING` (current score descending). ID ascending resolves ties; missing dates/unrated scores sort last.
+- `rating`: `ALL` (default), `RATED`, or `UNRATED`.
+- `vintage`: `ALL` (default), `YEAR`, `NON_VINTAGE`, `MULTI_VINTAGE`, or `UNKNOWN`.
+
+Wine cursors are bounded to 2048 characters and bind the owner, normalized query and all filter/sort choices. Changing the options with an old cursor returns 422 `INVALID_CURSOR`; restart from the first page. The cursor stores the SQL-evaluated sort value so Unicode name comparisons use the same database collation across pages. No owner or private content becomes accessible through a cursor or shared filter URL. Pre-J10 wine cursors are invalidated; entry-history cursors keep their existing format. See [query measurements and browser evidence](../tasks/wine-search-checkpoint.md).
 
 ### Implemented wine ratings (J08–J09)
 
