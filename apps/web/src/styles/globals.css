@@ -693,6 +693,51 @@ h2 {
   background: var(--color-surface);
   font: inherit;
 }
+.wine-filter-bar {
+  padding-block: 1.25rem;
+  border-block: 1px solid var(--color-border);
+  margin: 1.5rem 0 1.25rem;
+}
+.wine-search-field,
+.wine-filter-fields > div {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.wine-search-field {
+  max-width: 42rem;
+  margin-bottom: 1rem;
+}
+.wine-filter-bar input,
+.wine-filter-bar select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 0.375rem;
+  background: var(--color-surface);
+  color: var(--color-foreground);
+  font: inherit;
+}
+.wine-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 1rem;
+  max-width: 56rem;
+}
+.clear-wine-filters {
+  margin-bottom: 0;
+}
+.wine-filter-bar + .list-order,
+.clear-wine-filters + .list-order {
+  margin-top: 1rem;
+}
+@media (max-width: 700px) {
+  .wine-filter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .wine-rating {
   margin: 2.5rem 0;
   padding: 1.5rem 0;
