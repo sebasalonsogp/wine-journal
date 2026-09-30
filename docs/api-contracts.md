@@ -30,7 +30,17 @@ The entry, private manual wine if needed, optional new occasion and creation rec
 
 Entry creation/detail/history responses include nullable `occasionId`. For requests without the new optional fields, hashing preserves the pre-O02 normalized payload, so old unconfirmed saves remain replayable. Old receipts without `occasionId` decode as null. Changing occasion selection or notes under an already claimed key returns `SAVE_CONFLICT`. In the browser, nested fields are frozen after an uncertain save; definitive validation/404 failures allow correction. Drafts retain only bounded product fields, and creation requires successful storage of its retry key before sending a request.
 
-Entry editing does not change its association yet. Linking/unlinking previously saved entries and occasion-first batch capture remain future slices.
+Entry editing does not change its association yet. Linking/unlinking previously saved entries remains a future slice.
+
+### Implemented occasion-first capture (O03)
+
+`POST /occasions` now accepts optional `wines`, an array of wine groups. Each group specifies exactly one of `manualWine` or an owned `releaseId`, and `entries: [{consumedDate, notes?}]`. A group has 1–20 entries; the entire request is limited to 20 entries across at most 20 groups. Names do not imply shared identity: multiple entries inside one group deliberately reuse its release, while separate manual groups create separate identities. Dates and notes belong to individual entries and do not inherit later occasion edits. Time/place can be added through the existing entry editor after saving.
+
+The occasion, manual identities, personal wine records, entries and receipt commit in one transaction. Nested validation, ownership or database failures create no partial journal records. Creation/replay returns the occasion response. Empty or absent `wines` preserves old standalone creation hashes, allowing pre-O03 saves to replay unchanged.
+
+`POST /occasions/{id}/wines` accepts `{wines: [...]}` with the same bounds and at least one group; it requires a UUID `Idempotency-Key`. It adds new drinking entries without changing occasion context/version. The operation and target ID are included in its receipt hash, so a key cannot silently target another occasion or command. It returns the original occasion snapshot for retries; the browser refetches the wine list. Missing/foreign occasions/releases return 404. Successful responses are no-store; lock waits use the existing `SAVE_BUSY` behavior.
+
+`GET /occasions/{id}/wines` returns a `WinePage` with one card per personal wine/release. Here, `entryCount` and `lastConsumedDate` describe only entries linked to this occasion; current rating remains the user's wine-level rating. Pagination uses `limit` 1–100 (default 20) and a cursor bound to owner and occasion. Ordering is latest linked drinking date descending, then personal wine ID ascending. Other occasions and ungrouped entries never inflate the count. No album or fabricated bottle image is returned.
 
 ### Implemented My Wines search (J10)
 
@@ -92,8 +102,9 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Entry history | `GET /me/wines/{id}/entries` | Auth; paginated by consumed date with stable ties |
 | Change/read ratings | `PUT /me/wines/{id}/rating`, `GET /me/wines/{id}/rating-history` | Auth; expected rating version, current value/history |
 | Delete rating history | `DELETE /me/wines/{id}/rating-history` | Auth; explicit erase action; clear score/history atomically |
-| Browse/create occasions | `GET`, `POST /occasions` | Implemented context only; staged new entries and selected existing entries are planned |
-| Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | GET/PUT context implemented; deletion, grouped wine cards and album previews are planned |
+| Browse/create occasions | `GET`, `POST /occasions` | Implemented context and staged new entries; linking previously saved entries is planned |
+| List/add wines on an occasion | `GET`, `POST /occasions/{id}/wines` | Implemented grouped wine list and bounded transactional additions |
+| Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | GET/PUT context implemented; deletion and album previews are planned |
 | Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Auth; preserve consumed context; reject conflicting association unless deliberately re-linked |
 | Full memory galleries | `GET /me/wines/{id}/moments`, `GET /occasions/{id}/media` | Auth; paginated eligible assets, captions, source date and source link |
 | Upload initiation/completion | `POST /media/uploads`, `POST /media/{id}/complete` | Auth; per-account quota reservation, unique object key, owned staged asset |

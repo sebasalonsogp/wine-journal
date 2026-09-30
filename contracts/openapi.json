@@ -36,6 +36,92 @@
         "title": "BootstrapAccount",
         "type": "object"
       },
+      "CreateOccasion": {
+        "additionalProperties": false,
+        "properties": {
+          "localTime": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Localtime"
+          },
+          "locationLabel": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "pattern": "^[^\\x00]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locationlabel"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "pattern": "^[^\\x00]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "occasionDate": {
+            "format": "date",
+            "title": "Occasiondate",
+            "type": "string"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "pattern": "^[^\\x00]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "wines": {
+            "items": {
+              "$ref": "#/components/schemas/StagedWine"
+            },
+            "maxItems": 20,
+            "title": "Wines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "occasionDate"
+        ],
+        "title": "CreateOccasion",
+        "type": "object"
+      },
       "DeletedEntry": {
         "properties": {
           "id": {
@@ -652,6 +738,25 @@
         "title": "OccasionResponse",
         "type": "object"
       },
+      "OccasionWines": {
+        "additionalProperties": false,
+        "properties": {
+          "wines": {
+            "items": {
+              "$ref": "#/components/schemas/StagedWine"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Wines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "wines"
+        ],
+        "title": "OccasionWines",
+        "type": "object"
+      },
       "RatingChange": {
         "additionalProperties": false,
         "properties": {
@@ -842,6 +947,75 @@
           "consumedDate"
         ],
         "title": "SaveEntry",
+        "type": "object"
+      },
+      "StagedEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "consumedDate": {
+            "format": "date",
+            "title": "Consumeddate",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "pattern": "^[^\\x00]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "required": [
+          "consumedDate"
+        ],
+        "title": "StagedEntry",
+        "type": "object"
+      },
+      "StagedWine": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/StagedEntry"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Entries",
+            "type": "array"
+          },
+          "manualWine": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ManualWine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "releaseId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Releaseid"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "title": "StagedWine",
         "type": "object"
       },
       "WinePage": {
@@ -2593,7 +2767,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OccasionFields"
+                "$ref": "#/components/schemas/CreateOccasion"
               }
             }
           },
@@ -2911,6 +3085,269 @@
           }
         ],
         "summary": "Edit",
+        "tags": [
+          "journal"
+        ]
+      }
+    },
+    "/api/v1/occasions/{occasion_id}/wines": {
+      "get": {
+        "operationId": "wines_api_v1_occasions__occasion_id__wines_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "occasion_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Occasion Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 512,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WinePage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Wines",
+        "tags": [
+          "journal"
+        ]
+      },
+      "post": {
+        "operationId": "add_wines_api_v1_occasions__occasion_id__wines_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "occasion_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Occasion Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OccasionWines"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OccasionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Wines",
         "tags": [
           "journal"
         ]

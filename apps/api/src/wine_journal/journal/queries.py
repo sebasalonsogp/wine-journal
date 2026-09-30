@@ -51,14 +51,17 @@ def decode_cursor(value: str, scope: str, owner: UUID) -> tuple[date | None, UUI
         raise ApiError(422, "INVALID_CURSOR", "Reload this list to continue.") from None
 
 
-def wine_query(owner: UUID) -> Select[WineRow]:
+def wine_query(owner: UUID, occasion_id: UUID | None = None) -> Select[WineRow]:
     history = (
         select(
             DrinkingEntry.user_wine_id,
             func.max(DrinkingEntry.consumed_date).label("last_date"),
             func.count().label("entry_count"),
         )
-        .where(DrinkingEntry.owner_id == owner)
+        .where(
+            DrinkingEntry.owner_id == owner,
+            *([DrinkingEntry.occasion_id == occasion_id] if occasion_id else []),
+        )
         .group_by(DrinkingEntry.user_wine_id)
         .subquery()
     )

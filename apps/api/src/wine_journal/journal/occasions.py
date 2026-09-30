@@ -10,6 +10,7 @@ from wine_journal.accounts.service import read_account
 from wine_journal.core.auth import Principal
 from wine_journal.core.errors import ApiError
 from wine_journal.journal.models import Occasion, OccasionSave
+from wine_journal.journal.occasion_batch import CreateOccasion, OccasionWines, insert_wines
 from wine_journal.journal.occasion_schemas import (
     EditOccasion,
     OccasionFields,
@@ -55,7 +56,22 @@ def list_occasions(session: Session, owner: UUID, limit: int, cursor: str | None
 def create_occasion(
     session: Session, principal: Principal, key: UUID, body: OccasionFields
 ) -> OccasionResponse:
-    digest = hashlib.sha256(body.model_dump_json().encode()).hexdigest()
+    creation = CreateOccasion.model_validate(body.model_dump(by_alias=True))
+    return save_occasion_wines(session, principal, key, creation)
+
+
+def save_occasion_wines(
+    session: Session,
+    principal: Principal,
+    key: UUID,
+    body: CreateOccasion | OccasionWines,
+    occasion_id: UUID | None = None,
+) -> OccasionResponse:
+    # Empty batches preserve standalone creation hashes issued before O03.
+    payload = body.model_dump_json(exclude={"wines"} if not body.wines else set())
+    digest = hashlib.sha256(
+        (f"add:{occasion_id}:" + payload if occasion_id else payload).encode()
+    ).hexdigest()
     try:
         with session.begin():
             session.execute(text("SET LOCAL lock_timeout = '3s'"))
@@ -75,9 +91,14 @@ def create_occasion(
                     )
                 assert intent.response is not None
                 return OccasionResponse.model_validate(intent.response)
-            occasion = Occasion(owner_id=owner, **body.model_dump())
-            session.add(occasion)
-            session.flush()
+            if occasion_id is not None:
+                occasion = read_occasion(session, owner, occasion_id)
+            else:
+                assert isinstance(body, CreateOccasion)
+                occasion = Occasion(owner_id=owner, **body.model_dump(exclude={"wines"}))
+                session.add(occasion)
+                session.flush()
+            insert_wines(session, owner, occasion.id, body.wines)
             result = OccasionResponse.model_validate(occasion)
             intent.response = result.model_dump(mode="json", by_alias=True)
             return result
