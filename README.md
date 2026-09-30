@@ -69,4 +69,4 @@ Follow [development and verification](docs/development.md) for exact check comma
 - [Logical data model](docs/data-model.md) and [planned API](docs/api-contracts.md)
 - [Design references](design/README.md) and [latest UX decisions](tasks/ux-review-04.md)
 
-See the [occasion-first checkpoint](tasks/occasion-wines-checkpoint.md) for current verification. Next is O04: link and unlink previously saved entries while preserving their context. R01/R04 provider/media evidence remains independent work. Google, Apple, Facebook and X require external registration and live verification before enabling their buttons.
+Saved drinking entries now offer **Organize occasion** in My Wines: link, move or unlink them while preserving their date, notes and rating. See the [entry association checkpoint](tasks/entry-occasion-checkpoint.md) for verification. Next is O05: safe occasion deletion that preserves drinking entries. R01/R04 provider/media evidence remains independent work. Google, Apple, Facebook and X require external registration and live verification before enabling their buttons.

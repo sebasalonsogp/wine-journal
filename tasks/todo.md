@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Twenty of 59 tasks are complete; 39 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O03 add private occasions and both wine-first and occasion-first capture. O04, linking and unlinking previously saved entries, is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Twenty-one of 59 tasks are complete; 38 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O04 add private occasions, wine-first and occasion-first capture, and linking/unlinking saved entries. O05, safe occasion deletion, is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -563,7 +563,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="o04"></a>
 ### O04: Link and unlink existing entries
 
-- [ ] **Outcome:** Organize prior memories without copying them.
+- [x] **Outcome:** Organize prior memories without copying them.
 
 **Acceptance:**
 
@@ -571,6 +571,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Reject an entry already linked elsewhere unless the user explicitly chooses a re-link; occasion edits only prefill new entries, never overwrite existing ones.
 
 **Verify:** Link/unlink two entries, attempt a cross-owner link and conflicting association, then compare original fields and row counts.
+
+**Evidence:** The [O04 checkpoint](entry-occasion-checkpoint.md) records version/association guards, narrow SQL grants, preserved entry context/ratings, two-account and concurrent-write tests, confirmation and lost-response browser recovery. Full local regressions passed: 88 API, 21 unit and 17 browser tests.
 
 **Dependencies:** [O03](#o03). **Size:** M.
 

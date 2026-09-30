@@ -65,6 +65,10 @@ export function OccasionWines({ occasion }: { occasion: Occasion }) {
         </button>
       )}
       <AddOccasionWines occasion={occasion} />
+      <p className="form-footnote">
+        Already logged it? <Link href="/my-wines">Open My wines</Link> and choose Organize occasion
+        on the drinking entry.
+      </p>
     </section>
   );
 }
