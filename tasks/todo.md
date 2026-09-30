@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 30, 2026. **Twenty-three of 59 tasks are complete; 36 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 photo feasibility is next, followed by M02 uploads and M03 processing. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 30, 2026. **Twenty-four of 59 tasks are complete; 35 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. Next are M02 uploads and M03 processing. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -80,7 +80,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="r04"></a>
 ### R04: Prove iPhone photo conversion
 
-- [ ] **Outcome:** Resolve HEIF/HEIC handling before building the photo pipeline.
+- [x] **Outcome:** Resolve HEIF/HEIC handling before building the photo pipeline. [R04 evidence](media-feasibility.md) selects Pillow/pillow-heif with 23 measured fixtures, 25 regression cases, metadata/orientation verification and explicit format/resource limitations.
 
 **Acceptance:**
 

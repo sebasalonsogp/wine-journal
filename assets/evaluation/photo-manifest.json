@@ -1,0 +1,139 @@
+{
+  "revision": "b16be1196dfa465a342d68894696e685ca3655cb",
+  "fixtures": [
+    {
+      "id": "heif-RGB_10__128x128",
+      "file": "heif-RGB_10__128x128.heif",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif/RGB_10__128x128.heif",
+      "sha256": "7fbf1573c1e5c1693953b31bb287327c53eaefa74a6f1324e7391a08b3ed1e73"
+    },
+    {
+      "id": "heif_corrupted-corrupted",
+      "file": "heif_corrupted-corrupted.heic",
+      "expected": "INVALID_IMAGE",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_corrupted/corrupted.heic",
+      "sha256": "a3a2cc3c5367fb61e02f52330cab9568c469cc8e08f909ad24b7993add1f630e"
+    },
+    {
+      "id": "heif_other-arrow",
+      "file": "heif_other-arrow.heic",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_other/arrow.heic",
+      "sha256": "73f604d7353df4848505a1f45a5517f736857fe047372f95c2f3d671df92c22c"
+    },
+    {
+      "id": "heif_other-L_exif_xmp_iptc",
+      "file": "heif_other-L_exif_xmp_iptc.heic",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_other/L_exif_xmp_iptc.heic",
+      "sha256": "0083645511ffdee8acf04973237272678d3eb2554d77bde2adeeca102c220d51"
+    },
+    {
+      "id": "heif_other-pug",
+      "file": "heif_other-pug.heic",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_other/pug.heic",
+      "sha256": "1ddce96766efbfa0f6bdf634bdab26bdeff831393df8d67f4cdc7b7a7afebc67"
+    },
+    {
+      "id": "heif_other-spatial_photo",
+      "file": "heif_other-spatial_photo.heic",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_other/spatial_photo.heic",
+      "sha256": "ef941d328072a2df034adb3c3b46f41117606bfc8fcc100dff975d31f55ec028"
+    },
+    {
+      "id": "heif_special-200MP",
+      "file": "heif_special-200MP.heic",
+      "expected": "PIXEL_LIMIT",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_special/200MP.heic",
+      "sha256": "4dd7209010986a50b1049e54de47ae2188faef6d548213a9799e11fae1a317c6"
+    },
+    {
+      "id": "heif_special-guitar_cw90",
+      "file": "heif_special-guitar_cw90.hif",
+      "expected": "READY",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_special/guitar_cw90.hif",
+      "sha256": "f0d5e88be07b9d70a3715218ca612ccf45b126e5b4b42172dce14a62d2099932"
+    },
+    {
+      "id": "heif_truncated-truncated",
+      "file": "heif_truncated-truncated.heic",
+      "expected": "INVALID_IMAGE",
+      "url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/b16be1196dfa465a342d68894696e685ca3655cb/tests/images/heif_truncated/truncated.heic",
+      "sha256": "6ad78dff7607565a7cd945d2bdd60c654b5b2900ea7bce2415c6db14a5610288",
+      "note": "The decoder alone accepted the primary frame; top-level box validation rejects the truncated container."
+    },
+    {
+      "id": "orientation-1",
+      "file": "orientation-1.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-2",
+      "file": "orientation-2.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-3",
+      "file": "orientation-3.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-4",
+      "file": "orientation-4.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-5",
+      "file": "orientation-5.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-6",
+      "file": "orientation-6.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-7",
+      "file": "orientation-7.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-8",
+      "file": "orientation-8.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "orientation-6-heic",
+      "file": "orientation-6.heic",
+      "expected": "READY"
+    },
+    {
+      "id": "48mp-jpg",
+      "file": "48mp.jpg",
+      "expected": "READY"
+    },
+    {
+      "id": "excessive-edge-png",
+      "file": "excessive-edge.png",
+      "expected": "PIXEL_LIMIT"
+    },
+    {
+      "id": "svg-disguised-jpg",
+      "file": "svg-disguised.jpg",
+      "expected": "INVALID_IMAGE"
+    },
+    {
+      "id": "excessive-bytes-jpg",
+      "file": "excessive-bytes.jpg",
+      "expected": "INPUT_BYTES"
+    },
+    {
+      "id": "truncated-primary",
+      "file": "truncated-primary.heic",
+      "expected": "INVALID_IMAGE"
+    }
+  ]
+}
