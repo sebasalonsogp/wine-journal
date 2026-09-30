@@ -9,6 +9,7 @@ from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.database import database_session
 from wine_journal.core.errors import ErrorResponse
 from wine_journal.journal import occasions
+from wine_journal.journal.entry_associations import LinkEntry, set_occasion
 from wine_journal.journal.occasion_batch import CreateOccasion, OccasionWines
 from wine_journal.journal.occasion_schemas import (
     EditOccasion,
@@ -16,12 +17,42 @@ from wine_journal.journal.occasion_schemas import (
     OccasionResponse,
 )
 from wine_journal.journal.occasion_wines import list_occasion_wines
-from wine_journal.journal.schemas import WinePage
+from wine_journal.journal.schemas import EntryResponse, WinePage
 
 router = APIRouter(
     tags=["journal"],
     responses={status: {"model": ErrorResponse} for status in (401, 403, 404, 409, 422, 500, 503)},
 )
+
+
+@router.put("/occasions/{occasion_id}/entries/{entry_id}", response_model=EntryResponse)
+def link_entry(
+    occasion_id: UUID,
+    entry_id: UUID,
+    body: LinkEntry,
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> EntryResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return set_occasion(
+        session, principal, entry_id, occasion_id, body.version, body.previous_occasion_id
+    )
+
+
+@router.delete("/occasions/{occasion_id}/entries/{entry_id}", response_model=EntryResponse)
+def unlink_entry(
+    occasion_id: UUID,
+    entry_id: UUID,
+    version: Annotated[int, Query(gt=0)],
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> EntryResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return set_occasion(
+        session, principal, entry_id, occasion_id, version, occasion_id, unlink=True
+    )
 
 
 @router.post("/occasions", response_model=OccasionResponse)
