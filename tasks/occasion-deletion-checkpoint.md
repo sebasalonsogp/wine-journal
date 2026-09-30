@@ -17,6 +17,10 @@ Delivered September 29, 2026. Open an occasion and choose **Delete occasion**. T
 - Phone (390 px) and desktop (1440 px) confirmation screenshots were inspected. Overflow and axe checks, lint, types, formatting, build, browser-secret and tracked-file checks passed.
 - Local migration was applied without resetting journal data. Both preview services respond successfully.
 
+### Dependency audit follow-up
+
+The first CI run passed API/browser checks but flagged newly reported `brace-expansion` denial-of-service advisories in the lint/API-generation dependency tree ([nested recursion](https://github.com/advisories/GHSA-qhr7-859c-m2p7), [quadratic expansion](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr)). A targeted lockfile update moves the existing major-version lines to 1.1.21, 2.1.7 and 5.0.12. Package manifests and runtime dependencies are unchanged. Installation scripts were disabled for the frozen reinstall; `npm audit` reports zero vulnerabilities. The security follow-up reruns affected tooling/build checks and CI.
+
 ## Remaining scope
 
 Media is not implemented. Occasion-owned attachment cleanup and its warning must be added and tested with M06; personal/catalog cover fallback must be rechecked with M08. Other browser tabs can retain unsaved local drafts until discarded or signed out, but the deleted occasion cannot be recreated by its old save key. Cloud deployment and real OAuth registration remain pending.
