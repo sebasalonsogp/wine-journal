@@ -34,7 +34,7 @@ def set_occasion(
         with session.begin():
             session.execute(text("SET LOCAL lock_timeout = '3s'"))
             owner = read_account(session, principal).id
-            read_occasion(session, owner, occasion_id)
+            read_occasion(session, owner, occasion_id, lock=True)
             entry = read_entry(session, owner, entry_id)
             expected = occasion_id if unlink else previous
             if entry.version != version or entry.occasion_id != expected:

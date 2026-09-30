@@ -208,7 +208,7 @@ def test_occasion_migration_and_restricted_grants(
             assert connection.scalar(text("SELECT count(*) FROM app.drinking_entries")) == entries
         for statement in [
             "UPDATE app.occasions SET owner_id = owner_id",
-            "DELETE FROM app.occasions",
+            "UPDATE app.occasions SET id = id",
         ]:
             with engine.begin() as connection, pytest.raises(ProgrammingError):
                 connection.execute(text(statement))
