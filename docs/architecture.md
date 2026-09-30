@@ -151,7 +151,7 @@ repo/
         journal/
         media/
         integrations/           # Supabase storage, wine/recognition/Places clients
-        worker.py               # Added with media processing
+        worker.py               # M01 durable runner; handlers follow with media processing
       migrations/               # Alembic: sole application schema migration history
       tests/
         unit/
@@ -203,6 +203,8 @@ A barcode decoder reads digits; a data source maps those digits to possible wine
 Expose guest lookup with bounded requests, rate limits, and a global spend ceiling. A single-instance limiter is acceptable during a controlled local demo; before an internet demo, enforce shared limits at the gateway or in a database-backed counter so restarts/workers do not reset paid-provider protection. Start with synchronous, time-bounded recognition and explicit retry; add durable identification jobs only if the provider requires them. Do not hold a SQL transaction while waiting for a provider.
 
 Private photos and bounded videos are in the planned MVP. Add a small Postgres-backed job queue with the media slice: transactions enqueue validation/derivative work, and a worker claims jobs with leases, retries, and deduplication. Delivery is at least once; each handler must tolerate re-execution. A stopped API process must not lose the work. CPU-heavy decoding/transcoding runs in the worker with resource limits.
+
+M01 now implements the queue and separate runner in migration 0011. Its production handler registry is intentionally empty until the processing slices. Lease fencing protects queue state; each future storage handler must also make its effects idempotent. See the [worker contract and operating instructions](../apps/api/src/wine_journal/media/README.md).
 
 Proposed media flow: request upload permission → upload to a random staging object → notify completion → validate actual bytes/type/size and decode safely → make thumbnails/playable derivatives → mark ready → show in the journal. Strip embedded location metadata from displayed derivatives; keep any retained original private and settle original-retention policy with storage limits. Entry saving does not depend on successful media processing. Failed/abandoned objects get cleanup jobs. Only ready assets receive viewing links; raw unvalidated uploads never become covers or album content.
 

@@ -29,7 +29,7 @@ design/                 Preserved Stitch exports and connected walkthrough
 .github/workflows/      CI checks; no deployment workflow
 ```
 
-This is one repository with two runtime projects. Use npm inside `apps/web` and uv inside `apps/api`; there is no root package manager workspace. The backend is a modular monolith with a cohesive Journal core. Background workers and supporting services can be introduced independently when their workload requires them. See [architecture](docs/architecture.md) and [ADR 0005](docs/decisions/0005-repository-foundation.md).
+This is one repository with two runtime projects. Use npm inside `apps/web` and uv inside `apps/api`; there is no root package manager workspace. The backend is a modular monolith with a cohesive Journal core. Its durable media worker runs as a separate process from the same Python project, using Postgres jobs. See [architecture](docs/architecture.md) and [ADR 0005](docs/decisions/0005-repository-foundation.md).
 
 ## Run locally
 
@@ -57,6 +57,8 @@ uv run --directory apps/api --locked uvicorn wine_journal.main:app --reload --ho
 
 API docs: `http://127.0.0.1:8000/docs`. Liveness: `http://127.0.0.1:8000/api/v1/health/live`. Sign in at `http://localhost:3000/auth/sign-in` and read the development email code in Mailpit at `http://127.0.0.1:54324`. Local email never reaches an external mailbox. Follow [Supabase setup](supabase/README.md), including Docker Desktop's localhost-default setting when required.
 
+The background job runner is available with `uv run --directory apps/api --locked python -m wine_journal.worker --once`. The queue is implemented; image handlers and uploads are not yet available. See [worker operation and handler requirements](apps/api/src/wine_journal/media/README.md).
+
 This repository is public. Read [security and environment configuration](docs/security.md) before adding credentials. Real local values are generated into ignored files; GitHub secret scanning, push protection, and CI secret/file checks provide additional safeguards.
 
 ## Verify and continue
@@ -69,4 +71,4 @@ Follow [development and verification](docs/development.md) for exact check comma
 - [Logical data model](docs/data-model.md) and [planned API](docs/api-contracts.md)
 - [Design references](design/README.md) and [latest UX decisions](tasks/ux-review-04.md)
 
-Saved drinking entries offer **Organize occasion** in My Wines to link, move or unlink them. Occasion detail now offers confirmed **Delete occasion**, preserving every drinking entry, its own context and wine ratings. See the [occasion deletion checkpoint](tasks/occasion-deletion-checkpoint.md) for verification. Next is Phase 4: background jobs and private photo storage/processing, beginning with M01 and R04 feasibility evidence. Google, Apple, Facebook and X require external registration and live verification before enabling their buttons.
+Saved drinking entries offer **Organize occasion** in My Wines to link, move or unlink them. Occasion detail offers confirmed **Delete occasion**, preserving every drinking entry, its own context and wine ratings. Phase 4 now has a durable job foundation; see the [worker checkpoint](tasks/media-jobs-checkpoint.md). Next is R04 photo/storage feasibility, then M02 private upload authorization and M03 processing. Google, Apple, Facebook and X require external registration and live verification before enabling their buttons.
