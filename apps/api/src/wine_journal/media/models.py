@@ -17,6 +17,46 @@ from wine_journal.accounts.models import AppUser
 from wine_journal.core.database import Base
 
 
+class UploadAsset(Base):
+    __tablename__ = "upload_assets"
+    __table_args__ = (
+        UniqueConstraint("owner_id", "operation_key", name="uq_upload_operation"),
+        UniqueConstraint("object_key", name="uq_upload_object"),
+        CheckConstraint("declared_bytes BETWEEN 1 AND 20971520", name="ck_upload_size"),
+        CheckConstraint("reserved_bytes >= 26738688", name="ck_upload_reservation"),
+        CheckConstraint("unsettled_grants >= 0", name="ck_upload_grants"),
+        CheckConstraint(
+            "declared_type IN ('image/jpeg', 'image/png', 'image/webp', "
+            "'image/heic', 'image/heif')",
+            name="ck_upload_type",
+        ),
+        CheckConstraint(
+            "state IN ('PENDING', 'PROCESSING', 'READY', 'FAILED')", name="ck_upload_state"
+        ),
+        CheckConstraint("object_key ~ '^staging/[0-9a-f]{32}/[0-9a-f]{32}$'", name="ck_upload_key"),
+        CheckConstraint(
+            "state != 'PROCESSING' OR (object_id IS NOT NULL AND object_etag IS NOT NULL)",
+            name="ck_upload_verified",
+        ),
+        {"schema": "app"},
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    owner_id: Mapped[UUID] = mapped_column(ForeignKey(AppUser.id))
+    operation_key: Mapped[UUID] = mapped_column()
+    object_key: Mapped[str] = mapped_column(String(128))
+    declared_bytes: Mapped[int] = mapped_column()
+    declared_type: Mapped[str] = mapped_column(String(32))
+    reserved_bytes: Mapped[int] = mapped_column()
+    state: Mapped[str] = mapped_column(String(16), server_default="PENDING")
+    grant_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # A crash/timeout may leave a live capability. Cleanup must retain this reservation
+    # until every signing attempt is accounted for, even after known grants expire.
+    unsettled_grants: Mapped[int] = mapped_column(server_default="0")
+    object_id: Mapped[UUID | None] = mapped_column()
+    object_etag: Mapped[str | None] = mapped_column(String(256))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class Job(Base):
     __tablename__ = "jobs"
     __table_args__ = (
