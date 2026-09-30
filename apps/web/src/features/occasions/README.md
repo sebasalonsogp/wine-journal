@@ -12,4 +12,6 @@ Each batch allows 20 total entries. Per-entry dates and notes are independent; t
 
 O04 adds `entry-occasion.tsx` to wine drinking history for confirmed link/move/unlink commands. `occasion-select.tsx` shares the paginated picker with capture. The viewed entry version and previous association protect writes; stale or uncertain responses require a fresh read and explicit review. The in-memory choice is not a persisted draft. Entry mutations invalidate grouped occasion reads.
 
-Occasion deletion, official venue lookup, albums and participants remain later slices. See [O01](../../../../../tasks/occasion-checkpoint.md), [O02](../../../../../tasks/occasion-capture-checkpoint.md), [O03](../../../../../tasks/occasion-wines-checkpoint.md) and [O04](../../../../../tasks/entry-occasion-checkpoint.md).
+O05 adds `occasion-deletion.tsx`: a native confirmation dialog, version-checked removal, explicit stale-context review and safe same-version retry after response loss. Success clears this tab's occasion edit/add-wines drafts, refreshes entry/list reads and removes the deleted detail from the query cache. Entries and ratings remain in My Wines. Media cleanup will be integrated when albums exist.
+
+Official venue lookup, albums and participants remain later slices. See [O01](../../../../../tasks/occasion-checkpoint.md), [O02](../../../../../tasks/occasion-capture-checkpoint.md), [O03](../../../../../tasks/occasion-wines-checkpoint.md), [O04](../../../../../tasks/entry-occasion-checkpoint.md) and [O05](../../../../../tasks/occasion-deletion-checkpoint.md).

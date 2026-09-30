@@ -6,6 +6,7 @@ import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { dateLabel, JournalError } from "@/features/my-wines/wine-display";
 import { OccasionEditor } from "./occasion-editor";
 import { OccasionWines } from "./occasion-wines";
+import { OccasionDeletion } from "./occasion-deletion";
 
 export function OccasionList() {
   const api = useJournalApi();
@@ -145,6 +146,7 @@ export function OccasionDetail({ occasionId }: { occasionId: string }) {
             <p className="occasion-availability">
               Photo memories for this occasion are coming soon.
             </p>
+            <OccasionDeletion occasion={occasion} />
           </>
         )
       )}

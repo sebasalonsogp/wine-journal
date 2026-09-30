@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 29, 2026. **Twenty-one of 59 tasks are complete; 38 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O04 add private occasions, wine-first and occasion-first capture, and linking/unlinking saved entries. O05, safe occasion deletion, is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, September 29, 2026. **Twenty-two of 59 tasks are complete; 37 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. Phase 4 is next, starting with M01 background jobs and R04 photo feasibility evidence. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -583,7 +583,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="o05"></a>
 ### O05: Condense and remove occasions
 
-- [ ] **Outcome:** Keep the secondary view clear and deletion predictable.
+- [x] **Outcome:** Keep the secondary view clear and deletion predictable.
 
 **Acceptance:**
 
@@ -591,6 +591,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Deleting an occasion removes only its context and occasion-owned attachments, preserves entries and their own memories, and warns about the general album.
 
 **Verify:** Prove three wine cards for four entries; delete a group and verify all retained entries remain reachable from My Wines; rerun with media after M06.
+
+**Evidence:** The [O05 checkpoint](occasion-deletion-checkpoint.md) records confirmed deletion, three grouped wines/four preserved entries, receipt redaction, ownership/version checks, concurrent capture and transactional rollback. Local regressions passed: 92 API, 21 unit and 18 browser tests. Media does not exist yet; album warnings, image fallback and attachment cleanup must be reverified with M06/M08.
 
 **Dependencies:** [O04](#o04). **Size:** M.
 
