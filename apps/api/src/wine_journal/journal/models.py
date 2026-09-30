@@ -77,6 +77,36 @@ class DrinkingEntry(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class Occasion(Base):
+    __tablename__ = "occasions"
+    __table_args__ = (
+        UniqueConstraint("owner_id", "id", name="uq_occasions_owner"),
+        Index("ix_occasions_owner_date", "owner_id", "occasion_date", "id"),
+        CheckConstraint("version > 0", name="ck_occasion_version"),
+        CheckConstraint("(local_time IS NULL) = (timezone IS NULL)", name="ck_occasion_time_zone"),
+        {"schema": "app"},
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    owner_id: Mapped[UUID] = mapped_column(ForeignKey("app.app_users.id"))
+    title: Mapped[str | None] = mapped_column(String(200))
+    occasion_date: Mapped[date] = mapped_column()
+    local_time: Mapped[time | None] = mapped_column()
+    timezone: Mapped[str | None] = mapped_column(String(100))
+    location_label: Mapped[str | None] = mapped_column(String(200))
+    notes: Mapped[str | None] = mapped_column(Text())
+    version: Mapped[int] = mapped_column(server_default="1")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class OccasionSave(Base):
+    __tablename__ = "occasion_saves"
+    __table_args__ = ({"schema": "app"},)
+    owner_id: Mapped[UUID] = mapped_column(ForeignKey("app.app_users.id"), primary_key=True)
+    key: Mapped[UUID] = mapped_column(primary_key=True)
+    request_hash: Mapped[str] = mapped_column(String(64))
+    response: Mapped[dict[str, object] | None] = mapped_column(JSONB)
+
+
 class EntrySave(Base):
     """One intent per owner/key; inserted and completed in the entry transaction."""
 

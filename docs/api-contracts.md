@@ -1,6 +1,16 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, `GET/PATCH/DELETE /entries/{id}`, and rating changes/history/erasure are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, minimal `POST /entries`, `GET /me/wines`, wine detail, paginated history, `GET/PATCH/DELETE /entries/{id}`, rating changes/history/erasure, `GET/POST /occasions` and `GET/PUT /occasions/{id}` are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+
+### Implemented occasions (O01)
+
+`POST /occasions` requires a UUID `Idempotency-Key` and `occasionDate`. Optional fields are `title`, `localTime`, `timezone`, `locationLabel` and `notes`; title/place are limited to 200 characters, notes to 10,000. Blank titles/places normalize to null. Local time and IANA timezone must be supplied or cleared together; time has minute precision and no UTC offset. Untitled occasions display their date. No wine entry is created implicitly.
+
+Creation returns 200 with the context, `id`, `version` and `createdAt`. A transactional receipt replays the original response for the same normalized body/key; changed input returns 409 `SAVE_CONFLICT`. A three-second lock timeout returns 409 `SAVE_BUSY` and `Retry-After: 3`. Receipts persist; future occasion/account deletion must remove private receipt content without allowing retries to resurrect deleted records.
+
+`GET /occasions` accepts `limit` (1–100, default 20) and an owner/route-bound cursor (maximum 512 characters). Sort is occasion date descending, ID ascending. It is a live paginated view; edits can move records between pages. `GET /occasions/{id}` reads one owned occasion.
+
+`PUT /occasions/{id}` replaces the editable context, requiring `occasionDate` and the positive integer `version` previously read. Omitted optional fields clear to null. ID/owner/creation timestamp are preserved; successful edits increment the version. Stale edits return 409 `EDIT_CONFLICT`; lock timeouts return 409 `EDIT_BUSY`. Clients keep their draft, read the latest context and require an explicit choice before replacing it. All routes require an active account, use no-store responses, and return 404 for absent/foreign occasions. Occasion deletion, entry links and media remain planned.
 
 ### Implemented manual-journal subset (J01–J03)
 
@@ -72,8 +82,8 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Entry history | `GET /me/wines/{id}/entries` | Auth; paginated by consumed date with stable ties |
 | Change/read ratings | `PUT /me/wines/{id}/rating`, `GET /me/wines/{id}/rating-history` | Auth; expected rating version, current value/history |
 | Delete rating history | `DELETE /me/wines/{id}/rating-history` | Auth; explicit erase action; clear score/history atomically |
-| Browse/create occasions | `GET`, `POST /occasions` | Auth; create can include staged new entries and selected existing entries |
-| Read/edit/delete occasion | `GET`, `PATCH`, `DELETE /occasions/{id}` | Auth; occasion read groups wine cards and provides bounded album previews |
+| Browse/create occasions | `GET`, `POST /occasions` | Implemented context only; staged new entries and selected existing entries are planned |
+| Read/edit/delete occasion | `GET`, `PUT`, `DELETE /occasions/{id}` | GET/PUT context implemented; deletion, grouped wine cards and album previews are planned |
 | Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Auth; preserve consumed context; reject conflicting association unless deliberately re-linked |
 | Full memory galleries | `GET /me/wines/{id}/moments`, `GET /occasions/{id}/media` | Auth; paginated eligible assets, captions, source date and source link |
 | Upload initiation/completion | `POST /media/uploads`, `POST /media/{id}/complete` | Auth; per-account quota reservation, unique object key, owned staged asset |
