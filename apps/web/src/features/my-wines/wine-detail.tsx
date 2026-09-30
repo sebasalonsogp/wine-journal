@@ -89,6 +89,13 @@ export function WineDetail({ wineId }: { wineId: string }) {
                       )}
                       {entry.locationLabel && <p>{entry.locationLabel}</p>}
                       {entry.notes && <p className="entry-notes">{entry.notes}</p>}
+                      {entry.occasionId && (
+                        <p>
+                          <Link href={`/occasions/${entry.occasionId}`} prefetch={false}>
+                            View occasion
+                          </Link>
+                        </p>
+                      )}
                       <EntryEditor
                         entry={entry}
                         label={`${wine.name} · ${dateLabel(entry.consumedDate)}`}

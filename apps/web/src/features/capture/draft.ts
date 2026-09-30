@@ -1,5 +1,10 @@
 import type { components } from "@/lib/api/schema";
 import { draftPrefix } from "@/lib/session/private-drafts";
+import {
+  occasionBody,
+  parseOccasionDraft,
+  type OccasionDraft,
+} from "@/features/occasions/occasion-draft";
 
 export type SaveEntry = components["schemas"]["SaveEntry"];
 export type Fields = {
@@ -10,6 +15,9 @@ export type Fields = {
   edition: string;
   consumedDate: string;
   releaseId: string | null;
+  notes: string;
+  occasionId: string | null;
+  newOccasion: OccasionDraft | null;
 };
 export type Draft = {
   version: 1;
@@ -35,18 +43,29 @@ export function newDraft(ownerId: string | null): Draft {
       edition: "",
       consumedDate,
       releaseId: null,
+      notes: "",
+      occasionId: null,
+      newOccasion: null,
     },
   };
 }
 
 export function parseDraft(raw: string | null): Draft | null {
-  if (!raw || raw.length > 5000) return null;
+  if (!raw || raw.length > 140000) return null;
   try {
     const value = JSON.parse(raw);
     const fields = value.fields;
+    const nested =
+      fields?.newOccasion == null ? null : parseOccasionDraft(JSON.stringify(fields.newOccasion));
     if (
       value.version !== 1 ||
       !fields ||
+      (fields.notes !== undefined &&
+        (typeof fields.notes !== "string" || fields.notes.length > 10000)) ||
+      (fields.occasionId != null &&
+        (typeof fields.occasionId !== "string" || !uuid.test(fields.occasionId))) ||
+      (fields.newOccasion != null &&
+        (!nested || nested.version !== null || nested.attempted || fields.occasionId != null)) ||
       (value.ownerId !== null &&
         (typeof value.ownerId !== "string" || !uuid.test(value.ownerId))) ||
       (value.intentKey !== null &&
@@ -72,6 +91,9 @@ export function parseDraft(raw: string | null): Draft | null {
         consumedDate: fields.consumedDate,
         vintageStatus: fields.vintageStatus,
         releaseId: fields.releaseId,
+        notes: fields.notes ?? "",
+        occasionId: fields.occasionId ?? null,
+        newOccasion: nested,
       },
     };
   } catch {
@@ -103,9 +125,15 @@ export function removeDraft() {
 }
 
 export function entryBody(fields: Fields): SaveEntry {
-  if (fields.releaseId) return { consumedDate: fields.consumedDate, releaseId: fields.releaseId };
-  return {
+  const context = {
     consumedDate: fields.consumedDate,
+    ...(fields.notes ? { notes: fields.notes } : {}),
+    ...(fields.occasionId ? { occasionId: fields.occasionId } : {}),
+    ...(fields.newOccasion ? { newOccasion: occasionBody(fields.newOccasion) } : {}),
+  };
+  if (fields.releaseId) return { ...context, releaseId: fields.releaseId };
+  return {
+    ...context,
     manualWine: {
       name: fields.name.trim(),
       producer: fields.producer.trim() || null,

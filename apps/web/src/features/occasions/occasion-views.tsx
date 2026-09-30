@@ -141,7 +141,8 @@ export function OccasionDetail({ occasionId }: { occasionId: string }) {
             </section>
             <OccasionEditor key={occasion.id} occasion={occasion} />
             <p className="occasion-availability">
-              Adding wines and photo memories to occasions is coming soon.
+              You can link an occasion when logging a wine. Wine lists and photo memories here are
+              coming soon.
             </p>
           </>
         )
