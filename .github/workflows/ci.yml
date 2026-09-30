@@ -94,6 +94,10 @@ jobs:
       - name: Start disposable local Supabase with generated credentials
         id: local_supabase
         run: uv run --project apps/api --locked python scripts/start_local.py
+      - name: Configure private local Storage without displaying credentials
+        run: uv run --project apps/api --locked python scripts/configure_storage.py
+      - name: Verify real private Storage capabilities and upload limits
+        run: uv run --project apps/api --locked python scripts/smoke_local_storage.py
       - run: npm run build --prefix apps/web
       - name: Check browser assets against generated private values
         run: uv run --project apps/api --locked python scripts/check_browser_secrets.py

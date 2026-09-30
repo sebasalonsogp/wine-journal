@@ -6,6 +6,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "alembic>=1.16,<2",
     "fastapi>=0.141.1",
+    "httpx>=0.28.1",
     "psycopg[binary]>=3.2,<4",
     "pydantic-settings>=2.15.0",
     "pyjwt[crypto]>=2.15.0,<3",
@@ -39,7 +40,6 @@ files = ["src", "tests", "../../scripts"]
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28.1",
     "mypy>=2.3.1",
     "pillow==12.3.0",
     "pillow-heif==1.8.0",
