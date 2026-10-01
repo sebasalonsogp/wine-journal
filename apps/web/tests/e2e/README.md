@@ -17,3 +17,11 @@ Entry editing verifies draft recovery after reload, two simultaneous browser edi
 Deletion verifies dialog cancellation and keyboard focus, stale confirmation after an edit in another tab, deletion of one of two entries, a committed deletion with a dropped response and safe retry, and the preserved wine card after the final entry is removed. Confirmation screenshots and axe checks use synthetic data only.
 
 No traces, HAR, storage state, or videos are recorded. The pinned runner's automatic DOM snapshot feature is disabled. Explicit screenshots cover blank sign-in, synthetic wine lists/detail and capture forms, never code fields or account details. CI uploads only `auth-check-summary.json`, containing fixed test titles, statuses, durations and error counts. Do not broaden the artifact glob to `test-results/**`; local failure files may still include diagnostic data. Codes/tokens/cookies remain only in process memory and are never printed by fixtures.
+
+# Personal cover acceptance
+
+`covers.spec.ts` checks manual file validation and sign-out, independent text save
+during upload failure, retry, replacement, invalid-image fallback, stale-tab removal,
+wine-card display, reload and exclusion from memory galleries. It shares synthetic
+image/worker fixtures with `photos.spec.ts`; no original user media is used. Cover
+screenshots are local-only and the CI reporter retains only its allowlisted summary.

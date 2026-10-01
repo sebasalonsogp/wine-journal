@@ -63,6 +63,20 @@ export async function uploadPhoto(
   signal: AbortSignal,
   reserved: (assetId: string) => void,
 ): Promise<void> {
+  return uploadAsset(api, file, identity, signal, async (assetId) => {
+    reserved(assetId);
+    await attachPhoto(api, entryId, assetId, signal);
+  });
+}
+
+/** Upload bytes independently of how a processed asset will be used. */
+export async function uploadAsset(
+  api: PhotoApi,
+  file: File,
+  identity: UploadIdentity,
+  signal: AbortSignal,
+  beforeUpload: (assetId: string) => Promise<void> = async () => {},
+): Promise<void> {
   const contentType = photoType(file) as components["schemas"]["UploadRequest"]["contentType"];
   const complete = () =>
     api.call((client, timeout) =>
@@ -74,7 +88,7 @@ export async function uploadPhoto(
     );
   signal.throwIfAborted();
   if (identity.assetId) {
-    await attachPhoto(api, entryId, identity.assetId, signal);
+    await beforeUpload(identity.assetId);
     // The bytes or completion may have arrived even when the previous response was lost.
     try {
       await complete();
@@ -96,8 +110,7 @@ export async function uploadPhoto(
     }),
   );
   identity.assetId = grant.assetId;
-  reserved(grant.assetId);
-  await attachPhoto(api, entryId, grant.assetId, signal);
+  await beforeUpload(grant.assetId);
   signal.throwIfAborted();
   // The capability carries authorization. Never send the journal bearer token to Storage.
   try {

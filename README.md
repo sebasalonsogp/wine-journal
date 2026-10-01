@@ -57,7 +57,7 @@ uv run --directory apps/api --locked uvicorn wine_journal.main:app --reload --ho
 
 API docs: `http://127.0.0.1:8000/docs`. Liveness: `http://127.0.0.1:8000/api/v1/health/live`. Sign in at `http://localhost:3000/auth/sign-in` and read the development email code in Mailpit at `http://127.0.0.1:54324`. Local email never reaches an external mailbox. Follow [Supabase setup](supabase/README.md), including Docker Desktop's localhost-default setting when required.
 
-The background job runner is available with `uv run --directory apps/api --locked python -m wine_journal.worker --once`. The queue is implemented; image handlers and uploads are not yet available. See [worker operation and handler requirements](apps/api/src/wine_journal/media/README.md).
+The background job runner is available with `uv run --directory apps/api --locked python -m wine_journal.worker --once`. Private image uploads, processing and entry galleries are implemented. Enable/configure local media and build the isolated decoder as described in [worker operation and handler requirements](apps/api/src/wine_journal/media/README.md). Choose a personal bottle cover during manual capture or through Manage bottle cover on a saved wine. Covers stay separate from memories; failed replacements retain the existing cover.
 
 This repository is public. Read [security and environment configuration](docs/security.md) before adding credentials. Real local values are generated into ignored files; GitHub secret scanning, push protection, and CI secret/file checks provide additional safeguards.
 

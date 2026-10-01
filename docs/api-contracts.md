@@ -1,6 +1,21 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing and entry-photo associations are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing entry-photo associations and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+
+### Implemented personal bottle covers (M05)
+
+`PUT /me/wines/{wine_id}/cover` takes `{assetId: UUID | null, version: integer >= 0}`
+and returns `{assetId, version}`. Null removes the personal cover. Non-null assets
+must be owned and READY. An unchanged choice is a no-op; a change increments the
+independent revision. An identical immediate replay succeeds; other stale writes
+return 409 `COVER_CONFLICT`. Inaccessible wines/assets return 404; disabled accounts
+return 403. All responses are no-store. Account then wine locks serialize changes.
+
+Private wine list/detail and occasion wine projections include `coverAssetId` and
+`coverVersion`, defaulting to null/zero. They contain no image capability. Viewing
+uses the existing owner-authorized derivative endpoint. Cover changes never modify
+entry counts, ratings, catalog artwork or photo-gallery membership. Removed assets
+and reservations remain for M08 cleanup.
 
 ### Implemented entry photos (M04a)
 
@@ -139,7 +154,7 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Asset status / viewing | `GET /media/{id}`, `POST /media/{id}/view` | Implemented; viewing only for ready, authorized derivatives |
 | Entry photos | `GET /entries/{id}/photos`; `PUT`, `PATCH`, `DELETE /entries/{id}/photos/{assetId}` | Implemented owned links, independent revisions, captions and removal; fixed 12-photo collection |
 | Occasion media | Parent-specific `/occasions/{id}/media` routes | Planned; typed links; deletion removes association, then conditional cleanup |
-| Set/remove bottle cover | `PUT`, `DELETE /me/wines/{id}/cover` | Auth; owned image asset; separate from gallery membership |
+| Set/remove bottle cover | `PUT /me/wines/{id}/cover` with asset ID or null | Auth; owned READY image; expected revision; separate from gallery membership |
 | Correct private identity | `PATCH /me/wines/{id}/identity` | Auth; owner-only provisional data; shared catalog cannot be rewritten |
 | Correct entry's wine | `PUT /entries/{id}/wine` | Auth; explicit target; preserve entry context/media, leave original wine rating alone |
 | Official-place search | `GET /places/suggestions`, `GET /places/{providerId}` | Auth for MVP journal forms; bounded queries/session tokens and provider attribution |

@@ -1,5 +1,8 @@
 "use client";
 
+import { CoverEditor } from "@/features/media/cover-editor";
+import { BottleCover } from "@/features/media/bottle-cover";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -9,7 +12,7 @@ import { EntryOccasion } from "@/features/occasions/entry-occasion";
 import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
 import { readWineFilters, wineFilterQuery } from "./wine-filters";
-import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
+import { dateLabel, releaseLabel, JournalError } from "./wine-display";
 
 export function WineDetail({ wineId }: { wineId: string }) {
   const api = useJournalApi();
@@ -52,7 +55,7 @@ export function WineDetail({ wineId }: { wineId: string }) {
         wine && (
           <>
             <section className="wine-record">
-              <BottlePlaceholder />
+              <BottleCover api={api} assetId={wine.coverAssetId} name={wine.name} />
               <div>
                 {wine.producer && <p className="wine-producer">{wine.producer}</p>}
                 <h1>{wine.name}</h1>
@@ -63,6 +66,17 @@ export function WineDetail({ wineId }: { wineId: string }) {
                 </Link>
               </div>
             </section>
+            <details className="entry-photo-disclosure">
+              <summary>Manage bottle cover</summary>
+              <CoverEditor
+                key={wine.id}
+                api={api}
+                wineId={wine.id}
+                onSaved={() => {
+                  void wineQuery.refetch();
+                }}
+              />
+            </details>
             <WineRating key={wine.id} wine={wine} />
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">

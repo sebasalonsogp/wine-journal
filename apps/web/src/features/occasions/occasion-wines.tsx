@@ -1,10 +1,12 @@
 "use client";
 
+import { BottleCover } from "@/features/media/bottle-cover";
+
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
-import { BottlePlaceholder, JournalError, releaseLabel } from "@/features/my-wines/wine-display";
+import { JournalError, releaseLabel } from "@/features/my-wines/wine-display";
 import { RequestFailure } from "@/lib/session/http";
 import { occasionKey, newOccasionDraft, storeOccasionDraft, type Occasion } from "./occasion-draft";
 import { newComposer, readComposer, wineBodies, type Composer } from "./occasion-composer";
@@ -38,7 +40,7 @@ export function OccasionWines({ occasion }: { occasion: Occasion }) {
           {wines.map((wine) => (
             <li key={wine.id}>
               <Link className="occasion-wine-card" href={`/my-wines/${wine.id}`} prefetch={false}>
-                <BottlePlaceholder />
+                <BottleCover api={api} assetId={wine.coverAssetId} name={wine.name} />
                 <div>
                   <h3>{wine.name}</h3>
                   <p>{releaseLabel(wine)}</p>

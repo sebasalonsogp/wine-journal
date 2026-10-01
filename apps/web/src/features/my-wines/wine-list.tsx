@@ -1,10 +1,12 @@
 "use client";
 
+import { BottleCover } from "@/features/media/bottle-cover";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
-import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
+import { dateLabel, releaseLabel, JournalError } from "./wine-display";
 import { WineFilterBar } from "./wine-filter-bar";
 import { readWineFilters, wineFilterQuery, wineSorts, type WineFilters } from "./wine-filters";
 
@@ -89,7 +91,7 @@ export function WineList() {
                   href={`/my-wines/${wine.id}${filterQuery}`}
                   prefetch={false}
                 >
-                  <BottlePlaceholder />
+                  <BottleCover api={api} assetId={wine.coverAssetId} name={wine.name} />
                   <div className="wine-card-content">
                     {wine.producer && <p className="wine-producer">{wine.producer}</p>}
                     <h2>{wine.name}</h2>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { usePrivatePhoto } from "./use-private-photo";
 import { photoFailure, type EntryPhoto, type PhotoApi } from "./photo-upload";
 
 export function PhotoCard({
@@ -13,9 +14,10 @@ export function PhotoCard({
   refresh: () => void;
 }) {
   const id = useId();
-  const [image, setImage] = useState("");
-  const [imageError, setImageError] = useState(false);
   const [viewAttempt, setViewAttempt] = useState(0);
+  const preview = usePrivatePhoto(api, photo.state === "READY" ? photo.assetId : null, viewAttempt);
+  const image = preview?.url;
+  const imageError = preview?.failed;
   const [draft, setDraft] = useState<{ caption: string; version: number } | null>(null);
   const caption = draft?.caption ?? photo.caption ?? "";
   const [busy, setBusy] = useState(false);
@@ -28,45 +30,6 @@ export function PhotoCard({
     lifetime.current = controller;
     return () => controller.abort();
   }, []);
-
-  useEffect(() => {
-    if (photo.state !== "READY") return;
-    const controller = new AbortController();
-    let url = "";
-    void Promise.resolve().then(async () => {
-      try {
-        setImageError(false);
-        const view = await api.call((client, timeout) =>
-          client.POST("/api/v1/media/{asset_id}/view", {
-            params: { path: { asset_id: photo.assetId } },
-            body: { variant: "thumbnail" },
-            signal: AbortSignal.any([controller.signal, timeout]),
-          }),
-        );
-        controller.signal.throwIfAborted();
-        const response = await fetch(view.viewUrl, {
-          cache: "no-store",
-          credentials: "omit",
-          referrerPolicy: "no-referrer",
-          redirect: "error",
-          signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
-        });
-        if (!response.ok || !response.headers.get("content-type")?.startsWith("image/webp"))
-          throw new Error();
-        const blob = await response.blob();
-        if (blob.size > 512 * 1024 || !blob.size) throw new Error();
-        controller.signal.throwIfAborted();
-        url = URL.createObjectURL(blob);
-        setImage(url);
-      } catch {
-        if (!controller.signal.aborted) setImageError(true);
-      }
-    });
-    return () => {
-      controller.abort();
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [api, photo.assetId, photo.state, viewAttempt]);
 
   async function mutate(remove: boolean) {
     if (submitting.current) return;
