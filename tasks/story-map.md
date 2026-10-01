@@ -22,7 +22,7 @@ Latest notes clarification: free-form notes and optional guided suggestions belo
 
 The existing technical discussion is in [plan.md](plan.md); [occasion journeys](occasion-journeys.md) map the two views and shared memories. This document is now the working source for story scope and product decisions. It does not turn earlier assistant recommendations into user-approved requirements.
 
-Current phase: repository scaffolding is complete and the user requested a phased implementation plan. The [roadmap](plan.md#phased-roadmap), [task backlog](todo.md), and [coverage matrix](story-coverage.md) define proposed execution and verification. This story map remains the product scope source; unresolved controls stay open, and planning does not mark product features implemented.
+Current phase: the first backend access checkpoint is implemented and verified; see [evidence and limits](access-checkpoint.md). Email codes plus Google, Apple and Facebook are selected through Supabase Auth. Web sign-in, live social-provider integration and the journal remain pending; safe local Supabase startup still needs the recorded Docker follow-up. The [roadmap](plan.md#phased-roadmap), [task backlog](todo.md), and [coverage matrix](story-coverage.md) track delivery without marking whole user stories complete from backend tests alone.
 
 ## How we will work through the product
 

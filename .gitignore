@@ -2,8 +2,16 @@
 .env
 .env.*
 !.env.example
+!.env.migrations.example
 *.pem
 *.key
+*.p12
+*.pfx
+*.keystore
+signing_keys.json
+secrets/
+.secrets/
+.tools/
 
 # JavaScript / Next.js
 node_modules/

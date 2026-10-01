@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: proposed phased execution plan for review, September 14, 2026. This replans the same project backlog after the completed scaffold. **59 tasks remain; no product implementation is started by this planning change.** The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 1, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06 occasion albums is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -15,7 +15,7 @@ Before executing a task, list its concrete files and test cases. If it requires 
 - [x] Architecture, story map, Stitch sources and the connected walkthrough are versioned in the private [repository](https://github.com/sebasalonsogp/wine-journal).
 - [x] Local lint/types/builds, two API smoke tests, browser smoke and the [initial Linux CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34895334930) passed.
 
-Local Docker/Supabase startup, real authentication, database tables, all journal features and hosted application deployment remain unimplemented. Existing tests verify the scaffold, not those capabilities. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
+This records the original scaffold milestone. Subsequent access/database evidence is recorded under F01–F04 and in the [access checkpoint](access-checkpoint.md). Private journal implementation follows below; hosted deployment remains upcoming. Preserve [ADR 0005](../docs/decisions/0005-repository-foundation.md).
 
 ## Early feasibility lane: Start alongside Phase 1
 
@@ -80,7 +80,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="r04"></a>
 ### R04: Prove iPhone photo conversion
 
-- [ ] **Outcome:** Resolve HEIF/HEIC handling before building the photo pipeline.
+- [x] **Outcome:** Resolve HEIF/HEIC handling before building the photo pipeline. [R04 evidence](media-feasibility.md) selects Pillow/pillow-heif with 23 measured fixtures, 25 regression cases, metadata/orientation verification and explicit format/resource limitations.
 
 **Acceptance:**
 
@@ -157,16 +157,16 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Milestone:** An owner signs in to a real private shell; guest access remains available.
 
 <a id="f01"></a>
-### F01: Settle the first sign-in flow
+### F01: Settle the sign-in methods
 
-- [ ] **Outcome:** Select one manageable authentication method.
+- [x] **Outcome:** Select managed email-code sign-in and the requested social providers.
 
 **Acceptance:**
 
-- Confirm email OTP/magic link or one OAuth provider after checking delivery/setup; define recovery and allowed return destinations.
+- Confirm email OTP plus Google, Apple and Facebook through Supabase; define recovery, provider registration prerequisites and allowed return destinations.
 - Record the choice in an ADR and update the sign-in UX; keep lookup guest-accessible and saving authenticated.
 
-**Verify:** Walk new-user, returning-user, expired-link/session, and cancel/return scenarios; record the user's choice before dependent integration.
+**Verify:** Record the user's choice and walk new-user, returning-user, expired-code/session and cancel/return scenarios. Implemented evidence: [ADR 0006](../docs/decisions/0006-authentication-and-public-repository.md), provider setup boundaries, and a successful local two-account OTP/API smoke. Web recovery/callback execution remains F05/F06.
 
 **Dependencies:** [BASE](#base). **Size:** S.
 
@@ -177,7 +177,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f02"></a>
 ### F02: Establish the local data boundary
 
-- [ ] **Outcome:** Make real Postgres and application migrations usable in development and CI.
+- [x] **Outcome:** Make real Postgres and application migrations usable in development and CI.
 
 **Acceptance:**
 
@@ -185,6 +185,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Separate migration and runtime privileges, leave application tables unexposed to the Data API, and supply isolated test fixtures with two accounts.
 
 **Verify:** Run migration from empty Postgres and verify runtime grants; CI uses disposable Postgres, never hosted personal data.
+
+**Progress:** F02a schema/roles/migrations and F02b isolated integration/CI verification passed. The [CI run](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed all 38 API tests. F02c also passed after selecting Docker Desktop's localhost-default port binding: the disposable probe and all Supabase published ports report loopback, guarded startup/migration succeeds, and the real two-account email-code smoke passes. See [local setup](../supabase/README.md).
 
 **Dependencies:** [BASE](#base). **Size:** M.
 
@@ -195,7 +197,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f03"></a>
 ### F03: Verify caller identity
 
-- [ ] **Outcome:** Create the reusable FastAPI authentication boundary.
+- [x] **Outcome:** Create the reusable FastAPI authentication boundary.
 
 **Acceptance:**
 
@@ -210,12 +212,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** AC-01, AC-03.
 
-**Checkpoint after F01, F02, F03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after F01, F02, F03:** Identity/database tests and the real local OTP smoke passed. F02c's safe persistent startup remains open and is explicitly recorded, not hidden by the green isolated API suite.
 
 <a id="f04"></a>
 ### F04: Resolve the application account
 
-- [ ] **Outcome:** Expose the first real authenticated API operation.
+- [x] **Outcome:** Expose the first real authenticated API operation.
 
 **Acceptance:**
 
@@ -223,6 +225,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Apply the agreed JSON/error/request-ID conventions and required CORS methods, including PUT; generate the implemented OpenAPI contract.
 
 **Verify:** Use two identities and concurrent bootstrap requests to prove uniqueness, no owner substitution, readable errors, and no account creation by GET; check browser preflight.
+
+**Evidence:** [CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468032) passed 38 API tests and web/contract checks; [secret checks](https://github.com/sebasalonsogp/wine-journal/actions/runs/34917468120) passed. Real local Supabase OTP tokens were accepted for two separate app accounts. [Checkpoint details](access-checkpoint.md) distinguish backend verification from pending browser work.
 
 **Dependencies:** [F02](#f02), [F03](#f03). **Size:** M.
 
@@ -233,7 +237,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f05"></a>
 ### F05: Sign in to the journal shell
 
-- [ ] **Outcome:** Connect the first web flow to the real identity API.
+- [x] **Outcome:** Connect the first web flow to the real identity API.
 
 **Acceptance:**
 
@@ -251,7 +255,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f06"></a>
 ### F06: Handle expired and ended sessions
 
-- [ ] **Outcome:** Keep account transitions predictable and private.
+- [x] **Outcome:** Keep account transitions predictable and private.
 
 **Acceptance:**
 
@@ -271,7 +275,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="f07"></a>
 ### F07: Automate the first authenticated journey
 
-- [ ] **Outcome:** Establish browser verification on a functioning flow.
+- [x] **Outcome:** Establish browser verification on a functioning flow.
 
 **Acceptance:**
 
@@ -279,6 +283,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Run focused API tests and the critical browser journey in CI, with no production keys or data; capture failure artifacts without tokens.
 
 **Verify:** Execute from a clean test environment and prove an unauthenticated private API call fails independently of the UI guard.
+
+**Evidence:** [Fresh GitHub CI](https://github.com/sebasalonsogp/wine-journal/actions/runs/34921267658) passed the real Supabase/browser job, all 39 API tests, web unit/build/type/lint checks and contract checks. See [web access checkpoint](web-access-checkpoint.md) for lifecycle, accessibility and configuration limits.
 
 **Dependencies:** [F06](#f06). **Size:** M.
 
@@ -296,7 +302,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j01"></a>
 ### J01: Represent private wine identities
 
-- [ ] **Outcome:** Add only the wine identity records needed for manual capture.
+- [x] **Outcome:** Add only the wine identity records needed for manual capture.
 
 **Acceptance:**
 
@@ -314,7 +320,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j02"></a>
 ### J02: Persist a minimal drinking entry
 
-- [ ] **Outcome:** Implement the reliable save boundary before the capture UI.
+- [x] **Outcome:** Implement the reliable save boundary before the capture UI.
 
 **Acceptance:**
 
@@ -332,7 +338,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j03"></a>
 ### J03: Read private wine history
 
-- [ ] **Outcome:** Provide bounded read models for the wine-first experience.
+- [x] **Outcome:** Provide bounded read models for the wine-first experience.
 
 **Acceptance:**
 
@@ -347,12 +353,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** HB-01, HB-02, WC-06, AC-03.
 
-**Checkpoint after J01, J02, J03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after J01, J02, J03:** Completed backend evidence and local runtime limitations are recorded in [manual journal checkpoint](manual-journal-checkpoint.md). J04/J05 browser evidence is now recorded in [manual web checkpoint](manual-web-checkpoint.md).
 
 <a id="j04"></a>
 ### J04: Save and revisit a first wine
 
-- [ ] **Outcome:** Deliver the first complete manual journal journey.
+- [x] **Outcome:** Deliver the first complete manual journal journey.
 
 **Acceptance:**
 
@@ -370,7 +376,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j05"></a>
 ### J05: Log the same wine again
 
-- [ ] **Outcome:** Separate repeat drinking from new wine identity.
+- [x] **Outcome:** Separate repeat drinking from new wine identity.
 
 **Acceptance:**
 
@@ -388,7 +394,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j06"></a>
 ### J06: Enrich an existing entry
 
-- [ ] **Outcome:** Let users fill in memories without logging another drink.
+- [x] **Outcome:** Let users fill in memories without logging another drink.
 
 **Acceptance:**
 
@@ -403,12 +409,14 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TJ-03, TJ-04.
 
+**Evidence:** [J06 checkpoint](entry-edit-checkpoint.md), with separate API/migration and browser-editor slices. Real concurrent updates, explicit conflict resolution, draft recovery and original-entry-ID preservation are verified.
+
 **Checkpoint after J04, J05, J06:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
 
 <a id="j07"></a>
 ### J07: Remove an entry safely
 
-- [ ] **Outcome:** Define deletion before media adds more references.
+- [x] **Outcome:** Define deletion before media adds more references.
 
 **Acceptance:**
 
@@ -423,10 +431,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TJ-04, AC-03.
 
+**Evidence:** [J07 checkpoint](entry-deletion-checkpoint.md) covers version-checked deletion, retained wine records, replay protection, confirmation/cancellation and interrupted-response recovery.
+
 <a id="j08"></a>
 ### J08: Store the current rating and revisions
 
-- [ ] **Outcome:** Implement wine-level rating changes under the confirmed rating decision.
+- [x] **Outcome:** Implement wine-level rating changes under the confirmed wine-level semantics and stated default scale.
 
 **Acceptance:**
 
@@ -444,7 +454,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="j09"></a>
 ### J09: Show current rating and history
 
-- [ ] **Outcome:** Make changing opinions understandable in the wine view.
+- [x] **Outcome:** Make changing opinions understandable in the wine view.
 
 **Acceptance:**
 
@@ -459,12 +469,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TP-04, HB-01.
 
-**Checkpoint after J07, J08, J09:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
+**Checkpoint after J07, J08, J09:** Complete. The [rating checkpoint](rating-checkpoint.md) records the default scale, clear/erase semantics, storage/API/browser slices, concurrency and interrupted-response evidence. Entry deletion evidence remains in the [J07 checkpoint](entry-deletion-checkpoint.md). Profile-query invalidation will be added with L03; no taste-profile query exists yet.
 
 <a id="j10"></a>
 ### J10: Search and sort My Wines
 
-- [ ] **Outcome:** Make the wine record useful once it grows.
+- [x] **Outcome:** Make the wine record useful once it grows.
 
 **Acceptance:**
 
@@ -479,6 +489,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** HB-03, HB-06, WC-06.
 
+**Evidence:** [J10 checkpoint](wine-search-checkpoint.md) records search/filter defaults, scoped cursor behavior, real pagination and navigation tests, and measured query plans for a synthetic multi-account library.
+
 **Phase 2 exit:** Save a manual wine/date, reload, log a second glass, backdate/edit an entry, change a release rating and inspect its history. Search/filter without mixing vintages. Retry and two-account cases pass; no occasion is required.
 
 <a id="phase-3"></a>
@@ -489,7 +501,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="o01"></a>
 ### O01: Create and revisit an occasion
 
-- [ ] **Outcome:** Introduce explicit occasions as the secondary journal view.
+- [x] **Outcome:** Introduce explicit occasions as the secondary journal view.
 
 **Acceptance:**
 
@@ -504,10 +516,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TJ-08, HB-05, AC-03.
 
+**Evidence:** [O01 checkpoint](occasion-checkpoint.md) records title/date rules, transactional retry protection, draft/conflict recovery, ownership checks and desktop/phone browser verification. Wine linking and albums remain later slices.
+
 <a id="o02"></a>
 ### O02: Create an occasion during wine capture
 
-- [ ] **Outcome:** Finish the wine-first creation loop.
+- [x] **Outcome:** Finish the wine-first creation loop.
 
 **Acceptance:**
 
@@ -522,10 +536,12 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TJ-10, TJ-05.
 
+**Evidence:** [O02 checkpoint](occasion-capture-checkpoint.md) records atomic entry/occasion saves, legacy retry compatibility, inline cancellation, independent notes/dates, paginated selection and browser recovery.
+
 <a id="o03"></a>
 ### O03: Add new wines from an occasion
 
-- [ ] **Outcome:** Finish the occasion-first creation loop.
+- [x] **Outcome:** Finish the occasion-first creation loop.
 
 **Acceptance:**
 
@@ -540,12 +556,14 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** TJ-05, TJ-06, WC-03.
 
+**Evidence:** [O03 checkpoint](occasion-wines-checkpoint.md) records bounded transactional batches, explicit repeat identity, grouped wine cards, retained child drafts and safe create/add retries.
+
 **Checkpoint after O01, O02, O03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
 
 <a id="o04"></a>
 ### O04: Link and unlink existing entries
 
-- [ ] **Outcome:** Organize prior memories without copying them.
+- [x] **Outcome:** Organize prior memories without copying them.
 
 **Acceptance:**
 
@@ -553,6 +571,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Reject an entry already linked elsewhere unless the user explicitly chooses a re-link; occasion edits only prefill new entries, never overwrite existing ones.
 
 **Verify:** Link/unlink two entries, attempt a cross-owner link and conflicting association, then compare original fields and row counts.
+
+**Evidence:** The [O04 checkpoint](entry-occasion-checkpoint.md) records version/association guards, narrow SQL grants, preserved entry context/ratings, two-account and concurrent-write tests, confirmation and lost-response browser recovery. Full local regressions passed: 88 API, 21 unit and 17 browser tests.
 
 **Dependencies:** [O03](#o03). **Size:** M.
 
@@ -563,7 +583,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="o05"></a>
 ### O05: Condense and remove occasions
 
-- [ ] **Outcome:** Keep the secondary view clear and deletion predictable.
+- [x] **Outcome:** Keep the secondary view clear and deletion predictable.
 
 **Acceptance:**
 
@@ -571,6 +591,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Deleting an occasion removes only its context and occasion-owned attachments, preserves entries and their own memories, and warns about the general album.
 
 **Verify:** Prove three wine cards for four entries; delete a group and verify all retained entries remain reachable from My Wines; rerun with media after M06.
+
+**Evidence:** The [O05 checkpoint](occasion-deletion-checkpoint.md) records confirmed deletion, three grouped wines/four preserved entries, receipt redaction, ownership/version checks, concurrent capture and transactional rollback. Local regressions passed: 92 API, 21 unit and 18 browser tests. Media does not exist yet; album warnings, image fallback and attachment cleanup must be reverified with M06/M08.
 
 **Dependencies:** [O04](#o04). **Size:** M.
 
@@ -588,7 +610,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m01"></a>
 ### M01: Run durable background jobs
 
-- [ ] **Outcome:** Introduce the smallest reliable worker for media work.
+- [x] **Outcome:** Introduce the smallest reliable worker for media work. Delivered with migration 0011, transactional enqueue, fenced leases and a separate Python runner; [verification and limits](media-jobs-checkpoint.md).
 
 **Acceptance:**
 
@@ -606,7 +628,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m02"></a>
 ### M02: Authorize staged private uploads
 
-- [ ] **Outcome:** Separate text persistence from upload lifecycle.
+- [x] **Outcome:** Separate text persistence from upload lifecycle.
+
+**Slices:** M02a private Storage provisioning/client and M02b owner-scoped assets, quota reservations, routes and two-account completion tests are complete. See the [upload checkpoint](private-upload-checkpoint.md). Real local Storage and disposable database checks pass; keep the upload flag off until M03 registers the processor.
 
 **Acceptance:**
 
@@ -624,7 +648,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m03"></a>
 ### M03: Process photos into private derivatives
 
-- [ ] **Outcome:** Turn supported uploads into usable images.
+- [x] **Outcome:** Turn supported uploads into usable images.
+
+**Slices:** M03a isolated conversion, M03b retry-safe worker publication and M03c authorized status/viewing and handler registration are complete. See the [processing checkpoint](photo-processing-checkpoint.md). All 280 local tests pass, including real JPEG/HEIC worker recovery and warmed-link expiry. Local media is enabled; the sample flag stays false for unconfigured environments. Hosted cache/capacity verification remains R07.
 
 **Acceptance:**
 
@@ -644,7 +670,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m04"></a>
 ### M04: Attach photos to an entry
 
-- [ ] **Outcome:** Let a standalone glass have its own memories.
+- [x] **Outcome:** Let a standalone glass have its own memories.
+
+**Evidence:** Owned entry-photo links, caption revisions and removal are connected to capture and saved-entry galleries. Real upload failure/retry, reload, processing failure, captions/removal and cross-tab privacy journeys pass. See the [entry-photo checkpoint](entry-photos-checkpoint.md) for checks and remaining device/storage limits.
 
 **Acceptance:**
 
@@ -662,7 +690,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m05"></a>
 ### M05: Use a personal bottle cover
 
-- [ ] **Outcome:** Keep bottle recognition artwork independent from memories.
+- [x] **Outcome:** Keep bottle recognition artwork independent from memories.
 
 **Acceptance:**
 
@@ -670,6 +698,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Preview, replace or remove the cover with catalog/placeholder fallback; changing it neither adds an album memory nor edits shared catalog artwork.
 
 **Verify:** Create a manual wine with a cover, retry a failed upload, replace/remove it and verify entry count and memory gallery membership stay unchanged.
+
+**Evidence:** [M05 checkpoint](wine-cover-checkpoint.md) records the versioned cover API, staged manual selection, independent retry/replacement/removal, private card display and real browser acceptance. M05a (API) and M05b (browser) are complete.
 
 **Dependencies:** [M04](#m04). **Size:** M.
 
@@ -1262,7 +1292,7 @@ This is the same work being replanned. Completed P1a is BASE; open product/resea
 | D6 architecture | Direction accepted in ADR 0005; F01, R07 and E04/E05 settle execution details |
 | D7 phased backlog | This plan is produced for review; completion of planning does not complete feature tasks |
 | P0 inputs | F01, R01–R07 and the decision gates |
-| P1a / P1b | BASE complete / F01–F07 pending |
+| P1a / P1b | BASE and F01–F07 complete |
 | P2 private journal | J01–J07 |
 | P3 rating/history | J08–J09 |
 | P4 occasions | O01–O05 |

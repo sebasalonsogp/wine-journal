@@ -1,3 +1,3 @@
 # Unit tests
 
-Add focused tests here when domain rules exist: release identity, rating revisions, and occasion/entry behavior. The scaffold has HTTP-level checks in `../integration`; no placeholder passing tests are needed.
+Current tests cover JWT verification, safe environment configuration, local startup cleanup and credential-file boundaries. Add release identity, rating and occasion tests with those feature slices. Real Postgres and HTTP behavior live in `../integration`; run the disposable-database runner for the complete suite.
