@@ -25,6 +25,12 @@ class UserWine(Base):
         UniqueConstraint("owner_id", "release_id", name="uq_user_wines_release"),
         CheckConstraint("rating_units BETWEEN 2 AND 10", name="ck_wine_rating"),
         CheckConstraint("rating_version >= 0", name="ck_wine_rating_version"),
+        CheckConstraint("cover_version >= 0", name="ck_wine_cover_version"),
+        ForeignKeyConstraint(
+            ["owner_id", "cover_asset_id"],
+            ["app.upload_assets.owner_id", "app.upload_assets.id"],
+            name="fk_wine_cover_owner",
+        ),
         ForeignKeyConstraint(
             ["owner_id", "release_id"], ["app.wine_releases.owner_id", "app.wine_releases.id"]
         ),
@@ -35,6 +41,8 @@ class UserWine(Base):
     release_id: Mapped[UUID] = mapped_column()
     rating_units: Mapped[int | None] = mapped_column()
     rating_version: Mapped[int] = mapped_column(server_default="0")
+    cover_asset_id: Mapped[UUID | None] = mapped_column()
+    cover_version: Mapped[int] = mapped_column(server_default="0")
 
 
 class RatingRevision(Base):

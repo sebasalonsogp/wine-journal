@@ -87,6 +87,8 @@ class WineResponse(BaseModel):
     entry_count: int
     current_rating: float | None
     rating_version: int
+    cover_asset_id: UUID | None = None
+    cover_version: int = 0
 
 
 class WinePage(BaseModel):

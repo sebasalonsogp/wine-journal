@@ -148,6 +148,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/wines/{wine_id}/cover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Change Wine Cover */
+        put: operations["change_wine_cover"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/wines/{wine_id}/entries": {
         parameters: {
             query?: never;
@@ -367,8 +384,22 @@ export interface components {
         AttachPhoto: Record<string, never>;
         /** BootstrapAccount */
         BootstrapAccount: Record<string, never>;
+        /** ChangeCover */
+        ChangeCover: {
+            /** Assetid */
+            assetId: string | null;
+            /** Version */
+            version: number;
+        };
         /** CompleteUpload */
         CompleteUpload: Record<string, never>;
+        /** CoverState */
+        CoverState: {
+            /** Assetid */
+            assetId: string | null;
+            /** Version */
+            version: number;
+        };
         /** CreateOccasion */
         CreateOccasion: {
             /** Localtime */
@@ -802,6 +833,13 @@ export interface components {
         };
         /** WineResponse */
         WineResponse: {
+            /** Coverassetid */
+            coverAssetId?: string | null;
+            /**
+             * Coverversion
+             * @default 0
+             */
+            coverVersion: number;
             /** Currentrating */
             currentRating: number | null;
             /** Edition */
@@ -1823,6 +1861,95 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WineResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    change_wine_cover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeCover"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CoverState"];
                 };
             };
             /** @description Unauthorized */
