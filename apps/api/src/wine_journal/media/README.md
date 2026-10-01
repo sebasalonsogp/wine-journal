@@ -1,14 +1,21 @@
 # Media jobs
 
-`photo_sandbox.PhotoSandbox` provides isolated conversion and `photo_processing.PhotoPublisher` publishes two verified private derivatives with fenced asset updates and retry recovery. Migration 0013 persists output metadata and fixed failure outcomes. See [the processing checkpoint](../../../../../tasks/photo-processing-checkpoint.md) for build commands, limits and verification. Keep uploads disabled until M03c adds private viewing and registers the handler; the production registry is still empty.
+`photo_sandbox.PhotoSandbox` provides isolated conversion and `photo_processing.PhotoPublisher` publishes two verified private derivatives with fenced asset updates and retry recovery. Migration 0013 persists output metadata and fixed failure outcomes. The worker registers `process_photo` when media is enabled and checks private Storage and the decoder before claiming work. See [the processing checkpoint](../../../../../tasks/photo-processing-checkpoint.md) for limits and verification.
 
 There are no public job routes. Unsupported kinds become terminal failures; no fake processing marks assets ready. A terminal `process_photo` failure also fails its matching owned asset if it is still PROCESSING. Already READY/FAILED assets are preserved.
 
-`models.py` defines the queue; `jobs.py` implements transaction-aware enqueue, claiming, renewal and acknowledgement. `wine_journal.worker` is a separate process in this same Python project. It uses the existing restricted `wine_api` connection from the ignored API `.env`; it never loads migration/admin credentials. No new dependency, service or credential is required.
+`models.py` defines the queue; `jobs.py` implements transaction-aware enqueue, claiming, renewal and acknowledgement. `wine_journal.worker` is a separate process in this same Python project. It uses the restricted `wine_api` connection from the ignored API `.env` and the private Storage service credential from `.env.storage`; it never loads migration/admin credentials. No credential or application environment is passed into the decoder container.
 
 ## Running
 
-After the usual local setup and migrations, from `repo/`:
+After the usual local setup and migration 0013, from `repo/`:
+
+```sh
+uv run --directory apps/api --locked python ../../scripts/configure_storage.py
+uv run --directory apps/api --locked python ../../scripts/build_photo_decoder.py
+```
+
+Set `WINE_JOURNAL_MEDIA_UPLOADS_ENABLED=true` in the ignored `apps/api/.env`, then restart the API and start the separate worker:
 
 ```sh
 uv run --directory apps/api --locked python -m wine_journal.worker --once
@@ -17,7 +24,15 @@ uv run --directory apps/api --locked python -m wine_journal.worker
 
 `--once` checks/processes at most one job (or marks one exhausted lease failed) and exits. Polling defaults to two seconds; `--poll-seconds` accepts 1–60. Leases default to 60 seconds; `--lease-seconds` accepts 1–3600. Normal shutdown stops claiming, lets the current bounded handler return, then disposes connections. A forced stop leaves the lease for another worker to reclaim. A production process supervisor and media subprocess deadlines/resource limits belong to deployment and the processing slices; the runner does not forcibly interrupt a hung Python handler.
 
-Do not run this empty production registry against pending photo jobs. Integration tests explicitly inject the photo publisher until M03c registers it.
+The worker requires Linux Docker and its prebuilt decoder image. The API does not need Docker access. With media disabled the worker exits without claiming work; with invalid Storage/decoder configuration it exits nonzero before claiming. The sample environment stays disabled by default. A deployed worker needs a process supervisor and hosting/cache verification under R07; a local background process is not a deployment setup.
+
+## Private viewing
+
+- `GET /api/v1/media/{asset_id}` returns owned status, generic failure code and ready dimensions. It requires an active account, returns no source/object paths and remains usable during Storage outages.
+- `POST /api/v1/media/{asset_id}/view` accepts only `{"variant":"display"}` or `{"variant":"thumbnail"}`. It requires owned READY state before signing and rechecks account/state afterward. It returns `assetId`, `variant`, `viewUrl` and `expiresAt`. Unknown/foreign assets return 404, unfinished/failed assets 409 and provider failures 503. No original-file viewing is exposed.
+- Both API responses use `Cache-Control: no-store`. Signed URLs are bearer capabilities: anyone who already holds one can read that exact derivative until the provider stops accepting it. Do not persist/log them or treat them as share links. Request a new link after expiry.
+- The local provider signs for 120 seconds and returns an HTTP `Expires` deadline matching the token. Its signed route does not return the uploaded object's `no-store` directive; authenticated object reads do. Local tests warm a short-lived signed URL, wait for actual expiry and verify rejection. Account disablement prevents new links but cannot recall downloaded files or already-issued capabilities.
+- Hosted Smart CDN may retain a cached response beyond token expiry. Verify the actual deployment's cache policy before enabling media; use an authenticated no-store proxy if a strict access-revocation deadline is required. See [Supabase signed URL caching](https://supabase.com/docs/guides/storage/cdn/smart-cdn#signed-urls-and-cdn-caching). The frontend should fetch private images without persistent caching and clear them on sign-out (M04).
 
 ## Contract
 

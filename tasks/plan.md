@@ -1,8 +1,8 @@
 # Wine Journal phased implementation plan
 
-Status: implementation underway, September 30, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02 establish durable jobs, photo-conversion evidence and private upload authorization. M03 photo processing is next; uploads remain disabled until its handler is ready. See the [upload checkpoint](private-upload-checkpoint.md).
+Status: implementation underway, October 1, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02/M03 deliver durable jobs, photo-conversion evidence, private upload authorization, isolated processing and owner-only viewing. Local media is enabled with the registered worker. M04 photo attachments and UI are next. See the [processing checkpoint](photo-processing-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 25 complete and 34 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 26 complete and 33 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 ## Original starting point (foundation baseline)
 
