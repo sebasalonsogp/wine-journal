@@ -10,7 +10,7 @@ from sqlalchemy import Engine, and_, func, or_, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from wine_journal.media.models import Job
+from wine_journal.media.models import Job, UploadAsset
 
 
 @dataclass(frozen=True)
@@ -23,6 +23,20 @@ class Claim:
     token: UUID
     attempt: int
     max_attempts: int
+
+
+def _fail_photo(session: Session, kind: str, owner: UUID, reference: UUID) -> None:
+    """Terminal queue failures must not leave owned photos permanently processing."""
+    if kind == "process_photo":
+        session.execute(
+            update(UploadAsset)
+            .where(
+                UploadAsset.id == reference,
+                UploadAsset.owner_id == owner,
+                UploadAsset.state == "PROCESSING",
+            )
+            .values(state="FAILED", processing_error="PROCESSING_FAILED")
+        )
 
 
 def enqueue(
@@ -83,6 +97,7 @@ def claim(engine: Engine, *, lease_seconds: int = 60) -> Claim | None:
         if job.attempts >= job.max_attempts:
             job.state, job.error_code = "FAILED", "LEASE_EXPIRED"
             job.lease_token = job.lease_until = None
+            _fail_photo(session, job.kind, job.owner_id, job.reference_id)
             return None
         now = session.scalar(select(func.clock_timestamp()))
         assert isinstance(now, datetime)
@@ -112,7 +127,7 @@ def finish(
     retry = error == "HANDLER_FAILED" and job.attempt < job.max_attempts
     with Session(engine) as session, session.begin():
         session.execute(text("SET LOCAL lock_timeout = '3s'"))
-        saved = session.scalar(
+        saved = session.execute(
             update(Job)
             .where(
                 Job.id == job.id,
@@ -129,8 +144,10 @@ def finish(
                 if retry
                 else Job.run_after,
             )
-            .returning(Job.id)
-        )
+            .returning(Job.kind, Job.owner_id, Job.reference_id)
+        ).one_or_none()
+        if saved is not None and error and not retry:
+            _fail_photo(session, *saved)
         return saved is not None
 
 
