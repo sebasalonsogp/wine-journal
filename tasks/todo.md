@@ -650,7 +650,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 - [ ] **Outcome:** Turn supported uploads into usable images.
 
-**Slices:** M03a isolated conversion is complete; M03b retry-safe worker publication and M03c authorized status/viewing remain. See the [processing checkpoint](photo-processing-checkpoint.md). Keep the parent open and uploads disabled until all slices pass.
+**Slices:** M03a isolated conversion and M03b retry-safe worker publication are complete; M03c authorized status/viewing and handler registration remain. See the [processing checkpoint](photo-processing-checkpoint.md). Keep the parent open and uploads disabled until all slices pass.
 
 **Acceptance:**
 

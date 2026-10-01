@@ -1,5 +1,6 @@
 """Opt-in real Storage + disposable SQL integration; synthetic data only."""
 
+import hashlib
 import io
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -7,28 +8,37 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 import httpx
+import pillow_heif
 import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 from pydantic import SecretStr
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
-from wine_journal.integrations.storage import ObjectInfo, OutputConflict, Storage
+from wine_journal.integrations.storage import ObjectInfo, OutputConflict, Storage, StorageError
 from wine_journal.main import create_app
 from wine_journal.media.models import Job, UploadAsset
+from wine_journal.media.photo_processing import PhotoPublisher, derivative_keys
+from wine_journal.media.photo_sandbox import PhotoSandbox
 from wine_journal.media.uploads import RESERVATION_BYTES
+from wine_journal.worker import run_once
 
 
 @pytest.mark.skipif(
     os.environ.get("WINE_JOURNAL_TEST_STORAGE") != "1", reason="Opt-in local Storage probe"
 )
+@pytest.mark.parametrize(
+    "source_format,content_type", [("JPEG", "image/jpeg"), ("HEIF", "image/heic")]
+)
 def test_real_private_upload_flow(
     database_urls: dict[str, SecretStr],
     monkeypatch: pytest.MonkeyPatch,
+    source_format: str,
+    content_type: str,
 ) -> None:
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[4] / "scripts"))
     from configure_storage import local_credentials
@@ -37,6 +47,7 @@ def test_real_private_upload_flow(
     config = config.model_copy(update={"bucket": "wj-upload-flow-" + uuid4().hex})
     storage = Storage(config)
     engine = database_engine(database_urls["runtime"])
+    admin = database_engine(database_urls["migration"], role="wine_migrator")
     app = create_app(Settings.model_construct(database_url=database_urls["runtime"]))
     app.state.storage = storage
     person, other = (
@@ -45,20 +56,24 @@ def test_real_private_upload_flow(
     )
     app.dependency_overrides[require_principal] = lambda: person
     image = io.BytesIO()
-    Image.new("RGB", (16, 16), "olive").save(image, format="JPEG")
+    pillow_heif.register_heif_opener()
+    exif = Image.Exif()
+    exif[274], exif[315] = 6, "SYNTHETIC_PRIVATE_METADATA"
+    # HEIF's encoder reads rotation from serialized EXIF, not a Pillow Exif object.
+    Image.new("RGB", (16, 24), "olive").save(image, format=source_format, exif=exif.tobytes())
     contents = image.getvalue()
-    payload = {"sizeBytes": len(contents), "contentType": "image/jpeg"}
+    payload = {"sizeBytes": len(contents), "contentType": content_type}
     headers = {
         "apikey": anon.get_secret_value(),
         "Authorization": "Bearer " + anon.get_secret_value(),
-        "Content-Type": "image/jpeg",
+        "Content-Type": content_type,
     }
     service_headers = {
         "apikey": config.service_key.get_secret_value(),
         "Authorization": "Bearer " + config.service_key.get_secret_value(),
     }
     keys: list[str] = []
-    derivative_keys: list[str] = []
+    cleanup_derivatives: list[str] = []
     owners: list[UUID] = []
     # Never log httpx requests: their query strings contain signed upload capabilities.
     with (
@@ -123,17 +138,72 @@ def test_real_private_upload_flow(
                     etag=asset.object_etag,
                 )
             assert storage.download(expected) == contents
-            display_key = f"photos/{UUID(grant['assetId']).hex}/v1/display.jpg"
-            derivative_keys.append(display_key)
-            storage.put_derivative(display_key, contents)
+            # Independent known key exercises raw replay/conflict behavior before the worker.
+            display_key = f"photos/{uuid4().hex}/v1/display.jpg"
+            jpeg = io.BytesIO()
+            Image.new("RGB", (16, 16), "olive").save(jpeg, format="JPEG")
+            probe = jpeg.getvalue()
+            cleanup_derivatives.append(display_key)
+            storage.put_derivative(display_key, probe)
             first_output = storage.info(display_key)
-            storage.put_derivative(display_key, contents)
+            storage.put_derivative(display_key, probe)
             assert storage.info(display_key) == first_output
             with pytest.raises(OutputConflict):
-                storage.put_derivative(display_key, contents + b"different")
+                storage.put_derivative(display_key, probe + b"different")
             assert not client.get(
                 f"{config.url}/object/authenticated/{config.bucket}/{display_key}", headers=headers
             ).is_success
+            asset_id = UUID(grant["assetId"])
+            display_key, thumbnail_key = derivative_keys(asset_id)
+            cleanup_derivatives.extend((display_key, thumbnail_key))
+            publisher = PhotoPublisher(engine, storage, PhotoSandbox())
+            put = storage.put_derivative
+
+            def interrupt(key: str, body: bytes) -> None:
+                assert engine.pool.checkedout() == 0  # type: ignore[attr-defined]
+                if key == thumbnail_key:
+                    raise StorageError("Synthetic interruption between private outputs.")
+                put(key, body)
+
+            with monkeypatch.context() as patch:
+                patch.setattr(storage, "put_derivative", interrupt)
+                assert run_once(engine, {"process_photo": publisher})
+            first_display = storage.info(display_key)
+            with Session(engine) as session:
+                asset = session.get(UploadAsset, asset_id)
+                assert asset and asset.state == "PROCESSING"
+                job = session.scalar(select(Job).where(Job.reference_id == asset_id))
+                assert job and job.state == "PENDING" and job.attempts == 1
+            with admin.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE app.jobs SET run_after = clock_timestamp() WHERE reference_id = :id"
+                    ),
+                    {"id": asset_id},
+                )
+            assert run_once(engine, {"process_photo": publisher})
+            assert storage.info(display_key) == first_display
+            display = storage.download(first_display)
+            thumbnail = storage.download(storage.info(thumbnail_key))
+            for output in (display, thumbnail):
+                with Image.open(io.BytesIO(output)) as decoded:
+                    assert decoded.size == (24, 16) and not decoded.getexif()
+                    assert not {"icc_profile", "exif", "xmp", "comment"}.intersection(decoded.info)
+                assert b"SYNTHETIC_PRIVATE_METADATA" not in output
+            with Session(engine) as session:
+                asset = session.get(UploadAsset, asset_id)
+                assert (
+                    asset and asset.state == "READY" and asset.reserved_bytes == RESERVATION_BYTES
+                )
+                assert asset.display_sha256 == hashlib.sha256(display).hexdigest()
+                assert asset.thumbnail_sha256 == hashlib.sha256(thumbnail).hexdigest()
+                job = session.scalar(select(Job).where(Job.reference_id == asset_id))
+                assert job and job.state == "SUCCEEDED" and job.attempts == 2
+            assert storage.download(expected) == contents  # A live upload grant still holds it.
+            for key in (display_key, thumbnail_key):
+                assert not client.get(
+                    f"{config.url}/object/authenticated/{config.bucket}/{key}", headers=headers
+                ).is_success
             mismatch = api.post(
                 "/api/v1/media/uploads", headers={"Idempotency-Key": str(uuid4())}, json=payload
             ).json()
@@ -176,7 +246,7 @@ def test_real_private_upload_flow(
                         "DELETE",
                         f"{config.url}/object/{config.bucket}",
                         headers=service_headers,
-                        json={"prefixes": keys + derivative_keys},
+                        json={"prefixes": keys + cleanup_derivatives},
                     )
                     assert result.status_code == 200, "Synthetic object cleanup failed."
                 result = client.delete(
@@ -186,3 +256,4 @@ def test_real_private_upload_flow(
             finally:
                 storage.close()
                 engine.dispose()
+                admin.dispose()
