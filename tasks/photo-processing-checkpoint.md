@@ -1,6 +1,6 @@
 # M03: Private photo processing
 
-September 30, 2026. **M03a isolated conversion and M03b worker publication are implemented.** M03c remains; the parent stays open and uploads remain disabled until private viewing and handler registration are delivered.
+October 1, 2026. **M03a isolated conversion, M03b worker publication and M03c authorized viewing/worker registration are implemented.** Photo UI and attachment flows remain M04 onward. Hosted rollout remains subject to R07 capacity and cache-policy verification.
 
 1. **M03a — isolated conversion:** promote the R04 conversion path, enforce derivative byte limits, and run the native decoders in a credential-free, network-disabled Docker container with hard memory/CPU/process limits and a bounded lifetime/output stream. Files: `media/photos.py`, `media/photo_protocol.py`, `media/photo_sandbox.py`, decoder Dockerfile/build inputs, decoder tests and CI. Test orientation/metadata/HEIC, invalid inputs, transparency, deterministic output, output ceilings, actual container restrictions and forced time/memory termination. No journal/Storage credentials or host directories enter the decoder.
 2. **M03b — worker publication:** bounded private source downloads, deterministic derivative keys, immutable/retry-safe writes, database publication fenced by the current job lease, explicit asset failure outcomes and crash recovery. Test partial publication, retries, stale workers and real Storage; retain originals/reservations under the M02 grant rules.
@@ -45,7 +45,7 @@ Set `WINE_JOURNAL_TEST_PHOTO_SANDBOX=1` for the test process, then run:
 uv run --locked python ../../scripts/run_api_tests.py
 ```
 
-For a focused sandbox run, use `uv run --locked pytest tests/integration/test_photo_sandbox.py -q`. Only synthetic fixtures are used. Keep `WINE_JOURNAL_MEDIA_UPLOADS_ENABLED=false`; no production job handler or viewing endpoint has been registered yet.
+For a focused sandbox run, use `uv run --locked pytest tests/integration/test_photo_sandbox.py -q`. Only synthetic fixtures are used. The M03a/M03b slices kept uploads disabled; M03c adds the registered handler and opt-in setup described in the [media README](../apps/api/src/wine_journal/media/README.md).
 
 ## M03b delivered
 
@@ -75,4 +75,18 @@ Storage contract references: [authenticated private downloads](https://supabase.
 
 ## Remaining acceptance
 
-M03c must authorize ready-only status/viewing, verify link expiry against real Storage and register the handler before enabling upload endpoints. Originals and the 25.5 MiB reservation remain subject to the M02 capability-retention rules; this increment deletes neither. Recent physical-iPhone/HDR visual checks and actual hosting capacity remain R04/R07/UI follow-ups.
+Originals and the 25.5 MiB reservation remain subject to the M02 capability-retention rules; safe cleanup remains M08. Recent physical-iPhone/HDR visual checks and actual hosting capacity remain R04/R07/UI follow-ups.
+
+## M03c delivered
+
+The API exposes owner-only photo status and POST-issued viewing capabilities for READY display/thumbnail derivatives. Clients cannot choose source paths, original variants, owners or expiry. Unknown and cross-account identifiers return the same 404. Status requires an active account but no Storage availability. Viewing checks readiness and account state before and after provider I/O, without holding a database connection across signing. Both responses are no-store, status failures use a generic public code, and capability strings are omitted from object representations and logs. OpenAPI and generated frontend types include the new contract.
+
+The Storage adapter signs exact derivative paths for 120 seconds and validates the returned origin-relative URL, token path and bounded expiry before returning it. Signing checks that the configured bucket is still private. The real test uses genuine provider signatures with a two-second TTL, warms the URL, then verifies rejection after expiry. It also rejects token reuse for a different derivative or the source file. These tests do not inspect signing secrets or forge provider tokens.
+
+Provider behavior matters: Storage v1.72.1's signed route emits `Expires` based on token expiry instead of the object's Cache-Control header. The regression test initially expected no-store on that route; inspection of the installed renderer and signed-object handler established the actual contract. New derivative uploads carry no-store, which is verified on authenticated reads; API JSON remains no-store. Hosted CDN revocation is a separate deployment gate, because [Supabase documents cached signed responses outliving token expiry](https://supabase.com/docs/guides/storage/cdn/smart-cdn#signed-urls-and-cdn-caching). Do not promise immediate revocation of issued links or downloaded bytes. The upload UI should use nonpersistent fetches and clear private media on sign-out.
+
+The separate worker now explicitly registers the photo publisher, validates private Storage and Docker/image availability before claiming, and closes resources on success or startup failure. Disabled media means no job claims, rather than failing queued photos against an empty handler registry. Six startup cases check registration, configuration failures, disabled mode and cleanup. Nine database/API cases verify status/view ownership, all four states, invalid requests, signing failures, expiry and account/state races; twelve adapter cases verify signed-response validation. Both real JPEG/HEIC flows recover an interrupted publication through the actual CLI worker, using only the disposable runtime/Storage credentials in its environment.
+
+M03c verification: **280 tests passed** in the complete local API/database suite with Storage and Docker checks enabled. Ruff, formatting, mypy (102 files), API packaging, Python dependency audit, tracked/browser secret checks and generated frontend type checking passed. OpenAPI and TypeScript contracts were regenerated. Known non-failing warnings remain Starlette/httpx deprecations and Windows pytest-cache permissions.
+
+Local rollout on October 1: started the validated worker in a hidden process, enabled media only in ignored `apps/api/.env`, and restarted only the identified API process. The API liveness route and My Wines preview return 200; new media routes require authentication. Entry and occasion counts were checked before/after and preserved. The checked-in example retains `false`. No new migration follows 0013, no data reset was performed, and no frontend upload/gallery controls were added. M03 is complete; M04 is next.

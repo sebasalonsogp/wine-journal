@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, September 30, 2026. **Twenty-five of 59 tasks are complete; 34 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. M02 implements private upload authorization and quota reservations; uploads remain disabled until M03 photo processing, which is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 1, 2026. **Twenty-six of 59 tasks are complete; 33 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. M02/M03 implement private upload reservations, isolated photo processing and owner-authorized viewing. Local media is enabled with the registered worker; M04 photo attachment/UI is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -648,9 +648,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m03"></a>
 ### M03: Process photos into private derivatives
 
-- [ ] **Outcome:** Turn supported uploads into usable images.
+- [x] **Outcome:** Turn supported uploads into usable images.
 
-**Slices:** M03a isolated conversion and M03b retry-safe worker publication are complete; M03c authorized status/viewing and handler registration remain. See the [processing checkpoint](photo-processing-checkpoint.md). Keep the parent open and uploads disabled until all slices pass.
+**Slices:** M03a isolated conversion, M03b retry-safe worker publication and M03c authorized status/viewing and handler registration are complete. See the [processing checkpoint](photo-processing-checkpoint.md). All 280 local tests pass, including real JPEG/HEIC worker recovery and warmed-link expiry. Local media is enabled; the sample flag stays false for unconfigured environments. Hosted cache/capacity verification remains R07.
 
 **Acceptance:**
 
