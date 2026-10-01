@@ -31,6 +31,8 @@ type WineRow = tuple[
     int,
     float | None,
     int,
+    UUID | None,
+    int,
 ]
 
 
@@ -78,6 +80,8 @@ def wine_query(owner: UUID, occasion_id: UUID | None = None) -> Select[WineRow]:
             func.coalesce(history.c.entry_count, 0).label("entry_count"),
             (UserWine.rating_units / 2.0).label("current_rating"),
             UserWine.rating_version,
+            UserWine.cover_asset_id,
+            UserWine.cover_version,
         )
         .join(WineRelease, UserWine.release_id == WineRelease.id)
         .join(WineDefinition, WineRelease.definition_id == WineDefinition.id)

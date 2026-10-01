@@ -42,10 +42,64 @@
         "title": "BootstrapAccount",
         "type": "object"
       },
+      "ChangeCover": {
+        "additionalProperties": false,
+        "properties": {
+          "assetId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assetid"
+          },
+          "version": {
+            "minimum": 0.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "assetId",
+          "version"
+        ],
+        "title": "ChangeCover",
+        "type": "object"
+      },
       "CompleteUpload": {
         "additionalProperties": false,
         "properties": {},
         "title": "CompleteUpload",
+        "type": "object"
+      },
+      "CoverState": {
+        "properties": {
+          "assetId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assetid"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "assetId",
+          "version"
+        ],
+        "title": "CoverState",
         "type": "object"
       },
       "CreateOccasion": {
@@ -1428,6 +1482,23 @@
       },
       "WineResponse": {
         "properties": {
+          "coverAssetId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverassetid"
+          },
+          "coverVersion": {
+            "default": 0,
+            "title": "Coverversion",
+            "type": "integer"
+          },
           "currentRating": {
             "anyOf": [
               {
@@ -2980,6 +3051,124 @@
         "summary": "Wine",
         "tags": [
           "journal"
+        ]
+      }
+    },
+    "/api/v1/me/wines/{wine_id}/cover": {
+      "put": {
+        "operationId": "change_wine_cover",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wine_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Wine Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCover"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Wine Cover",
+        "tags": [
+          "media"
         ]
       }
     },

@@ -16,6 +16,7 @@ from wine_journal.journal.occasion_routes import router as occasion_router
 from wine_journal.journal.rating_routes import router as rating_router
 from wine_journal.journal.routes import router as journal_router
 from wine_journal.media.attachment_routes import router as attachment_router
+from wine_journal.media.cover_routes import router as cover_router
 from wine_journal.media.routes import router as media_router
 
 
@@ -60,6 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(occasion_router, prefix="/api/v1")
     application.include_router(media_router, prefix="/api/v1")
     application.include_router(attachment_router, prefix="/api/v1")
+    application.include_router(cover_router, prefix="/api/v1")
     install_error_handlers(application)
     return application
 
