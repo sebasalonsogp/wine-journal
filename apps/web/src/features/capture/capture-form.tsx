@@ -7,6 +7,7 @@ import { RequestFailure } from "@/lib/session/http";
 import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 import { CaptureFields } from "./capture-fields";
 import { CaptureOccasion } from "./capture-occasion";
+import { PhotoWorkspace } from "@/features/media/photo-workspace";
 import {
   entryBody,
   newDraft,
@@ -24,6 +25,11 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [savedEntry, setSavedEntry] = useState<{ id: string; userWineId: string } | null>(null);
+  const photoCount = useRef(0);
+  const selectedPhotos = useCallback((count: number) => {
+    photoCount.current = count;
+  }, []);
   const submitting = useRef(false);
   const checkVersion = useRef(0);
 
@@ -93,9 +99,13 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
       api.clear();
       if (event.data === "signed-out") {
         clearPrivateDrafts();
+        setDraft(null);
+        setSavedEntry(null);
+        setStatus("locked");
         window.location.replace("/browse");
       } else {
         submitting.current = false;
+        setSavedEntry(null);
         setStatus("checking");
         void checkAccount();
       }
@@ -121,7 +131,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!draft || submitting.current) return;
+    if (!draft || savedEntry || submitting.current) return;
     submitting.current = true;
     setBusy(true);
     setError("");
@@ -156,6 +166,11 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
         }),
       );
       removeDraft();
+      if (version !== checkVersion.current) return;
+      if (photoCount.current > 0) {
+        setSavedEntry({ id: entry.id, userWineId: entry.userWineId });
+        return;
+      }
       // A document navigation drops old query caches before reading the persisted entry.
       window.location.replace(`/my-wines/${entry.userWineId}`);
     } catch (failure) {
@@ -208,84 +223,106 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
         </section>
       ) : (
         draft && (
-          <form className="capture-form" onSubmit={submit} aria-busy={busy}>
-            {notice && (
-              <p className="form-message" role="status">
-                {notice}
-              </p>
+          <>
+            {savedEntry ? (
+              <section className="save-notice" aria-labelledby="entry-saved-title">
+                <h2 id="entry-saved-title">Your entry is saved.</h2>
+                <p>The wine, date and notes are safe. Photos upload separately below.</p>
+                <a className="button" href={`/my-wines/${savedEntry.userWineId}`}>
+                  View wine
+                </a>
+              </section>
+            ) : (
+              <form className="capture-form" onSubmit={submit} aria-busy={busy}>
+                {notice && (
+                  <p className="form-message" role="status">
+                    {notice}
+                  </p>
+                )}
+                {draft.intentKey && !busy && (
+                  <p className="save-notice" role="status">
+                    This entry has an unconfirmed save. Retry to check and finish the same entry.
+                    Your details are kept unchanged to prevent a duplicate.
+                  </p>
+                )}
+                <fieldset disabled={busy || Boolean(draft.intentKey)}>
+                  <legend className="sr-only">Wine and drinking date</legend>
+                  <CaptureFields fields={draft.fields} change={change} />
+                  <div className="form-field">
+                    <label htmlFor="capture-notes">
+                      Quick notes <span>optional</span>
+                    </label>
+                    <textarea
+                      id="capture-notes"
+                      rows={3}
+                      maxLength={10000}
+                      value={draft.fields.notes}
+                      onChange={(event) => change({ notes: event.target.value })}
+                      placeholder="A first impression, or something to remember later"
+                    />
+                  </div>
+                  <CaptureOccasion
+                    key={draft.ownerId ?? "guest"}
+                    fields={draft.fields}
+                    change={change}
+                    owner={draft.ownerId}
+                    api={api}
+                  />
+                </fieldset>
+                {error && (
+                  <p className="form-message" role="alert">
+                    {error}
+                  </p>
+                )}
+                <div className="capture-actions">
+                  <button type="submit" className="button" disabled={busy}>
+                    {busy
+                      ? "Saving…"
+                      : draft.intentKey
+                        ? "Retry save"
+                        : draft.ownerId
+                          ? "Save entry"
+                          : "Sign in to save"}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-button"
+                    disabled={busy}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          draft.intentKey
+                            ? "This entry may already be saved. Discard this draft and check My wines before creating another?"
+                            : "Discard this unfinished entry?",
+                        )
+                      ) {
+                        removeDraft();
+                        window.location.replace("/my-wines");
+                      }
+                    }}
+                  >
+                    Discard draft
+                  </button>
+                </div>
+                {!draft.ownerId && (
+                  <p className="form-footnote">Your input will be kept while you sign in.</p>
+                )}
+                <p className="form-footnote">
+                  Saved entries stay private. You can add more notes, time and location later.
+                </p>
+              </form>
             )}
-            {draft.intentKey && !busy && (
-              <p className="save-notice" role="status">
-                This entry has an unconfirmed save. Retry to check and finish the same entry. Your
-                details are kept unchanged to prevent a duplicate.
-              </p>
-            )}
-            <fieldset disabled={busy || Boolean(draft.intentKey)}>
-              <legend className="sr-only">Wine and drinking date</legend>
-              <CaptureFields fields={draft.fields} change={change} />
-              <div className="form-field">
-                <label htmlFor="capture-notes">
-                  Quick notes <span>optional</span>
-                </label>
-                <textarea
-                  id="capture-notes"
-                  rows={3}
-                  maxLength={10000}
-                  value={draft.fields.notes}
-                  onChange={(event) => change({ notes: event.target.value })}
-                  placeholder="A first impression, or something to remember later"
-                />
-              </div>
-              <CaptureOccasion
-                key={draft.ownerId ?? "guest"}
-                fields={draft.fields}
-                change={change}
-                owner={draft.ownerId}
+            {draft.ownerId ? (
+              <PhotoWorkspace
+                key={draft.ownerId}
                 api={api}
+                entryId={savedEntry?.id}
+                onSelectionChange={selectedPhotos}
               />
-            </fieldset>
-            {error && (
-              <p className="form-message" role="alert">
-                {error}
-              </p>
+            ) : (
+              <p className="form-footnote">You can add private photos after signing in.</p>
             )}
-            <div className="capture-actions">
-              <button type="submit" className="button" disabled={busy}>
-                {busy
-                  ? "Saving…"
-                  : draft.intentKey
-                    ? "Retry save"
-                    : draft.ownerId
-                      ? "Save entry"
-                      : "Sign in to save"}
-              </button>
-              <button
-                type="button"
-                className="text-button"
-                disabled={busy}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      draft.intentKey
-                        ? "This entry may already be saved. Discard this draft and check My wines before creating another?"
-                        : "Discard this unfinished entry?",
-                    )
-                  ) {
-                    removeDraft();
-                    window.location.replace("/my-wines");
-                  }
-                }}
-              >
-                Discard draft
-              </button>
-            </div>
-            {!draft.ownerId && (
-              <p className="form-footnote">Your input will be kept while you sign in.</p>
-            )}
-            <p className="form-footnote">
-              Saved entries stay private. You can add more notes, time and location later.
-            </p>
-          </form>
+          </>
         )
       )}
     </main>

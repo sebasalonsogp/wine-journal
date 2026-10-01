@@ -108,7 +108,7 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
           {error}
         </p>
       )}
-      {ending || account.isPending || account.isFetching ? (
+      {ending || account.isPending ? (
         <main id="main" className="page-content" aria-busy="true">
           <p role="status">{ending ? "Signing out…" : "Opening your journal…"}</p>
         </main>
@@ -125,8 +125,15 @@ function VerifiedJournal({ children }: { children: React.ReactNode }) {
           </button>
         </main>
       ) : (
-        <AccountContext value={account.data}>
-          <TransportContext value={transport}>{children}</TransportContext>
+        <AccountContext key={account.data.id} value={account.data}>
+          {account.isFetching && (
+            <p className="page-content" role="status">
+              Checking your session…
+            </p>
+          )}
+          <div hidden={account.isFetching} inert={account.isFetching}>
+            <TransportContext value={transport}>{children}</TransportContext>
+          </div>
         </AccountContext>
       )}
     </>

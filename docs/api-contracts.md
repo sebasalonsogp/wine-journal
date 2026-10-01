@@ -12,7 +12,7 @@ Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry
 
 `DELETE /entries/{entry_id}/photos/{asset_id}?version=<positive integer>` removes the association and clears its caption. A repeated removal succeeds with `{assetId}`; stale active revisions return 409. A tombstone prevents delayed PUT retries from resurrecting a removed association (409 `PHOTO_REMOVED`). Missing/foreign parents or assets return 404; disabled accounts return 403. All responses are no-store. Mutations lock account then entry, with a three-second lock timeout using the existing 409 `UPLOAD_BUSY` response.
 
-Entry deletion cascades associations, including tombstones, while preserving assets, other references and reservations for M08 cleanup. No media operation changes the entry's version or replays entry creation. Save text first and attach independently: photo failure must not roll back wine/date/notes. The browser controls and complete phone journey remain M04b.
+Entry deletion cascades associations, including tombstones, while preserving assets, other references and reservations for M08 cleanup. No media operation changes the entry's version or replays entry creation. The browser saves text first and attaches independently: photo failure does not roll back wine/date/notes. M04b capture and entry-gallery controls exercise this contract, with files staged in browser memory until the entry is saved.
 
 ### Implemented occasions (O01)
 

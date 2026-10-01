@@ -6,6 +6,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { EntryEditor } from "@/features/capture/entry-editor";
 import { EntryOccasion } from "@/features/occasions/entry-occasion";
+import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
 import { readWineFilters, wineFilterQuery } from "./wine-filters";
 import { BottlePlaceholder, dateLabel, releaseLabel, JournalError } from "./wine-display";
@@ -102,6 +103,7 @@ export function WineDetail({ wineId }: { wineId: string }) {
                         label={`${wine.name} · ${dateLabel(entry.consumedDate)}`}
                       />
                       <EntryOccasion entry={entry} />
+                      <EntryPhotos api={api} entryId={entry.id} />
                     </li>
                   ))}
                 </ol>

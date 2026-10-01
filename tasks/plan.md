@@ -1,8 +1,8 @@
 # Wine Journal phased implementation plan
 
-Status: implementation underway, October 1, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02/M03 deliver durable jobs, photo-conversion evidence, private upload authorization, isolated processing and owner-only viewing. Local media is enabled with the registered worker. M04a adds owned entry-photo associations and independent caption/removal revisions. M04b upload/gallery UI and its phone journey are next; M04 remains open. See the [entry-photo checkpoint](entry-photos-checkpoint.md).
+Status: implementation underway, October 1, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02–M04 deliver durable jobs, private uploads, isolated photo processing and owner-only entry galleries. Capture and saved entries now support photos, captions and retry/removal without repeating a text save. Local media is enabled with the registered worker. M05 personal bottle covers is next. See the [entry-photo checkpoint](entry-photos-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 26 complete and 33 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 27 complete and 32 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 ## Original starting point (foundation baseline)
 
