@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
-from wine_journal.integrations.storage import Storage
+from wine_journal.integrations.storage import ObjectInfo, OutputConflict, Storage
 from wine_journal.main import create_app
 from wine_journal.media.models import Job, UploadAsset
 from wine_journal.media.uploads import RESERVATION_BYTES
@@ -58,6 +58,7 @@ def test_real_private_upload_flow(
         "Authorization": "Bearer " + config.service_key.get_secret_value(),
     }
     keys: list[str] = []
+    derivative_keys: list[str] = []
     owners: list[UUID] = []
     # Never log httpx requests: their query strings contain signed upload capabilities.
     with (
@@ -113,6 +114,26 @@ def test_real_private_upload_flow(
                 assert not client.get(
                     f"{config.url}/object/{config.bucket}/{asset.object_key}", headers=headers
                 ).is_success
+                assert asset.object_id is not None and asset.object_etag is not None
+                expected = ObjectInfo(
+                    id=asset.object_id,
+                    name=asset.object_key,
+                    size=asset.declared_bytes,
+                    content_type=asset.declared_type,
+                    etag=asset.object_etag,
+                )
+            assert storage.download(expected) == contents
+            display_key = f"photos/{UUID(grant['assetId']).hex}/v1/display.jpg"
+            derivative_keys.append(display_key)
+            storage.put_derivative(display_key, contents)
+            first_output = storage.info(display_key)
+            storage.put_derivative(display_key, contents)
+            assert storage.info(display_key) == first_output
+            with pytest.raises(OutputConflict):
+                storage.put_derivative(display_key, contents + b"different")
+            assert not client.get(
+                f"{config.url}/object/authenticated/{config.bucket}/{display_key}", headers=headers
+            ).is_success
             mismatch = api.post(
                 "/api/v1/media/uploads", headers={"Idempotency-Key": str(uuid4())}, json=payload
             ).json()
@@ -155,7 +176,7 @@ def test_real_private_upload_flow(
                         "DELETE",
                         f"{config.url}/object/{config.bucket}",
                         headers=service_headers,
-                        json={"prefixes": keys},
+                        json={"prefixes": keys + derivative_keys},
                     )
                     assert result.status_code == 200, "Synthetic object cleanup failed."
                 result = client.delete(
