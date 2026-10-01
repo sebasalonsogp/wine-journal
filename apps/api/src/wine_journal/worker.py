@@ -3,19 +3,33 @@
 import argparse
 import logging
 import signal
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterator, Mapping
+from contextlib import contextmanager
 from threading import Event
 
 from sqlalchemy import Engine
 
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
+from wine_journal.integrations.storage import Storage, StorageSettings
 from wine_journal.media.jobs import Claim, claim, finish
+from wine_journal.media.photo_processing import PhotoPublisher
+from wine_journal.media.photo_sandbox import PhotoSandbox
 
 Handler = Callable[[Claim], None]
 logger = logging.getLogger("wine_journal.worker")
-# Media handlers are registered explicitly with M03. Never load modules from a job's kind.
-HANDLERS: Mapping[str, Handler] = {}
+
+
+@contextmanager
+def photo_handlers(engine: Engine) -> Iterator[Mapping[str, Handler]]:
+    """Validate infrastructure before claiming; never load modules from a job kind."""
+    storage = Storage(StorageSettings.model_validate({}))
+    try:
+        storage.check_private_bucket()
+        decoder = PhotoSandbox()
+        yield {"process_photo": PhotoPublisher(engine, storage, decoder)}
+    finally:
+        storage.close()
 
 
 def run_once(engine: Engine, handlers: Mapping[str, Handler], *, lease_seconds: int = 60) -> bool:
@@ -52,6 +66,9 @@ def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     try:
         settings = Settings()
+        if not settings.media_uploads_enabled:
+            logger.info("worker_media_disabled")
+            return 0  # Never claim and fail photo jobs against an empty registry.
         if settings.database_url is None:
             raise ValueError("Missing database configuration")
         engine = database_engine(settings.database_url)
@@ -61,22 +78,26 @@ def main() -> int:
     stop = Event()
     signal.signal(signal.SIGTERM, lambda *_: stop.set())
     signal.signal(signal.SIGINT, lambda *_: stop.set())
-    logger.info("worker_started registered_handlers=%s", len(HANDLERS))
     try:
-        while not stop.is_set():
-            try:
-                worked = run_once(engine, HANDLERS, lease_seconds=args.lease_seconds)
-            except Exception:
-                # Driver exceptions may contain private connection or payload details.
-                logger.error("worker_database_unavailable")
+        with photo_handlers(engine) as handlers:
+            logger.info("worker_started registered_handlers=%s", len(handlers))
+            while not stop.is_set():
+                try:
+                    worked = run_once(engine, handlers, lease_seconds=args.lease_seconds)
+                except Exception:
+                    # Driver exceptions may contain private connection or payload details.
+                    logger.error("worker_database_unavailable")
+                    if args.once:
+                        return 1
+                    worked = False
                 if args.once:
-                    return 1
-                worked = False
-            if args.once:
-                break
-            if not worked:
-                stop.wait(args.poll_seconds)
+                    break
+                if not worked:
+                    stop.wait(args.poll_seconds)
         return 0
+    except Exception:
+        logger.error("worker_startup_failed")
+        return 1
     finally:
         engine.dispose()
         logger.info("worker_stopped")
