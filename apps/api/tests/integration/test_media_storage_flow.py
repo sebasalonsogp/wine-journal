@@ -3,7 +3,12 @@
 import hashlib
 import io
 import os
+import subprocess
+import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -39,6 +44,7 @@ def test_real_private_upload_flow(
     monkeypatch: pytest.MonkeyPatch,
     source_format: str,
     content_type: str,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[4] / "scripts"))
     from configure_storage import local_credentials
@@ -106,11 +112,21 @@ def test_real_private_upload_flow(
             assert account.status_code == 200
             owners.append(UUID(account.json()["id"]))
             assert api.post(path, json={}).status_code == 404
+            assert api.get(f"/api/v1/media/{grant['assetId']}").status_code == 404
+            assert (
+                api.post(
+                    f"/api/v1/media/{grant['assetId']}/view", json={"variant": "display"}
+                ).status_code
+                == 404
+            )
             assert api.post(f"/api/v1/media/{uuid4()}/complete", json={}).status_code == 404
             app.dependency_overrides[require_principal] = lambda: person
             with ThreadPoolExecutor(max_workers=2) as workers:
                 results = list(workers.map(lambda _: api.post(path, json={}).status_code, range(2)))
             assert results == [200, 200]
+            status_path = f"/api/v1/media/{grant['assetId']}"
+            assert api.get(status_path).json()["state"] == "PROCESSING"
+            assert api.post(status_path + "/view", json={"variant": "display"}).status_code == 409
             with Session(engine) as session:
                 assert (
                     session.scalar(
@@ -181,7 +197,30 @@ def test_real_private_upload_flow(
                     ),
                     {"id": asset_id},
                 )
-            assert run_once(engine, {"process_photo": publisher})
+            # Recover with the actual registered CLI worker, not an injected handler.
+            environment = {
+                key: value
+                for key, value in os.environ.items()
+                if not key.startswith("WINE_JOURNAL_")
+            }
+            environment.update(
+                {
+                    "WINE_JOURNAL_DATABASE_URL": database_urls["runtime"].get_secret_value(),
+                    "WINE_JOURNAL_MEDIA_UPLOADS_ENABLED": "true",
+                    "WINE_JOURNAL_STORAGE_URL": config.url,
+                    "WINE_JOURNAL_STORAGE_BUCKET": config.bucket,
+                    "WINE_JOURNAL_STORAGE_SERVICE_KEY": config.service_key.get_secret_value(),
+                }
+            )
+            worker = subprocess.run(
+                [sys.executable, "-m", "wine_journal.worker", "--once"],
+                env=environment,
+                capture_output=True,
+                timeout=90,
+            )
+            assert worker.returncode == 0, (
+                "Registered photo worker failed; private diagnostics withheld."
+            )
             assert storage.info(display_key) == first_display
             display = storage.download(first_display)
             thumbnail = storage.download(storage.info(thumbnail_key))
@@ -204,6 +243,46 @@ def test_real_private_upload_flow(
                 assert not client.get(
                     f"{config.url}/object/authenticated/{config.bucket}/{key}", headers=headers
                 ).is_success
+            status = api.get(status_path)
+            assert (
+                status.json()["state"] == "READY" and status.headers["cache-control"] == "no-store"
+            )
+            for variant, expected_body in (("display", display), ("thumbnail", thumbnail)):
+                response = api.post(status_path + "/view", json={"variant": variant})
+                assert (
+                    response.status_code == 200 and response.headers["cache-control"] == "no-store"
+                )
+                view = response.json()
+                expiry = datetime.fromisoformat(view["expiresAt"])
+                assert 0 < (expiry - datetime.now(UTC)).total_seconds() <= 125
+                viewed = client.get(view["viewUrl"])
+                assert viewed.status_code == 200 and viewed.content == expected_body
+                # Storage's signed route replaces Cache-Control with token-bound Expires.
+                assert parsedate_to_datetime(viewed.headers["expires"]) == expiry
+                assert view["viewUrl"] not in caplog.text
+                # A token for one variant cannot read the other file or the original.
+                if variant == "display":
+                    for replacement in (thumbnail_key, expected.name):
+                        changed = view["viewUrl"].replace(display_key, replacement)
+                        assert not client.get(changed).is_success
+            # Real provider-signed token, warmed before expiry; no secret inspection or forged JWT.
+            short = storage.sign_view(display_key, seconds=2)
+            short_url = short.url.get_secret_value()
+            assert client.get(short_url).status_code == 200
+            remaining = (short.expires_at - datetime.now(UTC)).total_seconds()
+            time.sleep(max(0, remaining) + 1)
+            assert not client.get(short_url).is_success
+            assert short_url not in caplog.text
+            private_read = client.get(
+                f"{config.url}/object/authenticated/{config.bucket}/{display_key}",
+                headers=service_headers,
+            )
+            assert private_read.status_code == 200 and "no-store" in private_read.headers.get(
+                "cache-control", ""
+            )
+            app.dependency_overrides[require_principal] = lambda: other
+            assert api.post(status_path + "/view", json={"variant": "display"}).status_code == 404
+            app.dependency_overrides[require_principal] = lambda: person
             mismatch = api.post(
                 "/api/v1/media/uploads", headers={"Idempotency-Key": str(uuid4())}, json=payload
             ).json()
