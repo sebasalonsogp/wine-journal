@@ -19,6 +19,7 @@ MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 UPLOAD_TYPES = ("image/jpeg", "image/png", "image/webp", "image/heic", "image/heif")
 KEY_PATTERN = re.compile(r"staging/[0-9a-f]{32}/[0-9a-f]{32}")
 DERIVATIVE_PATTERN = re.compile(r"photos/[0-9a-f]{32}/v1/(display\.jpg|thumbnail\.webp)")
+VIEW_SECONDS = 120
 
 
 class StorageSettings(BaseSettings):
@@ -72,6 +73,12 @@ class UploadCapability:
     expires_at: datetime
 
 
+@dataclass(frozen=True)
+class ViewCapability:
+    url: SecretStr
+    expires_at: datetime
+
+
 class ObjectInfo(BaseModel):
     model_config = {"extra": "ignore", "frozen": True, "hide_input_in_errors": True}
     id: UUID
@@ -116,7 +123,11 @@ class Storage:
     ) -> tuple[int, dict[str, object]]:
         started = time.monotonic()
         try:
-            headers = {"Content-Type": content_type, "x-upsert": "false"} if content_type else {}
+            headers = (
+                {"Content-Type": content_type, "x-upsert": "false", "Cache-Control": "no-store"}
+                if content_type
+                else {}
+            )
             with self._http.stream(
                 method, path, json=body, content=contents, headers=headers
             ) as response:
@@ -287,3 +298,47 @@ class Storage:
             raise OutputConflict("Existing derivative differs.")
         if self.download(info, limit=limit) != contents:
             raise OutputConflict("Existing derivative differs.")
+
+    def sign_view(self, key: str, *, seconds: int = VIEW_SECONDS) -> ViewCapability:
+        """Issue a bounded read capability only for server-generated derivative paths."""
+        if (
+            not DERIVATIVE_PATTERN.fullmatch(key)
+            or type(seconds) is not int
+            or not 1 <= seconds <= VIEW_SECONDS
+        ):
+            raise ValueError("Invalid photo viewing request.")
+        path = self._object_path(key)
+        self.check_private_bucket()
+        status, body = self._request("POST", f"object/sign/{path}", {"expiresIn": seconds})
+        if status != 200:
+            raise StorageError("Photo viewing is temporarily unavailable.")
+        try:
+            relative = body["signedURL"]
+            if not isinstance(relative, str) or len(relative) > 8192:
+                raise ValueError()
+            parsed = urlsplit(relative)
+            query = parse_qs(parsed.query, strict_parsing=True)
+            if (
+                parsed.scheme
+                or parsed.netloc
+                or parsed.fragment
+                or parsed.path != f"/object/sign/{path}"
+                or set(query) != {"token"}
+                or len(query["token"]) != 1
+            ):
+                raise ValueError()
+            # Trusted-provider response validation only, never user authentication.
+            claims = jwt.decode(query["token"][0], options={"verify_signature": False})
+            expiry = claims.get("exp")
+            now = datetime.now(UTC).timestamp()
+            if (
+                type(expiry) is not int
+                or not now < expiry <= now + seconds + 5
+                or claims.get("url") != path
+            ):
+                raise ValueError()
+            return ViewCapability(
+                SecretStr(self.settings.url + relative), datetime.fromtimestamp(expiry, UTC)
+            )
+        except (ValueError, KeyError, jwt.InvalidTokenError):
+            raise StorageError("Invalid photo viewing response.") from None

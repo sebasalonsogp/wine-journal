@@ -31,3 +31,25 @@ class UploadCompletion(BaseModel):
 
 class CompleteUpload(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class PhotoStatus(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    asset_id: UUID
+    state: Literal["PENDING", "PROCESSING", "READY", "FAILED"]
+    error_code: Literal["PHOTO_PROCESSING_FAILED"] | None = None
+    width: int | None = None
+    height: int | None = None
+
+
+class PhotoViewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    variant: Literal["display", "thumbnail"]
+
+
+class PhotoView(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    asset_id: UUID
+    variant: Literal["display", "thumbnail"]
+    view_url: str = Field(repr=False)
+    expires_at: datetime
