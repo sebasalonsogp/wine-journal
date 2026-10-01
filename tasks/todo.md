@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, October 1, 2026. **Twenty-seven of 59 tasks are complete; 32 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 personal bottle covers is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 1, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06 occasion albums is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -690,7 +690,7 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m05"></a>
 ### M05: Use a personal bottle cover
 
-- [ ] **Outcome:** Keep bottle recognition artwork independent from memories.
+- [x] **Outcome:** Keep bottle recognition artwork independent from memories.
 
 **Acceptance:**
 
@@ -698,6 +698,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 - Preview, replace or remove the cover with catalog/placeholder fallback; changing it neither adds an album memory nor edits shared catalog artwork.
 
 **Verify:** Create a manual wine with a cover, retry a failed upload, replace/remove it and verify entry count and memory gallery membership stay unchanged.
+
+**Evidence:** [M05 checkpoint](wine-cover-checkpoint.md) records the versioned cover API, staged manual selection, independent retry/replacement/removal, private card display and real browser acceptance. M05a (API) and M05b (browser) are complete.
 
 **Dependencies:** [M04](#m04). **Size:** M.
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useId, useState } from "react";
 import { privateResetEvent } from "@/lib/session/private-drafts";
+import { usePendingImages } from "./use-pending-images";
 import { PhotoCard } from "./photo-card";
 import { PhotoSelection, type SelectedPhoto } from "./photo-selection";
 import {
@@ -53,51 +54,7 @@ export function PhotoWorkspace({
     window.addEventListener(privateResetEvent, reset);
     return () => window.removeEventListener(privateResetEvent, reset);
   }, []);
-  useEffect(() => {
-    if (!selected.length) return;
-    const warn = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    const follow = (event: MouseEvent) => {
-      const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
-      if (
-        !(link instanceof HTMLAnchorElement) ||
-        link.target === "_blank" ||
-        event.ctrlKey ||
-        event.metaKey
-      )
-        return;
-      if (
-        link.hash &&
-        link.origin === location.origin &&
-        link.pathname === location.pathname &&
-        link.search === location.search
-      )
-        return;
-      event.preventDefault();
-      event.stopPropagation();
-      if (
-        window.confirm(
-          "Some photos haven’t finished. Leave this page? Saved entries are kept, but selected files must be chosen again.",
-        )
-      ) {
-        window.removeEventListener("beforeunload", warn);
-        window.location.assign(link.href);
-      }
-    };
-    window.addEventListener("beforeunload", warn);
-    document.addEventListener("click", follow, true);
-    const clear = () => {
-      window.removeEventListener("beforeunload", warn);
-      document.removeEventListener("click", follow, true);
-    };
-    window.addEventListener(privateResetEvent, clear);
-    return () => {
-      clear();
-      window.removeEventListener(privateResetEvent, clear);
-    };
-  }, [selected.length]);
+  usePendingImages(selected.length > 0);
 
   useEffect(() => {
     if (!entryId || ended) return;

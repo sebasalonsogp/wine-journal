@@ -7,6 +7,7 @@ import { RequestFailure } from "@/lib/session/http";
 import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 import { CaptureFields } from "./capture-fields";
 import { CaptureOccasion } from "./capture-occasion";
+import { CoverEditor } from "@/features/media/cover-editor";
 import { PhotoWorkspace } from "@/features/media/photo-workspace";
 import {
   entryBody,
@@ -27,6 +28,10 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
   const [notice, setNotice] = useState("");
   const [savedEntry, setSavedEntry] = useState<{ id: string; userWineId: string } | null>(null);
   const photoCount = useRef(0);
+  const coverCount = useRef(0);
+  const selectedCover = useCallback((count: number) => {
+    coverCount.current = count;
+  }, []);
   const selectedPhotos = useCallback((count: number) => {
     photoCount.current = count;
   }, []);
@@ -167,7 +172,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
       );
       removeDraft();
       if (version !== checkVersion.current) return;
-      if (photoCount.current > 0) {
+      if (photoCount.current > 0 || coverCount.current > 0) {
         setSavedEntry({ id: entry.id, userWineId: entry.userWineId });
         return;
       }
@@ -227,7 +232,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
             {savedEntry ? (
               <section className="save-notice" aria-labelledby="entry-saved-title">
                 <h2 id="entry-saved-title">Your entry is saved.</h2>
-                <p>The wine, date and notes are safe. Photos upload separately below.</p>
+                <p>The wine, date and notes are safe. Images upload separately below.</p>
                 <a className="button" href={`/my-wines/${savedEntry.userWineId}`}>
                   View wine
                 </a>
@@ -311,6 +316,14 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
                   Saved entries stay private. You can add more notes, time and location later.
                 </p>
               </form>
+            )}
+            {draft.ownerId && !draft.fields.releaseId && (
+              <CoverEditor
+                key={`cover-${draft.ownerId}`}
+                api={api}
+                wineId={savedEntry?.userWineId}
+                onSelectionChange={selectedCover}
+              />
             )}
             {draft.ownerId ? (
               <PhotoWorkspace

@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createTransport } from "../../src/lib/api/transport";
 import { RequestFailure } from "../../src/lib/session/http";
-import { photoType, uploadPhoto, type UploadIdentity } from "../../src/features/media/photo-upload";
+import {
+  photoType,
+  uploadPhoto,
+  uploadAsset,
+  type UploadIdentity,
+} from "../../src/features/media/photo-upload";
 
 test("photo selection rejects empty, oversized and unsupported files, with an HEIC fallback", () => {
   assert.equal(photoType({ type: "", name: "Memory.HEIC", size: 10 }), "image/heic");
@@ -109,4 +114,40 @@ test("aborted photo work does not request a new capability", async () => {
     ),
     { name: "AbortError" },
   );
+});
+
+test("a cover upload never attaches itself to a memory or recreates a wine", async () => {
+  const original = globalThis.fetch;
+  const paths: string[] = [];
+  globalThis.fetch = async (input) => {
+    if (input === "/auth/session")
+      return Response.json({
+        accessToken: "synthetic",
+        subject: "test",
+        expiresAt: Date.now() / 1000 + 3600,
+        apiUrl: "https://api.example.test",
+      });
+    if (input === "https://storage.example.test/upload") return new Response(null, { status: 200 });
+    const path = new URL((input as Request).url).pathname;
+    paths.push(path);
+    if (path.endsWith("/media/uploads"))
+      return Response.json({
+        assetId: "cover",
+        uploadUrl: "https://storage.example.test/upload",
+        contentType: "image/png",
+      });
+    if (path.endsWith("/complete")) return Response.json({ assetId: "cover", state: "PROCESSING" });
+    throw new Error("Unexpected mutation outside the upload lifecycle");
+  };
+  try {
+    await uploadAsset(
+      createTransport(),
+      new File(["image"], "cover.png", { type: "image/png" }),
+      { operationKey: "cover-operation" },
+      new AbortController().signal,
+    );
+    assert.deepEqual(paths, ["/api/v1/media/uploads", "/api/v1/media/cover/complete"]);
+  } finally {
+    globalThis.fetch = original;
+  }
 });
