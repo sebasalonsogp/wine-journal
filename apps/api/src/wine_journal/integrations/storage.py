@@ -18,6 +18,7 @@ from wine_journal.core.config import API_DIRECTORY
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 UPLOAD_TYPES = ("image/jpeg", "image/png", "image/webp", "image/heic", "image/heif")
 KEY_PATTERN = re.compile(r"staging/[0-9a-f]{32}/[0-9a-f]{32}")
+DERIVATIVE_PATTERN = re.compile(r"photos/[0-9a-f]{32}/v1/(display\.jpg|thumbnail\.webp)")
 
 
 class StorageSettings(BaseSettings):
@@ -54,6 +55,14 @@ class StorageError(Exception):
 
 
 class ObjectMissing(StorageError):
+    pass
+
+
+class ObjectChanged(StorageError):
+    pass
+
+
+class OutputConflict(StorageError):
     pass
 
 
@@ -97,11 +106,20 @@ class Storage:
         self._http.close()
 
     def _request(
-        self, method: str, path: str, body: object = None
+        self,
+        method: str,
+        path: str,
+        body: object = None,
+        *,
+        contents: bytes | None = None,
+        content_type: str | None = None,
     ) -> tuple[int, dict[str, object]]:
         started = time.monotonic()
         try:
-            with self._http.stream(method, path, json=body) as response:
+            headers = {"Content-Type": content_type, "x-upsert": "false"} if content_type else {}
+            with self._http.stream(
+                method, path, json=body, content=contents, headers=headers
+            ) as response:
                 data = bytearray()
                 for chunk in response.iter_bytes():
                     data.extend(chunk)
@@ -148,11 +166,13 @@ class Storage:
             raise StorageError("Private storage configuration does not match the upload contract.")
 
     def _object_path(self, key: str) -> str:
-        if not KEY_PATTERN.fullmatch(key):
+        if not KEY_PATTERN.fullmatch(key) and not DERIVATIVE_PATTERN.fullmatch(key):
             raise ValueError("Invalid staging key.")
         return f"{self.settings.bucket}/{key}"
 
     def sign_upload(self, key: str) -> UploadCapability:
+        if not KEY_PATTERN.fullmatch(key):
+            raise ValueError("Invalid staging key.")
         path = self._object_path(key)
         # Check configuration before issuing a capability. Provider limits are essential:
         # clients can bypass the future app completion route after obtaining a token.
@@ -205,3 +225,65 @@ class Storage:
             return info
         except (ValueError, ValidationError):
             raise StorageError("Invalid object verification response.") from None
+
+    def download(self, expected: ObjectInfo, *, limit: int = MAX_UPLOAD_BYTES) -> bytes:
+        """Read exactly the verified object; cap raw bytes and never follow redirects."""
+        path = self._object_path(expected.name)
+        if not 0 < expected.size <= limit <= MAX_UPLOAD_BYTES:
+            raise ObjectChanged("Object exceeds its download limit.")
+        if self.info(expected.name) != expected:
+            raise ObjectChanged("Object identity changed.")
+        started = time.monotonic()
+        try:
+            with self._http.stream(
+                "GET", f"object/authenticated/{path}", headers={"Accept-Encoding": "identity"}
+            ) as response:
+                if response.status_code != 200:
+                    raise StorageError("Private download is temporarily unavailable.")
+                if (
+                    response.headers.get("content-encoding", "identity") != "identity"
+                    or response.headers.get("content-type") != expected.content_type
+                    or response.headers.get("etag", "").strip('"') != expected.etag.strip('"')
+                    or response.headers.get("content-length") != str(expected.size)
+                ):
+                    raise ObjectChanged("Object headers changed.")
+                data = bytearray()
+                # No chunk aggregation: check the deadline after every transport read.
+                for chunk in response.iter_raw():
+                    if len(data) + len(chunk) > expected.size:
+                        raise ObjectChanged("Object size changed.")
+                    if time.monotonic() - started > 15:
+                        raise StorageError("Private download timed out.")
+                    data.extend(chunk)
+                if len(data) != expected.size:
+                    raise ObjectChanged("Object size changed.")
+        except httpx.HTTPError:
+            raise StorageError("Private download is temporarily unavailable.") from None
+        if self.info(expected.name) != expected:
+            raise ObjectChanged("Object identity changed.")
+        return bytes(data)
+
+    def put_derivative(self, key: str, contents: bytes) -> None:
+        """Never overwrite. A matching existing object also completes an uncertain write."""
+        if not DERIVATIVE_PATTERN.fullmatch(key):
+            raise ValueError("Invalid derivative key.")
+        display = key.endswith("display.jpg")
+        limit = 5 * 1024 * 1024 if display else 512 * 1024
+        content_type = "image/jpeg" if display else "image/webp"
+        if not 0 < len(contents) <= limit:
+            raise ValueError("Invalid derivative size.")
+        try:
+            # Readback, rather than provider-specific conflict responses, determines success.
+            self._request(
+                "POST",
+                f"object/{self._object_path(key)}",
+                contents=contents,
+                content_type=content_type,
+            )
+        except StorageError:
+            pass
+        info = self.info(key)
+        if (info.size, info.content_type) != (len(contents), content_type):
+            raise OutputConflict("Existing derivative differs.")
+        if self.download(info, limit=limit) != contents:
+            raise OutputConflict("Existing derivative differs.")

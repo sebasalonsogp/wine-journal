@@ -49,4 +49,12 @@ For a focused sandbox run, use `uv run --locked pytest tests/integration/test_ph
 
 ## Remaining acceptance
 
+### M03b implementation sequence
+
+1. Extend `integrations/storage.py` with bounded authenticated reads and immutable derivative writes. Verify identity/size/type before and after reads; reconcile uncertain writes by reading back the expected bytes. Unit cases cover limits, redirects, changed objects, interrupted writes and conflicts; the real Storage flow verifies provider behavior.
+2. Add migration `0013` and model fields for processing version, derivative sizes/dimensions/hashes and fixed failure codes. Implement `media/photo_processing.py` around short, lease-fenced SQL transactions, with no open SQL connection during Storage or decoding. Extend queue terminal failure handling so an exhausted or abandoned final attempt cannot strand an asset in PROCESSING. Exercise retries, crashes, stale claims, disabled accounts and ownership with disposable PostgreSQL.
+3. Run the actual private Storage → isolated decoder → private derivatives path, including an interruption between output writes. Update CI and record evidence. Keep source/grant reservations, upload feature flag and production handler registration unchanged until M03c.
+
+Storage contract references: [authenticated private downloads](https://supabase.com/docs/guides/storage/serving/downloads), [immutable standard uploads](https://supabase.com/docs/guides/storage/uploads/standard-uploads). Derivative paths are server-generated and versioned; upload capabilities remain restricted to staging paths. No provider credentials, capabilities, source bytes or exception bodies enter job payloads or logs.
+
 M03b must download the expected immutable source with byte/time bounds, validate source identity, publish deterministic private derivatives, recover interrupted publication and fence asset updates against stale job leases. M03c must authorize ready-only status/viewing, verify link expiry against real Storage and register the handler before enabling upload endpoints. Originals and the 25.5 MiB reservation remain subject to the M02 capability-retention rules; this increment deletes neither. Recent physical-iPhone/HDR visual checks and actual hosting capacity remain R04/R07/UI follow-ups.
