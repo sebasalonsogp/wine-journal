@@ -1,6 +1,18 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture and entry link/unlink commands are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing and entry-photo associations are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+
+### Implemented entry photos (M04a)
+
+`GET /entries/{entry_id}/photos` returns `{items: [...]}` for at most 12 active associations, ordered by attachment creation time then asset ID. Each item includes `entryId`, `assetId`, `caption`, `version`, `state`, generic `errorCode` and READY dimensions. This fixed-size collection needs no cursor. It never includes object paths, originals or signed links. Use `POST /media/{asset_id}/view` separately for a READY derivative.
+
+`PUT /entries/{entry_id}/photos/{asset_id}` with `{}` attaches an owned asset in any processing state. The same entry/asset pair replays the current association without overwriting captions. Both IDs must belong to the active account. Database composite foreign keys independently enforce this boundary. Concurrent additions cannot exceed 12 active photos; upload quotas still apply separately. These routes need the database, not an available Storage provider.
+
+`PATCH /entries/{entry_id}/photos/{asset_id}` requires `{version, caption}`. Captions allow 500 characters, reject NUL and normalize blank text to null. A successful edit increments only the attachment revision. An exact retry at the immediately subsequent revision returns that result; other stale writes return 409 `PHOTO_CONFLICT`.
+
+`DELETE /entries/{entry_id}/photos/{asset_id}?version=<positive integer>` removes the association and clears its caption. A repeated removal succeeds with `{assetId}`; stale active revisions return 409. A tombstone prevents delayed PUT retries from resurrecting a removed association (409 `PHOTO_REMOVED`). Missing/foreign parents or assets return 404; disabled accounts return 403. All responses are no-store. Mutations lock account then entry, with a three-second lock timeout using the existing 409 `UPLOAD_BUSY` response.
+
+Entry deletion cascades associations, including tombstones, while preserving assets, other references and reservations for M08 cleanup. No media operation changes the entry's version or replays entry creation. Save text first and attach independently: photo failure must not roll back wine/date/notes. The browser controls and complete phone journey remain M04b.
 
 ### Implemented occasions (O01)
 
@@ -124,8 +136,9 @@ Deletion removes only the owned entry. Wine identity and personal wine record su
 | Link/unlink existing entry | `PUT`, `DELETE /occasions/{id}/entries/{entryId}` | Implemented; auth; version and prior-association checks; preserve consumed context |
 | Full memory galleries | `GET /me/wines/{id}/moments`, `GET /occasions/{id}/media` | Auth; paginated eligible assets, captions, source date and source link |
 | Upload initiation/completion | `POST /media/uploads`, `POST /media/{id}/complete` | Auth; per-account quota reservation, unique object key, owned staged asset |
-| Asset status / viewing | `GET /media/{id}`, `POST /media/{id}/download-url` | Auth; viewing only for ready, authorized assets |
-| Attach/remove media | Parent-specific `/entries/{id}/media` and `/occasions/{id}/media` routes | Auth; typed links; deletion removes association, then conditional cleanup |
+| Asset status / viewing | `GET /media/{id}`, `POST /media/{id}/view` | Implemented; viewing only for ready, authorized derivatives |
+| Entry photos | `GET /entries/{id}/photos`; `PUT`, `PATCH`, `DELETE /entries/{id}/photos/{assetId}` | Implemented owned links, independent revisions, captions and removal; fixed 12-photo collection |
+| Occasion media | Parent-specific `/occasions/{id}/media` routes | Planned; typed links; deletion removes association, then conditional cleanup |
 | Set/remove bottle cover | `PUT`, `DELETE /me/wines/{id}/cover` | Auth; owned image asset; separate from gallery membership |
 | Correct private identity | `PATCH /me/wines/{id}/identity` | Auth; owner-only provisional data; shared catalog cannot be rewritten |
 | Correct entry's wine | `PUT /entries/{id}/wine` | Auth; explicit target; preserve entry context/media, leave original wine rating alone |
@@ -137,27 +150,24 @@ Guides are initially build-time editorial content, so they need no API/CMS. Publ
 
 Account bootstrap is safe to retry because `(auth_issuer, auth_subject)` is unique and creation uses `INSERT ... ON CONFLICT DO NOTHING` inside a transaction. It does not use a caller-supplied owner or general idempotency-key table. Neither bootstrap nor GET reactivates a disabled account. Successful account responses and errors are `Cache-Control: no-store`; errors contain a generated `requestId` also returned as `X-Request-ID`. Missing/invalid tokens return 401; missing/unavailable identity infrastructure returns 503. Error payloads exclude raw validation input and internal SQL/provider details.
 
-## Wine-first capture example
+## Wine-first capture example (implemented)
 
 ```json
 {
-  "wine": { "kind": "CATALOG_RELEASE", "releaseId": "<uuid>" },
+  "manualWine": { "name": "Dinner wine", "vintageStatus": "UNKNOWN" },
   "consumedDate": "2026-09-14",
-  "consumedTime": null,
   "notes": "",
-  "occasion": {
-    "kind": "NEW",
+  "newOccasion": {
     "title": "Dinner with friends",
-    "date": "2026-09-14",
-    "location": { "kind": "CUSTOM", "label": "Alex's house" }
-  },
-  "mediaIds": []
+    "occasionDate": "2026-09-14",
+    "locationLabel": "Alex's house"
+  }
 }
 ```
 
-The wine/date alone is valid; omit `occasion` entirely for a standalone glass. Alternative wine selectors are `USER_WINE` and `MANUAL`; manual requires a name and explicit vintage status, with unknown facts allowed. An `EXISTING` occasion requires an accessible occasion ID. Schemas reject combinations such as both new and existing occasion data.
+The wine/date alone is valid; omit `newOccasion` for a standalone glass. Select an owned existing release with `releaseId` instead of `manualWine`, and an existing occasion with `occasionId` instead of `newOccasion`. Schemas reject conflicting selectors.
 
-On submit, create/reuse the user-wine record, create any inline manual identity and new occasion, save the entry, attach owned staged/ready media references, and record the idempotency result in one SQL transaction. Return 201 with IDs, versions, and media processing statuses. If validation fails, no partial journal records remain. Creating this entry does not change a rating unless the user explicitly supplied a rating command in the flow; process that command with the same version rules and transaction when included.
+On submit, create/reuse the user-wine record, create any inline manual identity and new occasion, save the entry and record the idempotency result in one SQL transaction. Return 200 with entry and user-wine IDs and entry version. If validation fails, no partial journal records remain. Upload bytes, processing and photo associations are separate requests; text save does not wait for a worker or an attachment. Rating changes use their separate versioned command.
 
 ## Occasion-first capture
 

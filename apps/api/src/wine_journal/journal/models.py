@@ -57,6 +57,7 @@ class RatingRevision(Base):
 class DrinkingEntry(Base):
     __tablename__ = "drinking_entries"
     __table_args__ = (
+        UniqueConstraint("owner_id", "id", name="uq_drinking_entries_owner"),
         ForeignKeyConstraint(
             ["owner_id", "occasion_id"],
             ["app.occasions.owner_id", "app.occasions.id"],
