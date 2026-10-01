@@ -38,6 +38,38 @@ class UploadAsset(Base):
             "state != 'PROCESSING' OR (object_id IS NOT NULL AND object_etag IS NOT NULL)",
             name="ck_upload_verified",
         ),
+        CheckConstraint("processing_version = 1", name="ck_photo_version"),
+        CheckConstraint(
+            "display_bytes BETWEEN 1 AND 5242880 AND thumbnail_bytes BETWEEN 1 AND 524288",
+            name="ck_photo_bytes",
+        ),
+        CheckConstraint(
+            "width BETWEEN 1 AND 2048 AND height BETWEEN 1 AND 2048 "
+            "AND thumbnail_width BETWEEN 1 AND 480 AND thumbnail_height BETWEEN 1 AND 480",
+            name="ck_photo_dimensions",
+        ),
+        CheckConstraint(
+            "display_sha256 ~ '^[0-9a-f]{64}$' AND thumbnail_sha256 ~ '^[0-9a-f]{64}$'",
+            name="ck_photo_hashes",
+        ),
+        CheckConstraint(
+            "state != 'READY' OR (display_bytes IS NOT NULL AND thumbnail_bytes IS NOT NULL "
+            "AND width IS NOT NULL AND height IS NOT NULL AND thumbnail_width IS NOT NULL "
+            "AND thumbnail_height IS NOT NULL AND display_sha256 IS NOT NULL "
+            "AND thumbnail_sha256 IS NOT NULL AND object_id IS NOT NULL "
+            "AND object_etag IS NOT NULL)",
+            name="ck_photo_ready",
+        ),
+        CheckConstraint(
+            "processing_error IN ('INPUT_BYTES', 'PIXEL_LIMIT', 'INVALID_IMAGE', 'COLOR_PROFILE', "
+            "'OUTPUT_BYTES', 'RESOURCE_LIMIT', 'DECODER_PROTOCOL', 'SOURCE_CHANGED', "
+            "'SOURCE_TYPE_MISMATCH', 'OUTPUT_CONFLICT', 'ACCOUNT_UNAVAILABLE', "
+            "'PROCESSING_FAILED')",
+            name="ck_photo_error",
+        ),
+        CheckConstraint(
+            "(state = 'FAILED') = (processing_error IS NOT NULL)", name="ck_photo_failed"
+        ),
         {"schema": "app"},
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
@@ -54,6 +86,16 @@ class UploadAsset(Base):
     unsettled_grants: Mapped[int] = mapped_column(server_default="0")
     object_id: Mapped[UUID | None] = mapped_column()
     object_etag: Mapped[str | None] = mapped_column(String(256))
+    processing_version: Mapped[int] = mapped_column(server_default="1")
+    display_bytes: Mapped[int | None] = mapped_column()
+    thumbnail_bytes: Mapped[int | None] = mapped_column()
+    width: Mapped[int | None] = mapped_column()
+    height: Mapped[int | None] = mapped_column()
+    thumbnail_width: Mapped[int | None] = mapped_column()
+    thumbnail_height: Mapped[int | None] = mapped_column()
+    display_sha256: Mapped[str | None] = mapped_column(String(64))
+    thumbnail_sha256: Mapped[str | None] = mapped_column(String(64))
+    processing_error: Mapped[str | None] = mapped_column(String(32))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

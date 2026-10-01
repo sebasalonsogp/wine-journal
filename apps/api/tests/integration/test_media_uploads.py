@@ -288,7 +288,10 @@ def test_storage_quota_counts_full_allowance_and_failed_assets(
             grant = initiate_upload(session, person, uuid4(), BODY, provider(engine))
             with admin.begin() as connection:
                 connection.execute(
-                    text("UPDATE app.upload_assets SET state = 'FAILED' WHERE id = :id"),
+                    text(
+                        "UPDATE app.upload_assets SET state = 'FAILED', "
+                        "processing_error = 'PROCESSING_FAILED' WHERE id = :id"
+                    ),
                     {"id": grant.asset_id},
                 )
         with pytest.raises(ApiError) as failure:
