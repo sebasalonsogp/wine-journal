@@ -13,7 +13,7 @@ export type Account = components["schemas"]["AccountResponse"] & { email: string
 type Operation<T> = (
   api: Client<paths>,
   signal: AbortSignal,
-) => Promise<{ data?: T; response: Response }>;
+) => Promise<{ data?: T; error?: unknown; response: Response }>;
 
 // One instance per mounted private shell. Tokens stay in memory, never query caches.
 export function createTransport() {
@@ -78,6 +78,7 @@ export function createTransport() {
             : result.response.status === 422
               ? "Check the details, then try again."
               : "We couldn't complete the request. Please try again.",
+        publicErrorCode(result.error),
       );
     }
     throw new RequestFailure(401, "Your session has ended.");
@@ -102,4 +103,13 @@ export function createTransport() {
       return { ...data, email: (current as Session | undefined)?.email ?? null };
     },
   };
+}
+
+function publicErrorCode(value: unknown): string | undefined {
+  if (!value || typeof value !== "object" || !("error" in value)) return;
+  const error = value.error;
+  if (!error || typeof error !== "object" || !("code" in error)) return;
+  return typeof error.code === "string" && /^[A-Z_]{1,64}$/.test(error.code)
+    ? error.code
+    : undefined;
 }
