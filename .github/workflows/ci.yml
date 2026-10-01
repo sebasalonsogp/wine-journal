@@ -102,7 +102,9 @@ jobs:
         run: uv run --project apps/api --locked python scripts/configure_storage.py
       - name: Verify real private Storage capabilities and upload limits
         run: uv run --project apps/api --locked python scripts/smoke_local_storage.py
-      - name: Verify owned uploads with real Storage and disposable Postgres
+      - name: Build isolated decoder for real Storage publication
+        run: uv run --project apps/api --locked python scripts/build_photo_decoder.py
+      - name: Verify private photo publication with real Storage and disposable Postgres
         env:
           WINE_JOURNAL_TEST_STORAGE: "1"
         run: uv run --project apps/api --locked python scripts/run_api_tests.py tests/integration/test_media_storage_flow.py -q --tb=short

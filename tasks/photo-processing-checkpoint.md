@@ -1,6 +1,6 @@
 # M03: Private photo processing
 
-September 30, 2026. **M03a isolated conversion is implemented and verified locally.** M03b/M03c remain; the parent stays open and uploads remain disabled until all are delivered.
+September 30, 2026. **M03a isolated conversion and M03b worker publication are implemented.** M03c remains; the parent stays open and uploads remain disabled until private viewing and handler registration are delivered.
 
 1. **M03a — isolated conversion:** promote the R04 conversion path, enforce derivative byte limits, and run the native decoders in a credential-free, network-disabled Docker container with hard memory/CPU/process limits and a bounded lifetime/output stream. Files: `media/photos.py`, `media/photo_protocol.py`, `media/photo_sandbox.py`, decoder Dockerfile/build inputs, decoder tests and CI. Test orientation/metadata/HEIC, invalid inputs, transparency, deterministic output, output ceilings, actual container restrictions and forced time/memory termination. No journal/Storage credentials or host directories enter the decoder.
 2. **M03b — worker publication:** bounded private source downloads, deterministic derivative keys, immutable/retry-safe writes, database publication fenced by the current job lease, explicit asset failure outcomes and crash recovery. Test partial publication, retries, stale workers and real Storage; retain originals/reservations under the M02 grant rules.
@@ -47,7 +47,23 @@ uv run --locked python ../../scripts/run_api_tests.py
 
 For a focused sandbox run, use `uv run --locked pytest tests/integration/test_photo_sandbox.py -q`. Only synthetic fixtures are used. Keep `WINE_JOURNAL_MEDIA_UPLOADS_ENABLED=false`; no production job handler or viewing endpoint has been registered yet.
 
-## Remaining acceptance
+## M03b delivered
+
+`Storage.download` checks the source's stored identity, size, MIME type and ETag before and after a bounded authenticated read. It rejects redirects, compressed responses, changed headers and bodies outside the declared length. `put_derivative` uses immutable writes and reads the object back to verify the exact expected bytes, including after an uncertain upload response. Existing different bytes fail closed. User upload capabilities still authorize only staging paths.
+
+`PhotoPublisher` loads owned work under account → job → asset locks, releases the transaction before Storage/decoder I/O, and renews its lease between bounded steps. It checks private-bucket configuration before reading. Publication locks/rechecks ownership, active account, current token and lease, then records READY only after both outputs are verified. A final database-clock check rolls back changes if the lease expired during the transaction. Stale workers can leave only the same two immutable, private objects; they cannot make an asset ready or overwrite another worker's result.
+
+Migration `0013_photo_publication` adds immutable processing version 1, bounded output sizes/dimensions, SHA-256 hashes and fixed failure codes. READY requires both outputs' metadata and the source identity. Runtime grants permit lifecycle updates only; ownership, paths, version and reservation sizes remain immutable. Output keys are `photos/{asset UUID}/v1/display.jpg` and `thumbnail.webp`. Changing the conversion recipe requires an explicit versioning decision; do not silently replace the decoder recipe for existing pending v1 jobs.
+
+Content rejection records an asset failure and successfully acknowledges the processing decision. Infrastructure failures retry with the existing bounded queue policy. Terminal errors and final expired leases atomically fail only matching owned PROCESSING assets; they never demote READY. If the process dies after publishing but before acknowledging, its successor skips conversion and acknowledges the existing result. A final-attempt crash after READY may leave a FAILED queue row with a READY asset; asset state remains authoritative for future viewing.
+
+Original objects, grant expiries, unresolved signing holds and the full 25.5 MiB reservation are retained. M08 owns safe reclamation. No status/viewing route, production handler registration or frontend behavior is added by M03b.
+
+Verification includes adapter limit/identity/conflict/uncertain-response tests and disposable-Postgres cases for partial output recovery, stale tokens, expiry during the final write, disabled accounts, foreign ownership, exhausted retries, final lease expiry, crash-after-ready replay, constraints/grants and reversible migration. Real Supabase + Docker cases cover JPEG and HEIC with an interruption before the thumbnail, byte-identical reuse of the first output, metadata removal, orientation, private access and preserved sources. The HEIF fixture was corrected to serialize EXIF bytes: passing a Pillow Exif object did not encode the intended container rotation. Production conversion code was unchanged.
+
+CI builds the isolated decoder in the browser/Storage job as well as the API job. The real provider test uses UUID temporary buckets and a disposable database; it does not touch journal files. For the full pipeline test, set `WINE_JOURNAL_TEST_STORAGE=1` and run `uv run --locked python ../../scripts/run_api_tests.py tests/integration/test_media_storage_flow.py -q --tb=short` from `apps/api` with local Supabase and the decoder image available.
+
+The full local suite passed **253 tests**, with both real Storage and real sandbox checks enabled. Ruff, format, mypy (98 files), packaging, dependency audit, unchanged OpenAPI generation and tracked/browser secret checks passed. Local migration 0013 preserved the entry/occasion counts and left uploads disabled. Known non-failing warnings concern Starlette/httpx deprecations and Windows pytest cache permissions.
 
 ### M03b implementation sequence
 
@@ -57,4 +73,6 @@ For a focused sandbox run, use `uv run --locked pytest tests/integration/test_ph
 
 Storage contract references: [authenticated private downloads](https://supabase.com/docs/guides/storage/serving/downloads), [immutable standard uploads](https://supabase.com/docs/guides/storage/uploads/standard-uploads). Derivative paths are server-generated and versioned; upload capabilities remain restricted to staging paths. No provider credentials, capabilities, source bytes or exception bodies enter job payloads or logs.
 
-M03b must download the expected immutable source with byte/time bounds, validate source identity, publish deterministic private derivatives, recover interrupted publication and fence asset updates against stale job leases. M03c must authorize ready-only status/viewing, verify link expiry against real Storage and register the handler before enabling upload endpoints. Originals and the 25.5 MiB reservation remain subject to the M02 capability-retention rules; this increment deletes neither. Recent physical-iPhone/HDR visual checks and actual hosting capacity remain R04/R07/UI follow-ups.
+## Remaining acceptance
+
+M03c must authorize ready-only status/viewing, verify link expiry against real Storage and register the handler before enabling upload endpoints. Originals and the 25.5 MiB reservation remain subject to the M02 capability-retention rules; this increment deletes neither. Recent physical-iPhone/HDR visual checks and actual hosting capacity remain R04/R07/UI follow-ups.
