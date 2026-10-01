@@ -63,4 +63,4 @@ Use the committed `package-lock.json` and `uv.lock`. Update dependencies deliber
 - Secrets, local environments, uploads, and backups are ignored by Git. Configuration examples contain names and safe defaults only.
 - Keep active planning and design changes inside this repository. The parent workspace holds the earlier archive.
 
-Docker is needed for the full API suite and local Supabase. Local email Auth/Postgres and browser access are exercised; the Storage/media workflow remains unimplemented. See [Supabase setup](../supabase/README.md) for the resolved Docker Desktop port-binding issue and the retained startup guard. A guard refusal is never a successful startup.
+Docker is needed for the full API suite, local Supabase and isolated photo processing. Browser photo tests additionally require the configured private bucket and built decoder image; see [browser test setup](../apps/web/tests/e2e/README.md). Local Auth, Postgres, Storage, photo processing and browser capture/retrieval are exercised. See [Supabase setup](../supabase/README.md) for the Docker Desktop loopback-binding guard. A guard refusal is never a successful startup.

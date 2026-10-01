@@ -30,6 +30,7 @@ export default defineConfig({
       command:
         "uv run --project ../api --locked uvicorn wine_journal.main:app --host 127.0.0.1 --port 8000 --no-access-log",
       url: "http://127.0.0.1:8000/api/v1/health/live",
+      env: { WINE_JOURNAL_MEDIA_UPLOADS_ENABLED: "true" },
       reuseExistingServer: !process.env.CI,
       timeout: 30000,
     },

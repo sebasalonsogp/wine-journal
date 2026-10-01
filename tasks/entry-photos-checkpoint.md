@@ -1,16 +1,16 @@
 # M04: Entry photos
 
-M04a delivered, October 1, 2026. M04 remains open until the M04b browser journey passes.
+M04 delivered, October 1, 2026. Backend associations and the browser photo journey are implemented and verified.
 
 ## Delivery slices
 
 1. **Complete:** Owned entry/asset associations, captions, removal and generated API contracts.
    Verify cross-account combinations, concurrent/replayed writes, stale changes,
    database constraints and entry deletion against disposable Postgres.
-2. Shared photo controls in capture and existing entries. Files can be selected
+2. **Complete:** Shared photo controls in capture and existing entries. Files can be selected
    before saving; saving text never waits for uploading. Keep the saved entry ID
    while retrying photos. Show pending, processing, ready and failed states.
-3. Verify the phone-sized save/failure/retry/reload/remove journey and desktop
+3. **Complete:** Verify the phone-sized save/failure/retry/reload/remove journey and desktop
    layout; run regression, security and CI checks before closing M04.
 
 ## Boundaries
@@ -53,21 +53,45 @@ only the verified local API processes; liveness and My Wines returned 200, and t
 new attachment route returned 401 without authentication. No database reset or
 credential changes were needed.
 
-## Next: M04b browser slice
+## M04b delivered
 
-Keep selected files in memory and the photo component mounted when text save
-returns an entry ID. Reuse that ID on every attachment retry; never re-POST the
-entry. Store no photo bytes or signed URLs in draft storage. Fetch READY
-derivatives without caching, use temporary blob URLs, and revoke them when the
-gallery/account unmounts. A failed decoder result needs replacement, not another
-entry or an automatic retry of a terminal processing job.
+Capture accepts photos in browser memory before text save. After the wine/date
+save succeeds, the page retains that entry ID and uploads independently; it never
+re-POSTs an entry to retry a photo. Existing entries expose a lazily loaded
+Photos & memories section. Captions retain their starting version while editing;
+removal affects only the current entry. Pending, processing, ready and failed
+states are explicit, including replacement guidance for terminal decoder failure.
 
-Capture currently navigates immediately after saving text. It needs an explicit
-saved-entry state when photos are selected. JournalShell currently unmounts its
-children during focus rechecks: preserve upload state during a same-account
-recheck without exposing an old account's data, and test the file-picker/focus
-round trip. Guest capture remains usable without photos before sign-in.
+Upload retries keep the operation key and asset ID, check authoritative completion
+before resending bytes, renew expired grants and never upsert. Storage requests
+omit journal authorization and cookies. READY thumbnails are fetched without
+caching and displayed through temporary blob URLs, revoked on unmount. Selected
+files and capabilities are not persisted in draft/query storage. Polling is
+bounded to five minutes with a manual refresh afterward. Guest capture remains
+usable without photos before sign-in.
 
-The frontend source and visual design were inspected, but upload controls were
-not implemented or visually verified in this slice. Impeccable context loading
-was unavailable; the existing project design references remain authoritative.
+Session focus checks hide/inert the existing subtree while retaining same-account
+work. A different account remounts it; sign-out clears media and bypasses unsaved
+photo navigation guards. The local preview uses the production build. No new
+migration or credential change was needed for M04b.
+
+Verification: 27 frontend unit cases pass, covering failed/lost upload responses,
+lost completion, expired grants, stable identities, aborts and file validation.
+All 20 browser scenarios pass in the final full regression run. The new journeys
+use real local Auth, API, private Storage
+and the isolated decoder with synthetic images: phone text save during upload
+failure, retry without a duplicate entry, caption persistence, reload/removal,
+later attachments, decoder failure, visibility recheck and cross-tab sign-out.
+Headless tab activation did not emit visibilitychange, so the regression test
+explicitly drives that browser event and verifies an actual account recheck.
+
+Desktop/390px visual inspection and axe checks passed after one correction batch
+for caption borders and contained image sizing. Build, lint, formatting, TypeScript,
+dependency audit and tracked/browser secret checks passed. Impeccable's unavailable
+context loader was not retried; the incumbent design system was preserved.
+
+Limitations: this is online capture with in-memory photo selections, not durable
+offline upload. Account reservations still limit preview storage, and removing
+a reference does not release storage until M08. Physical iPhone/HEIC browser UX
+remains a device acceptance check; backend HEIC conversion is already tested.
+M05 personal bottle covers is the next backlog task.

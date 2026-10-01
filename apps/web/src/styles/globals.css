@@ -1061,3 +1061,132 @@ h2 {
 .occasion-wine-card:hover {
   border-color: var(--color-primary);
 }
+
+.entry-photo-disclosure {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.entry-photo-disclosure > summary {
+  cursor: pointer;
+  padding: 0.85rem 0;
+  color: var(--color-primary);
+  min-height: 44px;
+}
+.entry-photos {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.entry-photo-disclosure .entry-photos {
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 0.5rem;
+}
+.photo-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.photo-heading h2 {
+  font-size: 1.45rem;
+}
+.photo-picker {
+  margin: 1.25rem 0;
+}
+.photo-picker input {
+  max-width: 100%;
+  padding: 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.photo-picker input::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+}
+.photo-gallery,
+.photo-selections {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1.5rem;
+}
+.photo-card {
+  min-width: 0;
+  max-width: 36rem;
+}
+.entry-history .photo-card,
+.entry-history .photo-selection {
+  border: 0;
+  padding: 0;
+}
+.photo-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background: #ebe6da;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.photo-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.photo-frame p {
+  padding: 1.5rem;
+  max-width: 35ch;
+  text-align: center;
+}
+.photo-card .form-field {
+  margin-bottom: 0.5rem;
+}
+.photo-card textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  background: var(--color-surface);
+  font-size: 1rem;
+  resize: vertical;
+}
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  align-items: center;
+}
+.photo-actions button {
+  min-height: 44px;
+}
+.photo-selection {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.photo-filename {
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.photo-empty {
+  color: var(--color-muted-foreground);
+  margin: 1.5rem 0;
+}
+.save-notice .button {
+  margin-top: 1rem;
+}

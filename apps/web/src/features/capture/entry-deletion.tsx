@@ -129,7 +129,8 @@ export function EntryDeletion({ entry, label }: { entry: Entry; label: string })
           )}
           <p id={`${id}-description`}>
             This entry and its notes will be permanently deleted. The wine record and its other
-            entries will stay.
+            entries will stay. Photos will be detached from this entry; other entries using them
+            will keep them.
           </p>
           {error && <p role="alert">{error}</p>}
           <div className="capture-actions">

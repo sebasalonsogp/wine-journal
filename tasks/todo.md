@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, October 1, 2026. **Twenty-six of 59 tasks are complete; 33 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, wine-first and occasion-first capture, linking/unlinking saved entries and safe occasion deletion. M01 adds durable background jobs with crash recovery. R04 establishes photo conversion evidence and initial limits. M02/M03 implement private upload reservations, isolated photo processing and owner-authorized viewing. Local media is enabled with the registered worker; M04 photo attachment/UI is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 1, 2026. **Twenty-seven of 59 tasks are complete; 32 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 personal bottle covers is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -670,9 +670,9 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 <a id="m04"></a>
 ### M04: Attach photos to an entry
 
-- [ ] **Outcome:** Let a standalone glass have its own memories.
+- [x] **Outcome:** Let a standalone glass have its own memories.
 
-**Progress:** M04a implements owned entry-photo links, caption revisions, retry-safe removal and bounded listing. Browser selection/upload/gallery and the phone acceptance journey remain M04b. See the [entry-photo checkpoint](entry-photos-checkpoint.md).
+**Evidence:** Owned entry-photo links, caption revisions and removal are connected to capture and saved-entry galleries. Real upload failure/retry, reload, processing failure, captions/removal and cross-tab privacy journeys pass. See the [entry-photo checkpoint](entry-photos-checkpoint.md) for checks and remaining device/storage limits.
 
 **Acceptance:**
 
