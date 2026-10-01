@@ -672,6 +672,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 - [ ] **Outcome:** Let a standalone glass have its own memories.
 
+**Progress:** M04a implements owned entry-photo links, caption revisions, retry-safe removal and bounded listing. Browser selection/upload/gallery and the phone acceptance journey remain M04b. See the [entry-photo checkpoint](entry-photos-checkpoint.md).
+
 **Acceptance:**
 
 - Select and stage photos before or after entry save, attach only owned assets, and render pending/ready/failed states with captions/removal.

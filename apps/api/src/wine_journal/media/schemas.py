@@ -47,6 +47,31 @@ class PhotoViewRequest(BaseModel):
     variant: Literal["display", "thumbnail"]
 
 
+class EntryPhotoResponse(PhotoStatus):
+    entry_id: UUID
+    caption: str | None
+    version: int
+
+
+class EntryPhotos(BaseModel):
+    items: list[EntryPhotoResponse]
+
+
+class AttachPhoto(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class EditPhotoCaption(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    version: int = Field(strict=True, ge=1)
+    caption: str | None = Field(max_length=500, pattern=r"^[^\x00]*$")
+
+
+class RemovedPhoto(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    asset_id: UUID
+
+
 class PhotoView(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
     asset_id: UUID

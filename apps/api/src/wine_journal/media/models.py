@@ -5,6 +5,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     String,
     UniqueConstraint,
@@ -20,6 +21,7 @@ from wine_journal.core.database import Base
 class UploadAsset(Base):
     __tablename__ = "upload_assets"
     __table_args__ = (
+        UniqueConstraint("owner_id", "id", name="uq_upload_assets_owner"),
         UniqueConstraint("owner_id", "operation_key", name="uq_upload_operation"),
         UniqueConstraint("object_key", name="uq_upload_object"),
         CheckConstraint("declared_bytes BETWEEN 1 AND 20971520", name="ck_upload_size"),
@@ -96,6 +98,34 @@ class UploadAsset(Base):
     display_sha256: Mapped[str | None] = mapped_column(String(64))
     thumbnail_sha256: Mapped[str | None] = mapped_column(String(64))
     processing_error: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class EntryPhoto(Base):
+    __tablename__ = "entry_photos"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["owner_id", "entry_id"],
+            ["app.drinking_entries.owner_id", "app.drinking_entries.id"],
+            name="fk_entry_photo_entry_owner",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["owner_id", "asset_id"],
+            ["app.upload_assets.owner_id", "app.upload_assets.id"],
+            name="fk_entry_photo_asset_owner",
+        ),
+        Index("ix_entry_photos_asset", "owner_id", "asset_id"),
+        CheckConstraint("version > 0", name="ck_entry_photo_version"),
+        {"schema": "app"},
+    )
+    entry_id: Mapped[UUID] = mapped_column(primary_key=True)
+    asset_id: Mapped[UUID] = mapped_column(primary_key=True)
+    owner_id: Mapped[UUID] = mapped_column()
+    caption: Mapped[str | None] = mapped_column(String(500))
+    version: Mapped[int] = mapped_column(server_default="1")
+    # Keep the claim after removal: an old PUT retry must not resurrect it.
+    removed: Mapped[bool] = mapped_column(server_default="false")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
