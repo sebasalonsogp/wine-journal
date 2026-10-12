@@ -4,6 +4,8 @@ import { RequestFailure } from "@/lib/session/http";
 
 export type PhotoApi = ReturnType<typeof createTransport>;
 export type EntryPhoto = components["schemas"]["EntryPhotoResponse"];
+export type OccasionPhoto = components["schemas"]["OccasionPhotoResponse"];
+export type PhotoTarget = string | { occasionId: string };
 export type UploadIdentity = { operationKey: string; assetId?: string };
 export const PHOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif";
 export const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
@@ -27,28 +29,89 @@ export function photoFailure(failure: unknown): string {
   if (failure instanceof RequestFailure) {
     const messages: Record<string, string> = {
       MEDIA_QUOTA_EXCEEDED:
-        "Photo storage is full for this preview. Your entry is saved; keep this photo on your device.",
+        "Photo storage is full for this preview. Your saved details are kept; keep this photo on your device.",
       UPLOAD_LIMIT: "Two photos are already being processed. Wait for them to finish, then retry.",
       ENTRY_PHOTO_LIMIT: "This entry already has 12 photos. Remove one before adding another.",
+      OCCASION_PHOTO_LIMIT:
+        "This occasion already has 24 photos. Remove one before adding another.",
       PHOTO_REMOVED: "This photo was removed elsewhere. Remove this selection to continue.",
       PHOTO_CONFLICT: "This photo changed elsewhere. Reload photos before editing or removing it.",
-      MEDIA_UNAVAILABLE: "Photo uploads are unavailable. Your entry can still be saved.",
+      MEDIA_UNAVAILABLE: "Photo uploads are unavailable. You can still save your journal details.",
       UPLOAD_MISMATCH: "This file was rejected. Remove it and choose another photo.",
       UPLOAD_MISSING:
-        "The photo upload was interrupted. Check your connection and retry; your entry is saved.",
+        "The photo upload was interrupted. Check your connection and retry; your saved details are kept.",
       UPLOAD_EXPIRED: "The upload link expired. Retry to continue with a fresh link.",
     };
     return messages[failure.code ?? ""] ?? failure.message;
   }
-  return "The photo could not finish. Check your connection and retry; your entry is kept.";
+  return "The photo could not finish. Check your connection and retry; your saved details are kept.";
 }
 
-export function attachPhoto(api: PhotoApi, entryId: string, assetId: string, signal: AbortSignal) {
+export function attachPhoto(
+  api: PhotoApi,
+  target: PhotoTarget,
+  assetId: string,
+  signal: AbortSignal,
+) {
   signal.throwIfAborted();
+  if (typeof target !== "string")
+    return api.call((client, timeout) =>
+      client.PUT("/api/v1/occasions/{occasion_id}/photos/{asset_id}", {
+        params: { path: { occasion_id: target.occasionId, asset_id: assetId } },
+        body: {},
+        signal: AbortSignal.any([signal, timeout]),
+      }),
+    );
   return api.call((client, timeout) =>
     client.PUT("/api/v1/entries/{entry_id}/photos/{asset_id}", {
-      params: { path: { entry_id: entryId, asset_id: assetId } },
+      params: { path: { entry_id: target, asset_id: assetId } },
       body: {},
+      signal: AbortSignal.any([signal, timeout]),
+    }),
+  );
+}
+
+export function removePhoto(
+  api: PhotoApi,
+  target: PhotoTarget,
+  assetId: string,
+  version: number,
+  signal: AbortSignal,
+) {
+  if (typeof target !== "string")
+    return api.call((client, timeout) =>
+      client.DELETE("/api/v1/occasions/{occasion_id}/photos/{asset_id}", {
+        params: { path: { occasion_id: target.occasionId, asset_id: assetId }, query: { version } },
+        signal: AbortSignal.any([signal, timeout]),
+      }),
+    );
+  return api.call((client, timeout) =>
+    client.DELETE("/api/v1/entries/{entry_id}/photos/{asset_id}", {
+      params: { path: { entry_id: target, asset_id: assetId }, query: { version } },
+      signal: AbortSignal.any([signal, timeout]),
+    }),
+  );
+}
+
+export function captionPhoto(
+  api: PhotoApi,
+  photo: EntryPhoto | OccasionPhoto,
+  version: number,
+  caption: string | null,
+  signal: AbortSignal,
+) {
+  if ("occasionId" in photo)
+    return api.call((client, timeout) =>
+      client.PATCH("/api/v1/occasions/{occasion_id}/photos/{asset_id}", {
+        params: { path: { occasion_id: photo.occasionId, asset_id: photo.assetId } },
+        body: { version, caption },
+        signal: AbortSignal.any([signal, timeout]),
+      }),
+    );
+  return api.call((client, timeout) =>
+    client.PATCH("/api/v1/entries/{entry_id}/photos/{asset_id}", {
+      params: { path: { entry_id: photo.entryId, asset_id: photo.assetId } },
+      body: { version, caption },
       signal: AbortSignal.any([signal, timeout]),
     }),
   );
@@ -57,7 +120,7 @@ export function attachPhoto(api: PhotoApi, entryId: string, assetId: string, sig
 /** Keep identity across uncertain responses. Never upsert or create another entry. */
 export async function uploadPhoto(
   api: PhotoApi,
-  entryId: string,
+  entryId: PhotoTarget,
   file: File,
   identity: UploadIdentity,
   signal: AbortSignal,

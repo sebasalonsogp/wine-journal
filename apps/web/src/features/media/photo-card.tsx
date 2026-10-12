@@ -2,22 +2,27 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { usePrivatePhoto } from "./use-private-photo";
-import { photoFailure, type EntryPhoto, type PhotoApi } from "./photo-upload";
+import {
+  photoFailure,
+  captionPhoto,
+  removePhoto,
+  type EntryPhoto,
+  type OccasionPhoto,
+  type PhotoApi,
+} from "./photo-upload";
 
 export function PhotoCard({
   photo,
   api,
   refresh,
+  children,
 }: {
-  photo: EntryPhoto;
+  photo: EntryPhoto | OccasionPhoto;
   api: PhotoApi;
   refresh: () => void;
+  children?: React.ReactNode;
 }) {
   const id = useId();
-  const [viewAttempt, setViewAttempt] = useState(0);
-  const preview = usePrivatePhoto(api, photo.state === "READY" ? photo.assetId : null, viewAttempt);
-  const image = preview?.url;
-  const imageError = preview?.failed;
   const [draft, setDraft] = useState<{ caption: string; version: number } | null>(null);
   const caption = draft?.caption ?? photo.caption ?? "";
   const [busy, setBusy] = useState(false);
@@ -35,7 +40,11 @@ export function PhotoCard({
     if (submitting.current) return;
     if (
       remove &&
-      !window.confirm("Remove this photo from this entry? Other entries using it will keep it.")
+      !window.confirm(
+        "Remove this photo from this " +
+          ("occasionId" in photo ? "occasion" : "entry") +
+          "? Other references to it will be kept.",
+      )
     )
       return;
     submitting.current = true;
@@ -43,21 +52,21 @@ export function PhotoCard({
     setError("");
     const signal = lifetime.current!.signal;
     try {
-      const path = { entry_id: photo.entryId, asset_id: photo.assetId };
       if (remove)
-        await api.call((client, timeout) =>
-          client.DELETE("/api/v1/entries/{entry_id}/photos/{asset_id}", {
-            params: { path, query: { version: photo.version } },
-            signal: AbortSignal.any([signal, timeout]),
-          }),
+        await removePhoto(
+          api,
+          "occasionId" in photo ? { occasionId: photo.occasionId } : photo.entryId,
+          photo.assetId,
+          photo.version,
+          signal,
         );
       else
-        await api.call((client, timeout) =>
-          client.PATCH("/api/v1/entries/{entry_id}/photos/{asset_id}", {
-            params: { path },
-            body: { version: draft?.version ?? photo.version, caption: caption.trim() || null },
-            signal: AbortSignal.any([signal, timeout]),
-          }),
+        await captionPhoto(
+          api,
+          photo,
+          draft?.version ?? photo.version,
+          caption.trim() || null,
+          signal,
         );
       if (!signal.aborted) {
         setDraft(null);
@@ -72,40 +81,12 @@ export function PhotoCard({
   }
 
   return (
-    <li className="photo-card" data-testid="entry-photo">
-      <div className="photo-frame">
-        {image && photo.state === "READY" ? (
-          // Temporary blob URLs keep signed capabilities out of the DOM and image optimizer.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={image}
-            alt={photo.caption || "Photo from this drinking entry"}
-            width={480}
-            height={480}
-          />
-        ) : (
-          <p role="status">
-            {photo.state === "READY"
-              ? imageError
-                ? "Photo could not load."
-                : "Loading photo…"
-              : photo.state === "FAILED"
-                ? "This photo couldn’t be processed. Remove it and choose another."
-                : photo.state === "PROCESSING"
-                  ? "Preparing your photo…"
-                  : "Upload unfinished. Retry in the original tab, or remove and choose the photo again."}
-          </p>
-        )}
-      </div>
-      {imageError && (
-        <button
-          type="button"
-          className="text-button"
-          onClick={() => setViewAttempt((value) => value + 1)}
-        >
-          Retry image
-        </button>
-      )}
+    <li
+      className="photo-card"
+      data-testid={"occasionId" in photo ? "occasion-photo" : "entry-photo"}
+    >
+      <PhotoFrame photo={photo} api={api} />
+      {children}
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -162,5 +143,56 @@ export function PhotoCard({
         </p>
       )}
     </li>
+  );
+}
+
+export function PhotoFrame({
+  photo,
+  api,
+}: {
+  photo: Pick<EntryPhoto, "assetId" | "state" | "caption">;
+  api: PhotoApi;
+}) {
+  const [viewAttempt, setViewAttempt] = useState(0);
+  const preview = usePrivatePhoto(api, photo.state === "READY" ? photo.assetId : null, viewAttempt);
+  const image = preview?.url;
+  const imageError = preview?.failed;
+
+  return (
+    <>
+      <div className="photo-frame">
+        {image && photo.state === "READY" ? (
+          // Temporary blob URLs keep signed capabilities out of the DOM and image optimizer.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={image}
+            alt={photo.caption || "Photo from your journal"}
+            width={480}
+            height={480}
+          />
+        ) : (
+          <p role="status">
+            {photo.state === "READY"
+              ? imageError
+                ? "Photo could not load."
+                : "Loading photo…"
+              : photo.state === "FAILED"
+                ? "This photo couldn’t be processed. Remove it and choose another."
+                : photo.state === "PROCESSING"
+                  ? "Preparing your photo…"
+                  : "Upload unfinished. Retry in the original tab, or remove and choose the photo again."}
+          </p>
+        )}
+      </div>
+      {imageError && (
+        <button
+          type="button"
+          className="text-button"
+          onClick={() => setViewAttempt((value) => value + 1)}
+        >
+          Retry image
+        </button>
+      )}
+    </>
   );
 }
