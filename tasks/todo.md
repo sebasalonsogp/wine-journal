@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, October 1, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06 occasion albums is next. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 12, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls remain open. The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -722,6 +722,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Dependencies:** [M05](#m05), [O05](#o05). **Size:** M.
 
 **Primary change areas:** apps/api/src/wine_journal/journal/media album query; occasion attachment routes; apps/web/src/features/occasions and gallery; album tests.
+
+**Slices:** M06a attachment/album API is implemented; M06b browser scrapbook controls remain open. See the [occasion album checkpoint](occasion-album-checkpoint.md). The M06 parent remains unchecked until browser acceptance passes.
 
 **Stories:** OM-01, OM-03, OM-04, HB-05.
 

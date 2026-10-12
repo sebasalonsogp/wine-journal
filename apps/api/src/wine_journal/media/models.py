@@ -129,6 +129,34 @@ class EntryPhoto(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class OccasionPhoto(Base):
+    __tablename__ = "occasion_photos"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["owner_id", "occasion_id"],
+            ["app.occasions.owner_id", "app.occasions.id"],
+            name="fk_occasion_photo_occasion_owner",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["owner_id", "asset_id"],
+            ["app.upload_assets.owner_id", "app.upload_assets.id"],
+            name="fk_occasion_photo_asset_owner",
+        ),
+        Index("ix_occasion_photos_asset", "owner_id", "asset_id"),
+        CheckConstraint("version > 0", name="ck_occasion_photo_version"),
+        {"schema": "app"},
+    )
+    occasion_id: Mapped[UUID] = mapped_column(primary_key=True)
+    asset_id: Mapped[UUID] = mapped_column(primary_key=True)
+    owner_id: Mapped[UUID] = mapped_column()
+    caption: Mapped[str | None] = mapped_column(String(500))
+    version: Mapped[int] = mapped_column(server_default="1")
+    # Keep the claim after removal: an old PUT retry must not resurrect it.
+    removed: Mapped[bool] = mapped_column(server_default="false")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class Job(Base):
     __tablename__ = "jobs"
     __table_args__ = (

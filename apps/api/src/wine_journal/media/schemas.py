@@ -78,3 +78,13 @@ class PhotoView(BaseModel):
     variant: Literal["display", "thumbnail"]
     view_url: str = Field(repr=False)
     expires_at: datetime
+
+
+class OccasionPhotoResponse(PhotoStatus):
+    occasion_id: UUID
+    caption: str | None
+    version: int
+
+
+class OccasionPhotos(BaseModel):
+    items: list[OccasionPhotoResponse]
