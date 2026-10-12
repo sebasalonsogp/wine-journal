@@ -1,7 +1,8 @@
 # M06 — Occasion scrapbook
 
-Status: M06a backend implemented October 12, 2026; M06b browser work remains open.
-The parent M06 task is not complete.
+Status: M06a backend and M06b browser behavior implemented October 12, 2026.
+Functional acceptance passes; parent closeout remains pending the documented
+development dependency audit blocker. M07 wine highlights is the next product slice.
 
 ## Slices
 
@@ -15,6 +16,11 @@ The parent M06 task is not complete.
    inherited entry photos, bounded pagination and polling. Reuse media upload,
    thumbnail and session/navigation behavior. Verify real upload/retry, membership
    changes, sign-out, desktop/mobile appearance and accessibility before checking M06.
+
+M06b implementation was split into shared upload/caption/removal support and its
+album UI consumer. Concrete files: media/photo-upload, photo-selection, photo-card,
+occasion-album and album-sources; occasion-views, wine-detail, globals.css; unit
+upload retries and the occasion-album browser suite. No backend migration was needed.
 
 ## Contract and ownership
 
@@ -58,7 +64,35 @@ build passed. Existing OpenAPI paths/methods remain available. The built browser
 assets contained no generated private credentials.
 
 Local migration 0016 preserved entry, occasion, wine and asset counts. CI results
-are linked from the pull request after publication. No album UI is claimed yet.
+are linked from the pull request after publication.
+
+## M06b browser acceptance
+
+Saved occasions now display a single album with direct uploads, private processed
+thumbnails, direct-photo caption editing/removal and paginated original sources.
+Inherited entry photos are read-only here; source links open the precise entry in
+its wine record, including entries beyond the first history page. The record checks
+wine membership and offers a return to the full history. Selected files remain only
+in memory, with the shared navigation guard and sign-out cleanup. Pending photos
+poll every five seconds for at most 60 successful query updates; errors stop polling
+and Reload album can request a fresh read. Album and source pages contain 20 items.
+
+All 32 unit tests passed, including four additional occasion retry cases. All 24
+browser scenarios passed across the full regression run and focused rerun: the
+first full run passed 23 cases; the new long-history fixture initially used the
+wrong request field, corrected to releaseId, and both album cases then passed.
+The real Storage/Docker journey covers upload failure/retry without recreating an
+occasion, stale caption drafts, two ready assets with three shared references,
+standalone-photo exclusion, real API pagination, removal falling back to entry
+sources, unlink/deletion preservation, exact source navigation and sign-out.
+
+Desktop (1440px) and phone (390px) captures were visually inspected; overflow and
+axe WCAG A/AA checks passed. Images in screenshots are synthetic pipeline fixtures,
+not representative photography. Impeccable's detector returned no findings. Lint,
+formatting, strict typing, production build and browser-secret checks passed.
+Production npm audit reports zero vulnerabilities. Physical iPhone acceptance and
+video remain future verification/work; the full development audit is still blocked
+as documented below, so neither merge readiness nor complete CI success is claimed.
 
 ## Dependency audit follow-up (October 12)
 
