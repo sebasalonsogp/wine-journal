@@ -13,11 +13,19 @@ import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
 import { readWineFilters, wineFilterQuery } from "./wine-filters";
 import { dateLabel, releaseLabel, JournalError } from "./wine-display";
+import { RequestFailure } from "@/lib/session/http";
 
 export function WineDetail({ wineId }: { wineId: string }) {
   const api = useJournalApi();
   const account = useAccount();
-  const filters = readWineFilters(useSearchParams());
+  const params = useSearchParams();
+  const filters = readWineFilters(params);
+  const requestedEntry = params.get("entry");
+  const focusedEntry =
+    requestedEntry &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedEntry)
+      ? requestedEntry
+      : undefined;
   const wineQuery = useQuery({
     queryKey: ["wine", account?.id, wineId],
     queryFn: () =>
@@ -26,16 +34,28 @@ export function WineDetail({ wineId }: { wineId: string }) {
       ),
   });
   const history = useInfiniteQuery({
-    queryKey: ["entries", account?.id, wineId],
+    queryKey: ["entries", account?.id, wineId, focusedEntry],
     initialPageParam: undefined as string | undefined,
     enabled: Boolean(wineQuery.data),
-    queryFn: ({ pageParam }) =>
-      api.call((client, signal) =>
+    queryFn: async ({ pageParam }) => {
+      if (focusedEntry) {
+        const entry = await api.call((client, signal) =>
+          client.GET("/api/v1/entries/{entry_id}", {
+            params: { path: { entry_id: focusedEntry } },
+            signal,
+          }),
+        );
+        if (entry.userWineId !== wineId)
+          throw new RequestFailure(404, "This drinking entry is unavailable for this wine.");
+        return { items: [entry], nextCursor: null };
+      }
+      return api.call((client, signal) =>
         client.GET("/api/v1/me/wines/{wine_id}/entries", {
           params: { path: { wine_id: wineId }, query: { cursor: pageParam, limit: 20 } },
           signal,
         }),
-      ),
+      );
+    },
     getNextPageParam: (page) => page.nextCursor ?? undefined,
   });
   const wine = wineQuery.data;
@@ -81,12 +101,18 @@ export function WineDetail({ wineId }: { wineId: string }) {
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">
                 <h2 id="history-title" tabIndex={-1}>
-                  Your drinking history
+                  {focusedEntry ? "This photo’s drinking entry" : "Your drinking history"}
                 </h2>
                 <span>
-                  {wine.entryCount} {wine.entryCount === 1 ? "entry" : "entries"}
+                  {focusedEntry ? 1 : wine.entryCount}{" "}
+                  {focusedEntry || wine.entryCount === 1 ? "entry" : "entries"}
                 </span>
               </div>
+              {focusedEntry && (
+                <Link href={`/my-wines/${wineId}${wineFilterQuery(filters)}`} prefetch={false}>
+                  Show all drinking history
+                </Link>
+              )}
               {history.isPending ? (
                 <p role="status">Opening your entries…</p>
               ) : history.error ? (

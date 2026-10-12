@@ -7,6 +7,7 @@ import { dateLabel, JournalError } from "@/features/my-wines/wine-display";
 import { OccasionEditor } from "./occasion-editor";
 import { OccasionWines } from "./occasion-wines";
 import { OccasionDeletion } from "./occasion-deletion";
+import { OccasionAlbum } from "@/features/media/occasion-album";
 
 export function OccasionList() {
   const api = useJournalApi();
@@ -143,9 +144,7 @@ export function OccasionDetail({ occasionId }: { occasionId: string }) {
             </section>
             <OccasionEditor key={occasion.id} occasion={occasion} />
             <OccasionWines key={`wines-${occasion.id}`} occasion={occasion} />
-            <p className="occasion-availability">
-              Photo memories for this occasion are coming soon.
-            </p>
+            <OccasionAlbum key={`album-${occasion.id}`} occasionId={occasion.id} />
             <OccasionDeletion occasion={occasion} />
           </>
         )
