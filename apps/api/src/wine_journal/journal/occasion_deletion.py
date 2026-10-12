@@ -57,7 +57,8 @@ def delete_occasion(
                     )
                 )
             )
-            # Future occasion-owned media cleanup jobs belong in this transaction.
+            # Direct photo references cascade; entry photos and stored assets remain.
+            # M08 will reclaim assets only after checking every surviving reference.
             session.execute(
                 delete(Occasion).where(Occasion.owner_id == owner, Occasion.id == occasion_id)
             )

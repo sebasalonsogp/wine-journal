@@ -1,6 +1,33 @@
 # Wine Journal API contracts
 
-Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing entry-photo associations and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing, entry and occasion photo associations, album/source reads and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
+
+### Implemented occasion photos and album (M06a)
+
+`GET /occasions/{occasion_id}/photos` lists at most 24 active direct references.
+`PUT /occasions/{occasion_id}/photos/{asset_id}` with `{}` attaches an owned asset;
+replays do not duplicate references or reset captions. `PATCH` takes `{caption,
+version}` and retains the entry-photo revision/replay semantics. `DELETE` requires
+`?version=` and keeps a tombstone so late attachment retries cannot restore it.
+The capacity error is 409 `OCCASION_PHOTO_LIMIT`; stale captions/removals use
+`PHOTO_CONFLICT`, and removed attachment retries use `PHOTO_REMOVED`.
+
+`GET /occasions/{occasion_id}/album?limit=20&cursor=` returns one item per asset
+across active direct references and linked-entry attachments. Each item extends
+photo status with `sourceCount` and one `source` (`kind`, `parentId`, `userWineId`,
+`caption`, `version`). Direct occasion sources take priority; otherwise the entry
+with the lowest UUID represents the asset. The album's `/{asset_id}/sources` route
+accepts `?limit=20&offset=0` and exposes every contributing source/caption with
+`nextOffset`. Both lists cap page size at 50. Album cursors bind to owner/occasion
+and use upload creation time descending, then asset ID ascending. Source lists
+are live offset pages ordered by source priority then parent ID.
+
+All routes require an active owner, return no-store JSON without signed URLs and
+return 404 for missing/foreign parents or absent album membership. Unlinking an
+entry removes only its contribution to the album. Occasion deletion cascades
+direct reference rows and unlinks entries, preserving entry photos, assets and
+reservations for M08 cleanup. Cover-only assets do not enter the album. Browser
+scrapbook controls remain M06b.
 
 ### Implemented personal bottle covers (M05)
 
