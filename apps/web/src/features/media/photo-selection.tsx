@@ -6,6 +6,7 @@ import {
   attachPhoto,
   photoFailure,
   uploadPhoto,
+  removePhoto,
   type PhotoApi,
   type UploadIdentity,
 } from "./photo-upload";
@@ -15,12 +16,14 @@ export type SelectedPhoto = { key: string; file: File; assetId?: string };
 export function PhotoSelection({
   photo,
   entryId,
+  occasionId,
   api,
   onAsset,
   onDone,
 }: {
   photo: SelectedPhoto;
   entryId?: string;
+  occasionId?: string;
   api: PhotoApi;
   onAsset: (key: string, assetId: string) => void;
   onDone: (key: string) => void;
@@ -36,7 +39,8 @@ export function PhotoSelection({
   useEffect(() => {
     const controller = new AbortController();
     lifetime.current = controller;
-    if (entryId)
+    const target = occasionId ? { occasionId } : entryId;
+    if (target)
       void Promise.resolve().then(async () => {
         if (controller.signal.aborted) return;
         setState("uploading");
@@ -44,7 +48,7 @@ export function PhotoSelection({
         try {
           await uploadPhoto(
             api,
-            entryId,
+            target,
             photo.file,
             identity.current,
             controller.signal,
@@ -61,7 +65,7 @@ export function PhotoSelection({
         }
       });
     return () => controller.abort();
-  }, [api, entryId, photo.file, photo.key, attempt, onAsset, onDone]);
+  }, [api, entryId, occasionId, photo.file, photo.key, attempt, onAsset, onDone]);
 
   async function remove() {
     if (removingRef.current || state === "uploading") return;
@@ -70,25 +74,23 @@ export function PhotoSelection({
     setError("");
     const signal = lifetime.current!.signal;
     try {
-      if (entryId && identity.current.assetId) {
+      const target = occasionId ? { occasionId } : entryId;
+      if (target && identity.current.assetId) {
         // Resolve a possibly lost attach response before removing its reference.
         try {
-          const attached = await attachPhoto(api, entryId, identity.current.assetId, signal);
-          await api.call((client, timeout) =>
-            client.DELETE("/api/v1/entries/{entry_id}/photos/{asset_id}", {
-              params: {
-                path: { entry_id: entryId, asset_id: attached.assetId },
-                query: { version: attached.version },
-              },
-              signal: AbortSignal.any([signal, timeout]),
-            }),
-          );
+          const attached = await attachPhoto(api, target, identity.current.assetId, signal);
+          await removePhoto(api, target, attached.assetId, attached.version, signal);
         } catch (failure) {
           if (
             !(failure instanceof RequestFailure) ||
-            !["PHOTO_REMOVED", "ENTRY_PHOTO_LIMIT", "ENTRY_NOT_FOUND", "UPLOAD_NOT_FOUND"].includes(
-              failure.code ?? "",
-            )
+            ![
+              "PHOTO_REMOVED",
+              "ENTRY_PHOTO_LIMIT",
+              "ENTRY_NOT_FOUND",
+              "OCCASION_PHOTO_LIMIT",
+              "OCCASION_NOT_FOUND",
+              "UPLOAD_NOT_FOUND",
+            ].includes(failure.code ?? "")
           )
             throw failure;
         }
@@ -110,7 +112,9 @@ export function PhotoSelection({
           ? "Uploading photo…"
           : state === "error"
             ? "Upload needs attention"
-            : "Selected — uploads after you save the entry."}
+            : occasionId
+              ? "Selected — preparing upload."
+              : "Selected — uploads after you save the entry."}
       </p>
       {error && (
         <p className="form-message" role="alert">
