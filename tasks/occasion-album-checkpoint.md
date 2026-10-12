@@ -59,3 +59,24 @@ assets contained no generated private credentials.
 
 Local migration 0016 preserved entry, occasion, wine and asset counts. CI results
 are linked from the pull request after publication. No album UI is claimed yet.
+
+## Dependency audit follow-up (October 12)
+
+The first CI run passed API checks but exposed new web dependency advisories.
+Next.js and its matching lint configuration are patched from 16.3.6 to 16.3.8;
+the lockfile now uses sharp 0.35.5 and source-map-js 1.2.2. Web lint, formatting,
+typechecking, all 28 unit tests and production build passed again after updating.
+The production dependency audit reports zero vulnerabilities.
+
+The full audit still fails on [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm):
+development-only `eslint-config-next -> @next/eslint-plugin-next -> fast-glob ->
+micromatch -> braces@3.0.3`. The advisory has no published patched version; even
+eslint-plugin-next 16.4.0 retains this chain. It concerns deeply nested glob input
+in tooling, not journal input at runtime. Five audit package findings trace to
+this one advisory. The existing full audit gate remains unchanged and blocking;
+there is no blanket suppression or forced downgrade to Next.js 14 lint tooling.
+Recheck for an upstream patched dependency before merge/deployment.
+
+Patch references: [Next.js](https://github.com/advisories/GHSA-3w37-wq28-93x7),
+[sharp](https://github.com/advisories/GHSA-wq5f-xc86-pv6w),
+[source-map-js](https://github.com/advisories/GHSA-68fv-2mgg-jv7q).
