@@ -38,7 +38,7 @@ export function EntryOccasion({ entry }: { entry: Entry }) {
 
   async function refresh() {
     await Promise.all(
-      ["entries", "occasion-wines"].map((name) =>
+      ["entries", "occasion-wines", "wine-moments"].map((name) =>
         queries.invalidateQueries({ queryKey: [name, account.id] }),
       ),
     );

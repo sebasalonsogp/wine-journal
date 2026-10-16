@@ -40,6 +40,7 @@ export function EntryEditor({ entry, label }: { entry: Entry; label: string }) {
       queries.invalidateQueries({ queryKey: ["wine", account.id, entry.userWineId] }),
       queries.invalidateQueries({ queryKey: ["wines", account.id] }),
       queries.invalidateQueries({ queryKey: ["occasion-wines", account.id] }),
+      queries.invalidateQueries({ queryKey: ["wine-moments", account.id, entry.userWineId] }),
     ]);
   }
 

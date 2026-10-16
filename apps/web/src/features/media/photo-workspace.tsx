@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { privateResetEvent } from "@/lib/session/private-drafts";
 import { usePendingImages } from "./use-pending-images";
 import { PhotoCard } from "./photo-card";
@@ -17,10 +18,12 @@ export function PhotoWorkspace({
   api,
   entryId,
   onSelectionChange,
+  onPhotosChange,
 }: {
   api: PhotoApi;
   entryId?: string;
   onSelectionChange?: (count: number) => void;
+  onPhotosChange?: () => void;
 }) {
   const id = useId();
   const [selected, setSelected] = useState<SelectedPhoto[]>([]);
@@ -71,6 +74,7 @@ export function PhotoWorkspace({
         );
         if (controller.signal.aborted) return;
         setPhotos(result.items);
+        onPhotosChange?.();
         setError("");
         if (
           ++polls < 60 &&
@@ -88,7 +92,7 @@ export function PhotoWorkspace({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [api, entryId, revision, ended]);
+  }, [api, entryId, revision, ended, onPhotosChange]);
 
   const visible = photos.filter(
     (photo) => !selected.some((item) => item.assetId === photo.assetId),
@@ -189,6 +193,10 @@ export function PhotoWorkspace({
 }
 
 export function EntryPhotos({ api, entryId }: { api: PhotoApi; entryId: string }) {
+  const queries = useQueryClient();
+  const refreshMoments = useCallback(() => {
+    void queries.invalidateQueries({ queryKey: ["wine-moments"] });
+  }, [queries]);
   const [opened, setOpened] = useState(false);
   return (
     <details
@@ -198,7 +206,7 @@ export function EntryPhotos({ api, entryId }: { api: PhotoApi; entryId: string }
       }}
     >
       <summary>Photos & memories</summary>
-      {opened && <PhotoWorkspace api={api} entryId={entryId} />}
+      {opened && <PhotoWorkspace api={api} entryId={entryId} onPhotosChange={refreshMoments} />}
     </details>
   );
 }
