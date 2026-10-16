@@ -182,6 +182,199 @@ def owned_asset(p: AlbumFixture) -> str:
     return str(asset_id)
 
 
+def ready_assets(p: AlbumFixture, *assets: str) -> None:
+    with p.admin.begin() as connection:
+        for asset in assets:
+            connection.execute(
+                text(
+                    "UPDATE app.upload_assets SET state = 'READY', object_id = :object, "
+                    "object_etag = 'fixture', width = 1, height = 1, "
+                    "thumbnail_width = 1, thumbnail_height = 1, "
+                    "display_bytes = 1, thumbnail_bytes = 1, "
+                    "display_sha256 = :hash, thumbnail_sha256 = :hash WHERE id = :asset"
+                ),
+                {"asset": asset, "object": str(uuid4()), "hash": "a" * 64},
+            )
+
+
+def test_wine_moments_exact_membership_dates_pagination_and_repeated_links(
+    album: AlbumFixture,
+) -> None:
+    p = album
+    entry = p.client.get(f"/api/v1/entries/{p.entries[0]}").json()
+    wine = p.client.get(f"/api/v1/me/wines/{entry['userWineId']}").json()
+    url = f"/api/v1/me/wines/{wine['id']}/moments"
+    assert p.client.get(url).json() == {"items": [], "nextCursor": None}
+    children = []
+    for day, name, linked in (
+        ("2026-10-14", None, True),
+        ("2026-10-15", "Other wine", True),
+        ("2026-10-16", None, False),
+    ):
+        child = p.client.post(
+            "/api/v1/entries",
+            json={
+                "consumedDate": day,
+                **({"manualWine": {"name": name}} if name else {"releaseId": wine["releaseId"]}),
+                **({"occasionId": p.occasions[0]} if linked else {}),
+            },
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+        assert child.status_code == 200
+        children.append(child.json()["id"])
+    shared, general, own, tied, foreign_entry, standalone, pending, orphan = [
+        owned_asset(p) for _ in range(8)
+    ]
+    ready_assets(p, shared, general, own, tied, foreign_entry, standalone, orphan)
+    for parent, asset in (
+        (p.entries[0], shared),
+        (children[0], shared),
+        (p.entries[0], own),
+        (p.entries[0], tied),
+        (children[1], foreign_entry),
+        (children[2], standalone),
+        (p.entries[0], pending),
+    ):
+        assert p.client.put(f"/api/v1/entries/{parent}/photos/{asset}", json={}).status_code == 200
+    for asset in (shared, general):
+        assert (
+            p.client.put(f"/api/v1/occasions/{p.occasions[0]}/photos/{asset}", json={}).status_code
+            == 200
+        )
+    result = p.client.get(url)
+    assert result.status_code == 200 and result.headers["cache-control"] == "no-store"
+    items = result.json()["items"]
+    expected = [standalone, shared, general, *sorted([own, tied])]
+    assert [item["assetId"] for item in items] == expected
+    assert items[1]["sourceCount"] == 3  # Two entry references, one occasion reference.
+    assert items[1]["source"]["parentId"] == children[0]
+    assert items[1]["source"]["sourceDate"] == "2026-10-14"
+    assert items[2]["sourceCount"] == 1  # Repeated glasses do not multiply occasion references.
+    preview = p.client.get(url, params={"limit": 3}).json()
+    assert [item["assetId"] for item in preview["items"]] == expected[:3]
+    remainder = p.client.get(url, params={"limit": 20, "cursor": preview["nextCursor"]}).json()
+    assert [item["assetId"] for item in remainder["items"]] == expected[3:]
+    assert remainder["nextCursor"] is None
+    # Backdating changes the latest eligible source; equal dates prefer the entry.
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.drinking_entries SET consumed_date = '2026-10-12' WHERE id = :id"),
+            {"id": children[0]},
+        )
+    shared_item = next(
+        item for item in p.client.get(url).json()["items"] if item["assetId"] == shared
+    )
+    assert shared_item["source"]["kind"] == "ENTRY"
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.drinking_entries SET consumed_date = '2026-09-01' WHERE id = :id"),
+            {"id": children[0]},
+        )
+    shared_item = next(
+        item for item in p.client.get(url).json()["items"] if item["assetId"] == shared
+    )
+    assert shared_item["source"]["kind"] == "OCCASION"
+    assert shared_item["source"]["sourceDate"] == "2026-10-12"
+    for parent in (p.entries[0], children[0]):
+        assert (
+            p.client.delete(
+                f"/api/v1/occasions/{p.occasions[0]}/entries/{parent}", params={"version": 1}
+            ).status_code
+            == 200
+        )
+    assert {item["assetId"] for item in p.client.get(url).json()["items"]} == {
+        standalone,
+        shared,
+        own,
+        tied,
+    }
+    assert (
+        p.client.delete(f"/api/v1/occasions/{p.occasions[0]}", params={"version": 1}).status_code
+        == 200
+    )
+    assert {item["assetId"] for item in p.client.get(url).json()["items"]} == {
+        standalone,
+        shared,
+        own,
+        tied,
+    }
+
+
+def test_wine_moments_cover_exclusion_removal_and_readiness(album: AlbumFixture) -> None:
+    p = album
+    wine_id = p.client.get(f"/api/v1/entries/{p.entries[0]}").json()["userWineId"]
+    url = f"/api/v1/me/wines/{wine_id}/moments"
+    asset = p.assets[0]
+    assert (
+        p.client.put(f"/api/v1/entries/{p.entries[0]}/photos/{asset}", json={}).status_code == 200
+    )
+    assert p.client.get(url).json()["items"] == []
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE app.upload_assets SET state = 'FAILED', "
+                "processing_error = 'INVALID_IMAGE' WHERE id = :id"
+            ),
+            {"id": asset},
+        )
+    assert p.client.get(url).json()["items"] == []
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE app.upload_assets SET state = 'PENDING', processing_error = NULL "
+                "WHERE id = :id"
+            ),
+            {"id": asset},
+        )
+    ready_assets(p, asset)
+    assert len(p.client.get(url).json()["items"]) == 1
+    cover_url = f"/api/v1/me/wines/{wine_id}/cover"
+    assert p.client.put(cover_url, json={"assetId": asset, "version": 0}).status_code == 200
+    try:
+        assert p.client.get(url).json()["items"] == []
+    finally:
+        assert p.client.put(cover_url, json={"assetId": None, "version": 1}).status_code == 200
+    assert len(p.client.get(url).json()["items"]) == 1
+    assert (
+        p.client.delete(
+            f"/api/v1/entries/{p.entries[0]}/photos/{asset}", params={"version": 1}
+        ).status_code
+        == 200
+    )
+    assert p.client.get(url).json()["items"] == []
+
+
+def test_wine_moments_authorization_and_scoped_cursor(album: AlbumFixture) -> None:
+    p = album
+    wine_id = p.client.get(f"/api/v1/entries/{p.entries[0]}").json()["userWineId"]
+    url = f"/api/v1/me/wines/{wine_id}/moments"
+    for asset in (p.assets[0], owned_asset(p)):
+        ready_assets(p, asset)
+        assert (
+            p.client.put(f"/api/v1/entries/{p.entries[0]}/photos/{asset}", json={}).status_code
+            == 200
+        )
+    cursor = p.client.get(url, params={"limit": 1}).json()["nextCursor"]
+    for params in ({"limit": 0}, {"limit": 51}, {"cursor": "bad"}, {"cursor": "W10="}):
+        assert p.client.get(url, params=params).status_code == 422
+    p.sign_in(1)
+    assert p.client.get(url).status_code == 404
+    other_id = p.client.get(f"/api/v1/entries/{p.entries[1]}").json()["userWineId"]
+    assert (
+        p.client.get(f"/api/v1/me/wines/{other_id}/moments", params={"cursor": cursor}).status_code
+        == 422
+    )
+    p.sign_in(0)
+    p.app.dependency_overrides.pop(require_principal)
+    assert p.client.get(url).status_code == 401
+    p.sign_in(0)
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.app_users SET state = 'DISABLED' WHERE id = :id"), {"id": p.owners[0]}
+        )
+    assert p.client.get(url).status_code == 403
+
+
 def test_album_deduplicates_and_preserves_original_references_after_unlink_delete(
     album: AlbumFixture,
 ) -> None:

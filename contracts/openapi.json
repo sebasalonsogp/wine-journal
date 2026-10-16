@@ -935,6 +935,65 @@
         "title": "ManualWine",
         "type": "object"
       },
+      "MomentSource": {
+        "properties": {
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "kind": {
+            "enum": [
+              "OCCASION",
+              "ENTRY"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "title": "Parentid",
+            "type": "string"
+          },
+          "sourceDate": {
+            "format": "date",
+            "title": "Sourcedate",
+            "type": "string"
+          },
+          "userWineId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Userwineid"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "parentId",
+          "userWineId",
+          "caption",
+          "version",
+          "sourceDate"
+        ],
+        "title": "MomentSource",
+        "type": "object"
+      },
       "OccasionFields": {
         "additionalProperties": false,
         "properties": {
@@ -1725,6 +1784,102 @@
           "contentType"
         ],
         "title": "UploadRequest",
+        "type": "object"
+      },
+      "WineMoment": {
+        "properties": {
+          "assetId": {
+            "format": "uuid",
+            "title": "Assetid",
+            "type": "string"
+          },
+          "errorCode": {
+            "anyOf": [
+              {
+                "const": "PHOTO_PROCESSING_FAILED",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errorcode"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "source": {
+            "$ref": "#/components/schemas/MomentSource"
+          },
+          "sourceCount": {
+            "title": "Sourcecount",
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "READY",
+              "FAILED"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          }
+        },
+        "required": [
+          "assetId",
+          "state",
+          "source",
+          "sourceCount"
+        ],
+        "title": "WineMoment",
+        "type": "object"
+      },
+      "WineMoments": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WineMoment"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcursor"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "title": "WineMoments",
         "type": "object"
       },
       "WinePage": {
@@ -3581,6 +3736,133 @@
         "summary": "Entries",
         "tags": [
           "journal"
+        ]
+      }
+    },
+    "/api/v1/me/wines/{wine_id}/moments": {
+      "get": {
+        "operationId": "read_wine_moments",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wine_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Wine Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 512,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineMoments"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Wine Moments",
+        "tags": [
+          "media"
         ]
       }
     },
