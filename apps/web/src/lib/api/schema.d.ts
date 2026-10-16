@@ -182,6 +182,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/wines/{wine_id}/moments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Wine Moments */
+        get: operations["read_wine_moments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/wines/{wine_id}/rating": {
         parameters: {
             query?: never;
@@ -721,6 +738,30 @@ export interface components {
             /** Year */
             year?: number | null;
         };
+        /** MomentSource */
+        MomentSource: {
+            /** Caption */
+            caption: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "OCCASION" | "ENTRY";
+            /**
+             * Parentid
+             * Format: uuid
+             */
+            parentId: string;
+            /**
+             * Sourcedate
+             * Format: date
+             */
+            sourceDate: string;
+            /** Userwineid */
+            userWineId: string | null;
+            /** Version */
+            version: number;
+        };
         /** OccasionFields */
         OccasionFields: {
             /** Localtime */
@@ -981,6 +1022,35 @@ export interface components {
             contentType: "image/jpeg" | "image/png" | "image/webp" | "image/heic" | "image/heif";
             /** Sizebytes */
             sizeBytes: number;
+        };
+        /** WineMoment */
+        WineMoment: {
+            /**
+             * Assetid
+             * Format: uuid
+             */
+            assetId: string;
+            /** Errorcode */
+            errorCode?: "PHOTO_PROCESSING_FAILED" | null;
+            /** Height */
+            height?: number | null;
+            source: components["schemas"]["MomentSource"];
+            /** Sourcecount */
+            sourceCount: number;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "PENDING" | "PROCESSING" | "READY" | "FAILED";
+            /** Width */
+            width?: number | null;
+        };
+        /** WineMoments */
+        WineMoments: {
+            /** Items */
+            items: components["schemas"]["WineMoment"][];
+            /** Nextcursor */
+            nextCursor: string | null;
         };
         /** WinePage */
         WinePage: {
@@ -2227,6 +2297,85 @@ export interface operations {
             };
             /** @description Conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    read_wine_moments: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string | null;
+            };
+            header?: never;
+            path: {
+                wine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WineMoments"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

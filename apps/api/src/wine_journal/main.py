@@ -20,6 +20,7 @@ from wine_journal.media.attachment_routes import router as attachment_router
 from wine_journal.media.cover_routes import router as cover_router
 from wine_journal.media.occasion_photo_routes import router as occasion_photo_router
 from wine_journal.media.routes import router as media_router
+from wine_journal.media.wine_moment_routes import router as wine_moment_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -66,6 +67,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(cover_router, prefix="/api/v1")
     application.include_router(occasion_photo_router, prefix="/api/v1")
     application.include_router(album_router, prefix="/api/v1")
+    application.include_router(wine_moment_router, prefix="/api/v1")
     install_error_handlers(application)
     return application
 
