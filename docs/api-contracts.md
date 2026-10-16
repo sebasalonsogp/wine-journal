@@ -2,6 +2,26 @@
 
 Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing, entry and occasion photo associations, album/source reads and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
+### Implemented wine memories (M07)
+
+`GET /me/wines/{wine_id}/moments?limit=20&cursor=` returns `{items, nextCursor}`
+for the active owner's wine. Limits are 1–50; highlights request three items.
+Each item has processed-photo metadata, a representative `source` (kind, parent ID,
+optional user-wine ID, caption, version and `sourceDate`), and `sourceCount`.
+No storage paths or viewing capabilities appear in this read model.
+
+Eligible READY assets come from the wine's entries and direct general photos on
+their currently linked occasions. Repeated occasion links contribute once; another
+wine's entry-only photos and all current personal cover assets are excluded.
+Deduplicate before pagination. Choose the latest source date, preferring entries
+then parent UUID on ties; order cards by source date descending and asset UUID
+ascending. Cursors are scoped to account and wine; malformed/cross-scope cursors
+return 422. Missing/foreign wines return 404. Responses are private and no-store.
+
+These are live pages: changing dates or membership may change order. The browser's
+Reload memories action starts from the first page. Source links open the exact
+drinking entry or occasion; no new storage copy or schema is required.
+
 ### Implemented occasion photos and album (M06a)
 
 `GET /occasions/{occasion_id}/photos` lists at most 24 active direct references.

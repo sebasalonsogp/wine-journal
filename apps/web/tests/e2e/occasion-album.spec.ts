@@ -196,6 +196,138 @@ test("occasion album retries uploads, preserves sources through unlink/deletion 
   await expect(page.getByTestId("drinking-entry")).toHaveCount(0);
 });
 
+test("wine highlights show eligible memories, paginate and link to their original context", async ({
+  page,
+  request,
+}, testInfo) => {
+  test.setTimeout(180000);
+  await page.goto("/auth/sign-in?next=%2Foccasions%2Fnew");
+  await finishSignIn(page, request);
+  await expect(page.getByRole("button", { name: "Create occasion", exact: true })).toBeVisible();
+  const occasion = await journal(page, "occasions", "POST", {
+    occasionDate: "2026-10-12",
+    title: "Autumn dinner",
+  });
+  const own = await journal(page, "entries", "POST", {
+    consumedDate: "2026-10-15",
+    manualWine: { name: "Autumn Cabernet" },
+    occasionId: occasion.id,
+  });
+  const other = await journal(page, "entries", "POST", {
+    consumedDate: "2026-10-13",
+    manualWine: { name: "Dinner Syrah" },
+    occasionId: occasion.id,
+  });
+  const wineUrl = `/my-wines/${own.userWineId}`;
+  await page.goto(wineUrl);
+  await expect(page.getByRole("heading", { name: "Autumn Cabernet", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Moments with this wine" })).toHaveCount(0);
+  await page.goto(`/occasions/${occasion.id}`);
+  for (let index = 0; index < 3; index++) {
+    await page.getByLabel("Add occasion photos").setInputFiles({
+      ...photo,
+      name: `autumn-${index}.png`,
+    });
+    await expect(page.getByTestId("photo-selection")).toHaveCount(0, { timeout: 25000 });
+    processPhoto();
+    await expect(page.getByTestId("occasion-photo").locator("img")).toHaveCount(index + 1, {
+      timeout: 25000,
+    });
+  }
+  const [shared, ownPhoto, otherPhoto] = (
+    await journal(page, `occasions/${occasion.id}/album`)
+  ).items.map((item: { assetId: string }) => item.assetId);
+  for (const [entry, asset, caption] of [
+    [own.id, shared, "A glass shared with friends"],
+    [own.id, ownPhoto, "Cabernet at dinner"],
+    [other.id, otherPhoto, "Only the Syrah"],
+  ]) {
+    await journal(page, `entries/${entry}/photos/${asset}`, "PUT", {});
+    await journal(page, `entries/${entry}/photos/${asset}`, "PATCH", { version: 1, caption });
+  }
+  for (const asset of [ownPhoto, otherPhoto])
+    await journal(page, `occasions/${occasion.id}/photos/${asset}?version=1`, "DELETE");
+  await page.goto(wineUrl);
+  const moments = page.getByRole("region", { name: "Moments with this wine" });
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(2);
+  await expect(moments).not.toContainText("Only the Syrah");
+  // Add an explicit general reference on another occasion with this wine.
+  // Removed references are tombstones; a delayed retry must not resurrect them.
+  const secondOccasion = await journal(page, "occasions", "POST", {
+    occasionDate: "2026-10-10",
+    title: "Another shared table",
+  });
+  const wine = await journal(page, `me/wines/${own.userWineId}`);
+  await journal(page, "entries", "POST", {
+    consumedDate: "2026-10-10",
+    releaseId: wine.releaseId,
+    occasionId: secondOccasion.id,
+  });
+  await journal(page, `occasions/${secondOccasion.id}/photos/${otherPhoto}`, "PUT", {});
+  await page.getByRole("button", { name: "Reload memories" }).click();
+  await expect(moments.getByTestId("wine-moment").locator("img")).toHaveCount(3);
+  await expect(moments.getByRole("link", { name: "Open drinking entry" })).toHaveCount(2);
+  await expect(moments.getByRole("link", { name: "Open occasion" })).toHaveAttribute(
+    "href",
+    `/occasions/${secondOccasion.id}`,
+  );
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await moments.screenshot({ path: testInfo.outputPath(`wine-moments-${width}.png`) });
+  }
+  expect(
+    (
+      await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()
+    ).violations.map((issue) => issue.id),
+  ).toEqual([]);
+  await moments.getByRole("link", { name: "Open drinking entry" }).first().click();
+  await expect(page).toHaveURL(new RegExp(`entry=${own.id}#history-title$`));
+  await expect(page.getByTestId("drinking-entry")).toHaveCount(1);
+  await page.getByRole("link", { name: "Show all drinking history" }).click();
+  // Real keyset pagination, with smaller server pages to keep the upload fixture bounded.
+  await page.route("**/api/v1/me/wines/*/moments**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get("limit") === "20") url.searchParams.set("limit", "1");
+    await route.continue({ url: url.toString() });
+  });
+  await page.getByRole("link", { name: "View all memories" }).click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(1);
+  await page.getByRole("button", { name: "Load more memories" }).click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(2);
+  await page.getByRole("button", { name: "Load more memories" }).click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "Load more memories" })).toHaveCount(0);
+  await page.getByRole("link", { name: "Show highlights" }).click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(3);
+  await page.unroute("**/api/v1/me/wines/*/moments**");
+  await page.route("**/api/v1/me/wines/*/moments**", (route) =>
+    route.abort("internetdisconnected"),
+  );
+  await page.getByRole("button", { name: "Reload memories" }).click();
+  await expect(moments.getByRole("alert")).toBeVisible();
+  await page.unroute("**/api/v1/me/wines/*/moments**");
+  await page.getByRole("button", { name: "Reload memories" }).click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(3);
+  await page
+    .getByTestId("drinking-entry")
+    .first()
+    .getByRole("button", { name: "Delete entry", exact: true })
+    .click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Delete this entry", exact: true })
+    .click();
+  await expect(moments.getByTestId("wine-moment")).toHaveCount(1);
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page).toHaveURL(/\/browse$/);
+  await expect(page.getByTestId("wine-moment")).toHaveCount(0);
+  await page.goto(wineUrl);
+  await expect(page.getByTestId("wine-moment")).toHaveCount(0);
+});
+
 test("occasion selections guard navigation but clear on sign-out", async ({ page, request }) => {
   await page.goto("/auth/sign-in?next=%2Foccasions%2Fnew");
   await finishSignIn(page, request);

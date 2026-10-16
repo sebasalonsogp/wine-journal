@@ -5,12 +5,13 @@ import { BottleCover } from "@/features/media/bottle-cover";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { EntryEditor } from "@/features/capture/entry-editor";
 import { EntryOccasion } from "@/features/occasions/entry-occasion";
 import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
+import { WineMoments } from "./wine-moments";
 import { readWineFilters, wineFilterQuery } from "./wine-filters";
 import { dateLabel, releaseLabel, JournalError } from "./wine-display";
 import { RequestFailure } from "@/lib/session/http";
@@ -18,6 +19,7 @@ import { RequestFailure } from "@/lib/session/http";
 export function WineDetail({ wineId }: { wineId: string }) {
   const api = useJournalApi();
   const account = useAccount();
+  const queries = useQueryClient();
   const params = useSearchParams();
   const filters = readWineFilters(params);
   const requestedEntry = params.get("entry");
@@ -94,10 +96,12 @@ export function WineDetail({ wineId }: { wineId: string }) {
                 wineId={wine.id}
                 onSaved={() => {
                   void wineQuery.refetch();
+                  void queries.invalidateQueries({ queryKey: ["wine-moments", account?.id] });
                 }}
               />
             </details>
             <WineRating key={wine.id} wine={wine} />
+            {!focusedEntry && <WineMoments wineId={wineId} />}
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">
                 <h2 id="history-title" tabIndex={-1}>
