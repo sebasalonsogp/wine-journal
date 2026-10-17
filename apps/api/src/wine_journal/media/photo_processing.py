@@ -135,7 +135,17 @@ class PhotoPublisher:
                 derivative_keys(work.reference_id), (result.display, result.thumbnail), strict=True
             ):
                 self._renew(work)
-                self.storage.put_derivative(key, contents)
+                with self._asset(work) as asset:
+                    if asset is None:
+                        return
+                    # Commit the hold before releasing the DB connection for I/O.
+                    asset.unsettled_writes += 1
+                acknowledged = self.storage.put_derivative(key, contents)
+                if acknowledged:
+                    with self._asset(work) as asset:
+                        if asset is None:
+                            return
+                        asset.unsettled_writes -= 1
             self._ready(work, result)
         except PhotoRejected as error:
             if error.reason == "DECODER_UNAVAILABLE":

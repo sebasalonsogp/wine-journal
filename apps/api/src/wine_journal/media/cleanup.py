@@ -18,6 +18,7 @@ ELIGIBLE = """
     AND a.created_at <= clock_timestamp() - interval '24 hours'
     AND a.state IN ('PENDING', 'READY', 'FAILED')
     AND a.unsettled_grants = 0
+    AND a.unsettled_writes = 0
     AND (a.grant_expires_at IS NULL OR a.grant_expires_at <= clock_timestamp())
     AND NOT EXISTS (
         SELECT 1 FROM app.entry_photos p

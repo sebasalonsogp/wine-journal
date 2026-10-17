@@ -33,6 +33,7 @@ class UploadAsset(Base):
         CheckConstraint("declared_bytes BETWEEN 1 AND 20971520", name="ck_upload_size"),
         CheckConstraint("reserved_bytes >= 26738688", name="ck_upload_reservation"),
         CheckConstraint("unsettled_grants >= 0", name="ck_upload_grants"),
+        CheckConstraint("unsettled_writes >= 0", name="ck_upload_writes"),
         CheckConstraint(
             "declared_type IN ('image/jpeg', 'image/png', 'image/webp', "
             "'image/heic', 'image/heif')",
@@ -92,6 +93,9 @@ class UploadAsset(Base):
     # A crash/timeout may leave a live capability. Cleanup must retain this reservation
     # until every signing attempt is accounted for, even after known grants expire.
     unsettled_grants: Mapped[int] = mapped_column(server_default="0")
+    # The DB default keeps legacy inserts on hold; new code explicitly opts into
+    # write accounting. Failed/ambiguous writes never settle merely because of age.
+    unsettled_writes: Mapped[int] = mapped_column(default=0, server_default="1")
     object_id: Mapped[UUID | None] = mapped_column()
     object_etag: Mapped[str | None] = mapped_column(String(256))
     processing_version: Mapped[int] = mapped_column(server_default="1")
