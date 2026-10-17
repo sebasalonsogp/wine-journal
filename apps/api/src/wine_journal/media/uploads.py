@@ -63,7 +63,7 @@ def owned_asset(session: Session, owner: UUID, asset_id: UUID) -> UploadAsset:
         .where(UploadAsset.owner_id == owner, UploadAsset.id == asset_id)
         .execution_options(populate_existing=True)
     )
-    if asset is None:
+    if asset is None or asset.retired_at is not None:
         raise ApiError(404, "UPLOAD_NOT_FOUND", "This upload is unavailable.")
     return asset
 
@@ -78,6 +78,10 @@ def reserve_upload(
             )
         )
         if asset is not None:
+            if asset.retired_at is not None:
+                raise ApiError(
+                    409, "UPLOAD_RETIRED", "This upload expired. Choose the photo again."
+                )
             if (asset.declared_bytes, asset.declared_type) != (body.size_bytes, body.content_type):
                 raise ApiError(409, "UPLOAD_CONFLICT", "This upload key was used for another file.")
             if asset.state != "PENDING":

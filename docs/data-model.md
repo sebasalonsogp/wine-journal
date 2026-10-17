@@ -109,6 +109,16 @@ Application database commits and object uploads cannot be atomic together. Do no
 
 ## Removal and later sharing
 
+Migration 0017 adds immutable `upload_assets.retired_at` and a candidate index.
+Retirement requires no active entry/occasion/cover reference, a 24-hour draft age,
+settled signing attempts, expired known upload grants and no unfinished processing
+job. It rechecks under the account lock used by reference mutations. Retired
+identities are hidden from access/completion and cannot be retried or reattached;
+the DB trigger forbids clearing or rewriting the timestamp. It does not change the
+asset's processing state or release its reservation. Physical object deletion,
+late-write reconciliation and quota accounting are the next M08 slice. Migration
+rollback refuses to discard retirement fences once they have been used.
+
 | Action | Proposed behavior |
 | --- | --- |
 | Unlink entry from occasion | Set association to null; preserve entry context, notes, and entry media |

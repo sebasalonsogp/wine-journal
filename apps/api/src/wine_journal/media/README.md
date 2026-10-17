@@ -8,7 +8,7 @@ There are no public job routes. Unsupported kinds become terminal failures; no f
 
 ## Running
 
-After the usual local setup and migration 0013, from `repo/`:
+After the usual local setup and current migrations, from `repo/`:
 
 ```sh
 uv run --directory apps/api --locked python ../../scripts/configure_storage.py
@@ -33,6 +33,34 @@ The worker requires Linux Docker and its prebuilt decoder image. The API does no
 - Both API responses use `Cache-Control: no-store`. Signed URLs are bearer capabilities: anyone who already holds one can read that exact derivative until the provider stops accepting it. Do not persist/log them or treat them as share links. Request a new link after expiry.
 - The local provider signs for 120 seconds and returns an HTTP `Expires` deadline matching the token. Its signed route does not return the uploaded object's `no-store` directive; authenticated object reads do. Local tests warm a short-lived signed URL, wait for actual expiry and verify rejection. Account disablement prevents new links but cannot recall downloaded files or already-issued capabilities.
 - Hosted Smart CDN may retain a cached response beyond token expiry. Verify the actual deployment's cache policy before enabling media; use an authenticated no-store proxy if a strict access-revocation deadline is required. See [Supabase signed URL caching](https://supabase.com/docs/guides/storage/cdn/smart-cdn#signed-urls-and-cdn-caching). The frontend should fetch private images without persistent caching and clear them on sign-out (M04).
+
+## Retirement preview (M08a)
+
+After migration 0017 and deployment of the updated API and worker, preview a bounded
+batch from `repo/`:
+
+```sh
+uv run --directory apps/api --locked python -m wine_journal.media.cleanup --limit 50
+```
+
+The default performs no writes and reports aggregate counts only. `--apply` records
+irreversible retirement timestamps for the eligible batch. It does **not** delete
+Storage files or release quota. Deploy the new API/worker before using `--apply`;
+older code does not enforce the retirement fence. Do not schedule this command as
+the finished cleanup worker: physical deletion and reconciliation remain M08b.
+
+Retirement requires an unreferenced upload at least 24 hours old, no unresolved
+signing attempts, no unexpired known upload link, no pending/running job (including
+expired leases), and a state other than PROCESSING. Eligibility is rechecked under
+the same account lock used by attachments and covers. An old operation key receives
+409 UPLOAD_RETIRED; status, completion, viewing and new references receive 404.
+Retired identities cannot be restored or reused. A failed partial batch can be
+retried without changing already retired rows.
+
+Migration rollback is allowed before any retirement is recorded and deliberately
+refused afterward. Restore code that understands the fence instead of dropping it.
+Existing files/reservations remain available for the later deletion reconciler.
+See [M08 checkpoint](../../../../../tasks/media-cleanup-checkpoint.md).
 
 ## Contract
 
