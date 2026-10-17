@@ -13,9 +13,8 @@ from wine_journal.core.database import database_engine
 
 # Do not replace unresolved grants or jobs with a guessed timeout. The draft age
 # is only a retention policy; these guards are independently required.
-ELIGIBLE = """
-    a.retired_at IS NULL
-    AND a.created_at <= clock_timestamp() - interval '24 hours'
+SAFE_UNUSED = """
+    a.created_at <= clock_timestamp() - interval '24 hours'
     AND a.state IN ('PENDING', 'READY', 'FAILED')
     AND a.unsettled_grants = 0
     AND a.unsettled_writes = 0
@@ -34,6 +33,7 @@ ELIGIBLE = """
         WHERE j.owner_id = a.owner_id AND j.reference_id = a.id
         AND j.state IN ('PENDING', 'RUNNING'))
 """
+ELIGIBLE = "a.retired_at IS NULL AND " + SAFE_UNUSED
 
 
 def candidates(engine: Engine, *, limit: int = 50) -> list[tuple[UUID, UUID]]:

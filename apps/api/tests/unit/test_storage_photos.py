@@ -1,3 +1,4 @@
+import json
 import secrets
 from uuid import uuid4
 
@@ -7,6 +8,8 @@ from pydantic import SecretStr
 from pydantic_settings import SettingsConfigDict
 
 from wine_journal.integrations.storage import (
+    MAX_UPLOAD_BYTES,
+    UPLOAD_TYPES,
     ObjectChanged,
     ObjectInfo,
     OutputConflict,
@@ -169,5 +172,51 @@ def test_immutable_write_reconciles_uncertain_results(outcome: str) -> None:
         with pytest.raises(ObjectChanged):
             storage.download(info.model_copy(update={"size": 0}))
         assert writes == 1
+    finally:
+        storage.close()
+
+
+@pytest.mark.parametrize("outcome", ["deleted", "absent", "failure", "timeout", "remains", "bad"])
+def test_exact_deletion_requires_verified_absence(outcome: str) -> None:
+    key = "photos/" + "a" * 32 + "/v1/display.jpg"
+    calls = []
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        calls.append(request.method)
+        if "/bucket/" in request.url.path:
+            return httpx.Response(
+                200,
+                json={
+                    "id": "wine-journal-staging",
+                    "public": False,
+                    "file_size_limit": MAX_UPLOAD_BYTES,
+                    "allowed_mime_types": list(UPLOAD_TYPES),
+                },
+            )
+        if request.method == "DELETE":
+            assert json.loads(request.content) == {"prefixes": [key]}
+            if outcome == "timeout":
+                raise httpx.ReadTimeout("private-provider-body")
+            return httpx.Response(
+                500 if outcome == "failure" else 200,
+                json={} if outcome == "bad" else [],
+            )
+        if outcome == "remains":
+            return httpx.Response(200, json=info_for(key, b"x").model_dump(mode="json"))
+        return httpx.Response(404, json={"code": "NoSuchKey"})
+
+    storage = configured(httpx.MockTransport(respond))
+    try:
+        if outcome in {"deleted", "absent"}:
+            storage.remove((key,))
+        else:
+            with pytest.raises(StorageError) as error:
+                storage.remove((key,))
+            assert "private-provider-body" not in str(error.value)
+        prior = len(calls)
+        for invalid in ((), (key, key), ("staging/",), ("../other",), ("https://other",)):
+            with pytest.raises(ValueError):
+                storage.remove(invalid)
+        assert len(calls) == prior
     finally:
         storage.close()

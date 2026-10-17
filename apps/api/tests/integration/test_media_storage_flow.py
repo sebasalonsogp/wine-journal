@@ -24,11 +24,19 @@ from sqlalchemy.orm import Session
 from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
-from wine_journal.integrations.storage import ObjectInfo, OutputConflict, Storage, StorageError
+from wine_journal.integrations.storage import (
+    ObjectInfo,
+    ObjectMissing,
+    OutputConflict,
+    Storage,
+    StorageError,
+)
 from wine_journal.main import create_app
+from wine_journal.media.cleanup import retire
 from wine_journal.media.models import Job, UploadAsset
 from wine_journal.media.photo_processing import PhotoPublisher, derivative_keys
 from wine_journal.media.photo_sandbox import PhotoSandbox
+from wine_journal.media.sweep import sweep
 from wine_journal.media.uploads import RESERVATION_BYTES
 from wine_journal.worker import run_once
 
@@ -175,11 +183,11 @@ def test_real_private_upload_flow(
             publisher = PhotoPublisher(engine, storage, PhotoSandbox())
             put = storage.put_derivative
 
-            def interrupt(key: str, body: bytes) -> None:
+            def interrupt(key: str, body: bytes) -> bool:
                 assert engine.pool.checkedout() == 0  # type: ignore[attr-defined]
                 if key == thumbnail_key:
                     raise StorageError("Synthetic interruption between private outputs.")
-                put(key, body)
+                return put(key, body)
 
             with monkeypatch.context() as patch:
                 patch.setattr(storage, "put_derivative", interrupt)
@@ -312,6 +320,47 @@ def test_real_private_upload_flow(
             with ThreadPoolExecutor(max_workers=4) as workers:
                 results = list(workers.map(reserve, range(4)))
             assert sorted(results) == [200, 200, 409, 409]
+            # Accelerate ONLY synthetic DB eligibility. The still-live provider token
+            # lets this fixture simulate an upload arriving after the deletion pass.
+            identifier = UUID(grant["assetId"])
+            with admin.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE app.upload_assets SET created_at = now() - interval '2 days', "
+                        "grant_expires_at = now() - interval '1 hour' WHERE id = :id"
+                    ),
+                    {"id": identifier},
+                )
+            assert not retire(engine, owners[0], identifier)
+            # This synthetic interruption happened BEFORE the thumbnail HTTP request,
+            # and all synchronous probe requests have returned. Production must not
+            # clear unknown outcomes this way; only this fixture has that evidence.
+            with admin.begin() as connection:
+                connection.execute(
+                    text("UPDATE app.upload_assets SET unsettled_writes = 0 WHERE id = :id"),
+                    {"id": identifier},
+                )
+            assert retire(engine, owners[0], identifier)
+            assert sweep(engine, storage, owners[0], identifier)
+            for deleted_key in (expected.name, *derivative_keys(identifier)):
+                with pytest.raises(ObjectMissing):
+                    storage.info(deleted_key)
+            assert (
+                client.put(grant["uploadUrl"], headers=headers, content=contents).status_code == 200
+            )
+            with admin.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE app.upload_assets SET "
+                        "cleanup_attempted_at = now() - interval '6 minutes' "
+                        "WHERE id = :id"
+                    ),
+                    {"id": identifier},
+                )
+            assert sweep(engine, storage, owners[0], identifier)
+            with pytest.raises(ObjectMissing):
+                storage.info(expected.name)
+            assert not sweep(engine, storage, owners[0], identifier)
         finally:
             with Session(engine) as session:
                 keys = list(

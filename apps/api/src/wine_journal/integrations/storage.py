@@ -349,3 +349,31 @@ class Storage:
             )
         except (ValueError, KeyError, jwt.InvalidTokenError):
             raise StorageError("Invalid photo viewing response.") from None
+
+    def remove(self, keys: tuple[str, ...]) -> None:
+        """Delete a small exact-key batch and verify absence; never delete prefixes."""
+        if not 1 <= len(keys) <= 3 or len(set(keys)) != len(keys):
+            raise ValueError("Invalid deletion batch.")
+        for key in keys:
+            self._object_path(key)
+        self.check_private_bucket()
+        started = time.monotonic()
+        try:
+            with self._http.stream(
+                "DELETE", f"object/{self.settings.bucket}", json={"prefixes": list(keys)}
+            ) as response:
+                data = bytearray()
+                for chunk in response.iter_bytes():
+                    data.extend(chunk)
+                    if len(data) > 16 * 1024 or time.monotonic() - started > 15:
+                        raise StorageError("Invalid storage deletion response.")
+                if response.status_code != 200 or not isinstance(json.loads(data), list):
+                    raise StorageError("Storage deletion is temporarily unavailable.")
+        except (httpx.HTTPError, ValueError):
+            raise StorageError("Storage deletion is temporarily unavailable.") from None
+        for key in keys:
+            try:
+                self.info(key)
+            except ObjectMissing:
+                continue
+            raise StorageError("Storage deletion is not yet confirmed.")
