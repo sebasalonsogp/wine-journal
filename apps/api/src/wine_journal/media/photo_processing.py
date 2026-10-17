@@ -67,7 +67,12 @@ class PhotoPublisher:
                 .where(UploadAsset.id == work.reference_id, UploadAsset.owner_id == work.owner_id)
                 .with_for_update()
             )
-            if account is None or asset is None or asset.state != "PROCESSING":
+            if (
+                account is None
+                or asset is None
+                or asset.state != "PROCESSING"
+                or asset.retired_at is not None
+            ):
                 yield None
             elif account.state != "ACTIVE":
                 asset.state, asset.processing_error = "FAILED", "ACCOUNT_UNAVAILABLE"

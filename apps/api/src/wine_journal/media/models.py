@@ -24,6 +24,12 @@ class UploadAsset(Base):
         UniqueConstraint("owner_id", "id", name="uq_upload_assets_owner"),
         UniqueConstraint("owner_id", "operation_key", name="uq_upload_operation"),
         UniqueConstraint("object_key", name="uq_upload_object"),
+        Index(
+            "ix_upload_retirement_candidates",
+            "created_at",
+            "id",
+            postgresql_where=text("retired_at IS NULL"),
+        ),
         CheckConstraint("declared_bytes BETWEEN 1 AND 20971520", name="ck_upload_size"),
         CheckConstraint("reserved_bytes >= 26738688", name="ck_upload_reservation"),
         CheckConstraint("unsettled_grants >= 0", name="ck_upload_grants"),
@@ -99,6 +105,7 @@ class UploadAsset(Base):
     thumbnail_sha256: Mapped[str | None] = mapped_column(String(64))
     processing_error: Mapped[str | None] = mapped_column(String(32))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class EntryPhoto(Base):

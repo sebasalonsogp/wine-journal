@@ -1,7 +1,10 @@
+import json
 from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from threading import Barrier
+from unittest.mock import Mock, patch
 from uuid import UUID, uuid4
 
 import pytest
@@ -15,9 +18,14 @@ from sqlalchemy.orm import Session
 from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
-from wine_journal.integrations.storage import new_staging_key
+from wine_journal.core.errors import ApiError
+from wine_journal.integrations.storage import Storage, new_staging_key
 from wine_journal.main import create_app
+from wine_journal.media.attachments import attach_photo
+from wine_journal.media.cleanup import candidates, retire
+from wine_journal.media.cleanup import main as cleanup_main
 from wine_journal.media.models import UploadAsset
+from wine_journal.media.routes import private_storage
 from wine_journal.media.uploads import RESERVATION_BYTES
 
 
@@ -90,6 +98,9 @@ def album(database_urls: dict[str, SecretStr]) -> Iterator[AlbumFixture]:
         finally:
             with admin.begin() as connection:
                 for owner in p.owners:
+                    connection.execute(
+                        text("DELETE FROM app.jobs WHERE owner_id = :owner"), {"owner": owner}
+                    )
                     connection.execute(
                         text("DELETE FROM app.drinking_entries WHERE owner_id = :owner"),
                         {"owner": owner},
@@ -195,6 +206,209 @@ def ready_assets(p: AlbumFixture, *assets: str) -> None:
                 ),
                 {"asset": asset, "object": str(uuid4()), "hash": "a" * 64},
             )
+
+
+def age_asset(p: AlbumFixture, asset: str) -> None:
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE app.upload_assets SET created_at = now() - interval '2 days' WHERE id = :id"
+            ),
+            {"id": asset},
+        )
+
+
+@pytest.mark.parametrize(
+    "hold", ["recent", "grant", "uncertain", "processing", "pending", "running"]
+)
+def test_retirement_preserves_live_or_uncertain_work(album: AlbumFixture, hold: str) -> None:
+    p, asset = album, album.assets[0]
+    age_asset(p, asset)
+    with p.admin.begin() as connection:
+        if hold == "recent":
+            statement = "UPDATE app.upload_assets SET created_at = now() WHERE id = :id"
+        elif hold == "grant":
+            statement = (
+                "UPDATE app.upload_assets SET grant_expires_at = now() + interval '1 hour' "
+                "WHERE id = :id"
+            )
+        elif hold == "uncertain":
+            statement = (
+                "UPDATE app.upload_assets SET unsettled_grants = 1, "
+                "grant_expires_at = now() - interval '1 day' WHERE id = :id"
+            )
+        elif hold == "processing":
+            statement = (
+                "UPDATE app.upload_assets SET state = 'PROCESSING', object_id = :object, "
+                "object_etag = 'test' WHERE id = :id"
+            )
+        else:
+            statement = """INSERT INTO app.jobs
+                (id, owner_id, operation_key, kind, reference_id, state, lease_token, lease_until)
+                VALUES (:object, :owner, :id, 'process_photo', :id, :state,
+                        :token, :expiry)"""
+        connection.execute(
+            text(statement),
+            {
+                "id": asset,
+                "owner": p.owners[0],
+                "object": uuid4(),
+                "state": hold.upper(),
+                "token": uuid4() if hold == "running" else None,
+                # Even an expired lease is not evidence that its external write has ended.
+                "expiry": datetime.now(UTC) - timedelta(hours=1) if hold == "running" else None,
+            },
+        )
+    assert (UUID(p.owners[0]), UUID(asset)) not in candidates(p.engine)
+    assert not retire(p.engine, UUID(p.owners[0]), UUID(asset))
+
+
+def test_retirement_checks_every_active_reference_and_rechecks_preview(album: AlbumFixture) -> None:
+    p, asset = album, album.assets[0]
+    age_asset(p, asset)
+    owner = UUID(p.owners[0])
+    assert (owner, UUID(asset)) in candidates(p.engine)
+    ready_assets(p, asset)
+    entry_url = f"/api/v1/entries/{p.entries[0]}/photos/{asset}"
+    assert p.client.put(entry_url, json={}).status_code == 200
+    assert p.client.put(p.url(), json={}).status_code == 200
+    wine = p.client.get(f"/api/v1/entries/{p.entries[0]}").json()["userWineId"]
+    cover_url = f"/api/v1/me/wines/{wine}/cover"
+    assert p.client.put(cover_url, json={"assetId": asset, "version": 0}).status_code == 200
+    try:
+        assert not retire(p.engine, owner, UUID(asset))
+        assert p.client.delete(entry_url, params={"version": 1}).status_code == 200
+        assert not retire(p.engine, owner, UUID(asset))
+        assert p.client.delete(p.url(), params={"version": 1}).status_code == 200
+        assert not retire(p.engine, owner, UUID(asset))
+    finally:
+        assert p.client.put(cover_url, json={"assetId": None, "version": 1}).status_code == 200
+    assert retire(p.engine, owner, UUID(asset))
+    assert not retire(p.engine, owner, UUID(asset))
+
+
+def test_retirement_fences_all_public_access_and_retains_quota(album: AlbumFixture) -> None:
+    p, asset = album, album.assets[0]
+    age_asset(p, asset)
+    assert not retire(p.engine, UUID(p.owners[1]), UUID(asset))
+    assert retire(p.engine, UUID(p.owners[0]), UUID(asset))
+    with Session(p.engine) as session:
+        record = session.get(UploadAsset, UUID(asset))
+        assert record and record.retired_at and record.reserved_bytes == RESERVATION_BYTES
+        operation = str(record.operation_key)
+    storage = Mock(spec=Storage)
+    p.app.dependency_overrides[private_storage] = lambda: storage
+    assert p.client.get(f"/api/v1/media/{asset}").status_code == 404
+    for suffix, body in (("complete", {}), ("view", {"variant": "thumbnail"})):
+        assert p.client.post(f"/api/v1/media/{asset}/{suffix}", json=body).status_code == 404
+    assert p.client.put(p.url(), json={}).status_code == 404
+    assert (
+        p.client.put(f"/api/v1/entries/{p.entries[0]}/photos/{asset}", json={}).status_code == 404
+    )
+    wine = p.client.get(f"/api/v1/entries/{p.entries[0]}").json()["userWineId"]
+    assert (
+        p.client.put(
+            f"/api/v1/me/wines/{wine}/cover", json={"assetId": asset, "version": 0}
+        ).status_code
+        == 404
+    )
+    response = p.client.post(
+        "/api/v1/media/uploads",
+        json={"sizeBytes": 12, "contentType": "image/jpeg"},
+        headers={"Idempotency-Key": operation},
+    )
+    assert response.status_code == 409 and response.json()["error"]["code"] == "UPLOAD_RETIRED"
+    assert storage.mock_calls == []
+    with p.engine.begin() as connection, pytest.raises(IntegrityError):
+        connection.execute(
+            text("UPDATE app.upload_assets SET retired_at = NULL WHERE id = :id"), {"id": asset}
+        )
+
+
+@pytest.mark.parametrize("attempt", range(3))
+def test_retirement_serializes_with_a_new_attachment(album: AlbumFixture, attempt: int) -> None:
+    p, asset = album, album.assets[0]
+    age_asset(p, asset)
+    barrier = Barrier(2)
+
+    def attach() -> bool:
+        barrier.wait(timeout=5)
+        try:
+            with Session(p.engine) as session:
+                attach_photo(session, p.people[0], UUID(p.entries[0]), UUID(asset))
+            return True
+        except ApiError as error:
+            assert error.status == 404
+            return False
+
+    def cleanup() -> bool:
+        barrier.wait(timeout=5)
+        return retire(p.engine, UUID(p.owners[0]), UUID(asset))
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        attached, retired = pool.submit(attach), pool.submit(cleanup)
+        assert attached.result(timeout=10) != retired.result(timeout=10)
+
+
+def test_retirement_migration_preserves_rows_and_refuses_resurrection(
+    album: AlbumFixture,
+    migrate: Callable[..., None],
+) -> None:
+    p, asset = album, album.assets[0]
+    migrate("downgrade", "0016_occasion_photos")
+    migrate("upgrade", "head")
+    migrate("check")
+    assert p.client.get(f"/api/v1/media/{asset}").status_code == 200
+    age_asset(p, asset)
+    assert retire(p.engine, UUID(p.owners[0]), UUID(asset))
+    with pytest.raises(AssertionError, match="Migration verification failed"):
+        migrate("downgrade", "0016_occasion_photos")
+    assert p.client.get(f"/api/v1/media/{asset}").status_code == 404
+    for limit in (0, 101, True):
+        with pytest.raises(ValueError):
+            candidates(p.engine, limit=limit)
+
+
+def test_retirement_command_previews_by_default_and_safely_replays(
+    album: AlbumFixture,
+    database_urls: dict[str, SecretStr],
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    p = album
+    age_asset(p, p.assets[0])
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE app.upload_assets SET grant_expires_at = now() - interval '1 day' "
+                "WHERE id = :id"
+            ),
+            {"id": p.assets[0]},
+        )
+    settings = Settings.model_construct(database_url=database_urls["runtime"])
+    with patch("wine_journal.media.cleanup.Settings", return_value=settings):
+        with patch("sys.argv", ["cleanup", "--limit", "1"]):
+            assert cleanup_main() == 0
+        assert json.loads(capsys.readouterr().out) == {
+            "mode": "preview",
+            "candidates": 1,
+            "retired": 0,
+            "filesDeleted": 0,
+            "quotaReleased": 0,
+        }
+        assert p.client.get(f"/api/v1/media/{p.assets[0]}").status_code == 200
+        with patch("sys.argv", ["cleanup", "--apply", "--limit", "1"]):
+            assert cleanup_main() == 0
+            assert json.loads(capsys.readouterr().out)["retired"] == 1
+            assert cleanup_main() == 0
+            assert json.loads(capsys.readouterr().out)["retired"] == 0
+        with (
+            patch("sys.argv", ["cleanup"]),
+            patch(
+                "wine_journal.media.cleanup.candidates", side_effect=RuntimeError("PRIVATE_VALUE")
+            ),
+        ):
+            assert cleanup_main() == 1
+            assert "PRIVATE_VALUE" not in capsys.readouterr().out
 
 
 def test_wine_moments_exact_membership_dates_pagination_and_repeated_links(

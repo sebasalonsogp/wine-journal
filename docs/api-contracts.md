@@ -2,6 +2,15 @@
 
 Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing, entry and occasion photo associations, album/source reads and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
+### Retired upload behavior (M08a)
+
+The internal cleanup command can retire an unused upload after eligibility checks;
+there is no public cleanup endpoint. Retired uploads are unavailable (404) for
+status, completion, viewing, attachment and cover assignment. Retrying their
+original upload operation returns 409 `UPLOAD_RETIRED` with guidance to select the
+photo again. Neither retirement nor this response releases quota or deletes files;
+that remains M08b. Existing response shapes and OpenAPI operations are unchanged.
+
 ### Implemented wine memories (M07)
 
 `GET /me/wines/{wine_id}/moments?limit=20&cursor=` returns `{items, nextCursor}`
