@@ -94,7 +94,7 @@ def reserve_upload(
                     func.count(),
                     func.coalesce(func.sum(UploadAsset.reserved_bytes), 0),
                     func.count().filter(UploadAsset.state.in_(("PENDING", "PROCESSING"))),
-                ).where(UploadAsset.owner_id == owner)
+                ).where(UploadAsset.owner_id == owner, UploadAsset.quota_released_at.is_(None))
             ).one()
             if count >= ACCOUNT_ASSETS or reserved + RESERVATION_BYTES > ACCOUNT_BYTES:
                 raise ApiError(

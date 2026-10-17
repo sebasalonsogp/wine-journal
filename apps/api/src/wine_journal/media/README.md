@@ -36,7 +36,7 @@ The worker requires Linux Docker and its prebuilt decoder image. The API does no
 
 ## Retirement preview (M08a)
 
-After migration 0017 and deployment of the updated API and worker, preview a bounded
+After migrations through 0020 and deployment of the updated API and worker, preview a bounded
 batch from `repo/`:
 
 ```sh
@@ -46,11 +46,11 @@ uv run --directory apps/api --locked python -m wine_journal.media.cleanup --limi
 The default performs no writes and reports aggregate counts only. `--apply` records
 irreversible retirement timestamps for the eligible batch. It does **not** delete
 Storage files or release quota. Deploy the new API/worker before using `--apply`;
-older code does not enforce the retirement fence. Do not schedule this command as
-the finished cleanup worker: physical deletion and reconciliation remain M08b.
+older code does not enforce the retirement and write fences. Retirement and
+physical deletion are separate commands so each batch can be inspected.
 
 Retirement requires an unreferenced upload at least 24 hours old, no unresolved
-signing attempts, no unexpired known upload link, no pending/running job (including
+signing or derivative-write attempts, no unexpired known upload link, no pending/running job (including
 expired leases), and a state other than PROCESSING. Eligibility is rechecked under
 the same account lock used by attachments and covers. An old operation key receives
 409 UPLOAD_RETIRED; status, completion, viewing and new references receive 404.
@@ -59,8 +59,49 @@ retried without changing already retired rows.
 
 Migration rollback is allowed before any retirement is recorded and deliberately
 refused afterward. Restore code that understands the fence instead of dropping it.
-Existing files/reservations remain available for the later deletion reconciler.
+Existing files/reservations remain until the deletion reconciler verifies absence.
 See [M08 checkpoint](../../../../../tasks/media-cleanup-checkpoint.md).
+
+## Deletion and quota reconciliation (M08b)
+
+Preview retired assets due for deletion, then explicitly apply a bounded batch:
+
+```sh
+uv run --directory apps/api --locked python -m wine_journal.media.sweep --limit 50
+uv run --directory apps/api --locked python -m wine_journal.media.sweep --limit 50 --apply
+```
+
+Preview does not contact Storage or mutate timestamps. Apply rechecks retirement,
+references and outstanding work under the account lock, persists its attempt time,
+and releases the DB connection before calling Storage. It deletes only the asset's
+exact original/display/thumbnail keys and verifies all three are absent. Failed or
+interrupted passes retry after five minutes. Each invocation does at most 100 assets;
+the default is 50. Individual failures do not prevent other candidates from running.
+The command returns nonzero if any attempted deletion fails and prints aggregate
+counts only. It never lists objects or empties a bucket.
+
+Confirmed deletion records an immutable quota-release timestamp; original reserved
+bytes and operation identity remain for audit/retry protection. New reservations
+exclude released assets from byte, asset and inflight limits. Retired upload-operation
+replay still fails. This is **logical journal quota**, not a hard instantaneous cap
+on provider bytes: an already-accepted client upload can arrive late. Every tombstone,
+including released ones, stays eligible for later sweeps to delete such objects.
+Never stop revisiting a row just because its first deletion succeeded.
+
+Run retirement followed by sweep periodically (at least every five minutes while
+media is enabled); these are one-shot operator commands, not an installed scheduler.
+Automatic supervision/scheduling and alerts are the next operational slice. Backlogs
+need enough batch throughput. Do not enable unattended deletion until every API and
+worker runs the new code. Stop old processes before applying migrations locally.
+
+Migration 0018 puts every pre-existing asset on a write hold. New code explicitly
+initializes tracking; inserts by old code retain the conservative DB default. A
+worker records a hold before each external write and settles it only after an
+acknowledged successful response and a valid lease. Readback after timeout can
+publish a usable photo but cannot settle that uncertain request. Legacy/uncertain
+holds are never cleared automatically or by guessed timeouts; provider-backed
+resolution tooling remains future work. These assets retain their quota. Migration
+0018 refuses downgrade with holds; 0020 refuses downgrade after quota release.
 
 ## Contract
 

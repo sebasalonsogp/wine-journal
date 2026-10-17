@@ -27,7 +27,8 @@ from wine_journal.media.cleanup import candidates, retire
 from wine_journal.media.cleanup import main as cleanup_main
 from wine_journal.media.models import UploadAsset
 from wine_journal.media.routes import private_storage
-from wine_journal.media.uploads import RESERVATION_BYTES
+from wine_journal.media.schemas import UploadRequest
+from wine_journal.media.uploads import RESERVATION_BYTES, reserve_upload
 
 
 @dataclass
@@ -259,12 +260,19 @@ def test_deletion_rechecks_references_retries_and_revisits_late_objects(
     storage.remove.side_effect = StorageError("private-body")
     with pytest.raises(StorageError):
         media_sweep.sweep(p.engine, storage, owner, identifier)
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, identifier)
+        assert row is not None and row.quota_released_at is None
     assert (owner, identifier) not in media_sweep.candidates(p.engine)
     assert not media_sweep.sweep(p.engine, storage, owner, identifier)
     make_sweep_due(p, asset)
     storage.remove.side_effect = remove
     assert not media_sweep.sweep(p.engine, storage, UUID(p.owners[1]), identifier)
     assert media_sweep.sweep(p.engine, storage, owner, identifier) and not objects
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, identifier)
+        assert row is not None and row.quota_released_at is not None
+        released_at = row.quota_released_at
     objects.add(expected[0])  # Simulate an already-accepted upload arriving late.
     make_sweep_due(p, asset)
     assert media_sweep.sweep(p.engine, storage, owner, identifier) and not objects
@@ -272,6 +280,57 @@ def test_deletion_rechecks_references_retries_and_revisits_late_objects(
         row = session.get(UploadAsset, identifier)
         assert row is not None and row.retired_at is not None
         assert row.reserved_bytes == RESERVATION_BYTES
+        assert row.quota_released_at == released_at
+
+
+def test_verified_cleanup_recovers_quota_but_never_reuses_operation(
+    album: AlbumFixture, migrate: Callable[..., None]
+) -> None:
+    p, identifier = album, UUID(album.assets[0])
+    migrate("downgrade", "0019_media_sweep")
+    migrate("upgrade", "head")
+    migrate("check")
+    for _ in range(2):
+        extra = owned_asset(p)
+        with p.admin.begin() as connection:
+            connection.execute(
+                text(
+                    "UPDATE app.upload_assets SET state = 'FAILED', "
+                    "processing_error = 'PROCESSING_FAILED' WHERE id = :id"
+                ),
+                {"id": extra},
+            )
+    body = UploadRequest.model_validate({"sizeBytes": 12, "contentType": "image/jpeg"})
+    with Session(p.engine) as session, pytest.raises(ApiError) as error:
+        reserve_upload(session, p.people[0], uuid4(), body)
+    assert error.value.code == "MEDIA_QUOTA_EXCEEDED"
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, identifier)
+        assert row is not None
+        operation = row.operation_key
+    with p.engine.begin() as connection, pytest.raises(IntegrityError):
+        connection.execute(
+            text("UPDATE app.upload_assets SET quota_released_at = now() WHERE id = :id"),
+            {"id": identifier},
+        )
+    age_asset(p, str(identifier))
+    assert retire(p.engine, UUID(p.owners[0]), identifier)
+    with Session(p.engine) as session, pytest.raises(ApiError):
+        reserve_upload(session, p.people[0], uuid4(), body)
+    assert media_sweep.sweep(p.engine, Mock(spec=Storage), UUID(p.owners[0]), identifier)
+    with Session(p.engine) as session:
+        new_id, _ = reserve_upload(session, p.people[0], uuid4(), body)
+        assert new_id != identifier
+    with Session(p.engine) as session, pytest.raises(ApiError) as error:
+        reserve_upload(session, p.people[0], operation, body)
+    assert error.value.code == "UPLOAD_RETIRED"
+    with p.engine.begin() as connection, pytest.raises(IntegrityError):
+        connection.execute(
+            text("UPDATE app.upload_assets SET quota_released_at = NULL WHERE id = :id"),
+            {"id": identifier},
+        )
+    with pytest.raises(AssertionError, match="Migration verification failed"):
+        migrate("downgrade", "0019_media_sweep")
 
 
 def test_sweep_rechecks_new_hold_and_claims_once_concurrently(album: AlbumFixture) -> None:

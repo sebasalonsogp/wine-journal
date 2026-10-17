@@ -1,4 +1,4 @@
-"""Retry exact-key deletion while retaining tombstones and quota reservations."""
+"""Retry exact-key deletion and release logical quota while retaining tombstones."""
 
 import argparse
 import json
@@ -61,13 +61,26 @@ def sweep(engine: Engine, storage: Storage, owner_id: UUID, asset_id: UUID) -> b
     # Immutable retirement prohibits new references/grants/work. A crash or failed
     # delete leaves a due timestamp; the next run can repeat the same exact keys.
     storage.remove((key, *derivative_keys(asset_id)))
+    with Session(engine) as session, session.begin():
+        session.execute(text("SET LOCAL lock_timeout = '3s'"))
+        session.scalar(select(AppUser.id).where(AppUser.id == owner_id).with_for_update())
+        # A provider failure or crash before this commit keeps the reservation. An
+        # eventual retry verifies absence again; logical quota is released once.
+        session.execute(
+            text(
+                "UPDATE app.upload_assets a SET quota_released_at = clock_timestamp() "
+                "WHERE a.owner_id = :owner AND a.id = :asset "
+                "AND a.retired_at IS NOT NULL AND a.quota_released_at IS NULL AND " + SAFE_UNUSED
+            ),
+            {"owner": owner_id, "asset": asset_id},
+        )
     return True
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Preview or delete retired media objects.")
     parser.add_argument(
-        "--apply", action="store_true", help="Delete objects; retain quota and tombstones."
+        "--apply", action="store_true", help="Delete objects and reclaim quota; retain tombstones."
     )
     parser.add_argument("--limit", type=int, choices=range(1, 101), default=50, metavar="1..100")
     args = parser.parse_args()
@@ -95,7 +108,6 @@ def main() -> int:
                     "candidates": len(batch),
                     "assetsConfirmedAbsent": cleaned,
                     "failed": failed,
-                    "quotaReleased": 0,
                 }
             )
         )
