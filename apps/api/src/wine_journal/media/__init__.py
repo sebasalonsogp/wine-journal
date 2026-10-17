@@ -1,1 +1,1 @@
-"""Private assets, typed attachments, processing, signed access, and cleanup."""
+"""Private media lifecycle and durable processing jobs."""

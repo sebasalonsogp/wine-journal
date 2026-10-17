@@ -1,0 +1,70 @@
+import hashlib
+from uuid import UUID
+
+from sqlalchemy import text
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
+
+from wine_journal.accounts.service import read_account
+from wine_journal.catalog.service import create_manual_release, read_owned_release
+from wine_journal.core.auth import Principal
+from wine_journal.core.errors import ApiError
+from wine_journal.journal.entry_creation import insert_entry
+from wine_journal.journal.models import EntrySave, Occasion
+from wine_journal.journal.occasions import read_occasion
+from wine_journal.journal.schemas import EntryResponse, SaveEntry
+
+
+def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntry) -> EntryResponse:
+    # Preserve pre-occasion receipt hashes for unchanged, minimal capture requests.
+    absent = {
+        field for field in ("occasion_id", "new_occasion", "notes") if getattr(body, field) is None
+    }
+    digest = hashlib.sha256(body.model_dump_json(exclude=absent).encode()).hexdigest()
+    try:
+        with session.begin():
+            session.execute(text("SET LOCAL lock_timeout = '3s'"))
+            owner = read_account(session, principal)
+            claimed = session.scalar(
+                insert(EntrySave)
+                .values(owner_id=owner.id, key=key, request_hash=digest)
+                .on_conflict_do_nothing()
+                .returning(EntrySave.key)
+            )
+            intent = session.get(EntrySave, (owner.id, key))
+            assert intent is not None
+            if claimed is None:
+                if intent.request_hash != digest:
+                    raise ApiError(
+                        409, "SAVE_CONFLICT", "This save key belongs to different input."
+                    )
+                assert intent.response is not None
+                if intent.response.get("deleted") is True:
+                    raise ApiError(409, "ENTRY_REMOVED", "This saved entry has been deleted.")
+                return EntryResponse.model_validate(intent.response)
+            occasion_id = body.occasion_id
+            if occasion_id is not None:
+                read_occasion(session, owner.id, occasion_id, lock=True)
+            elif body.new_occasion is not None:
+                occasion = Occasion(owner_id=owner.id, **body.new_occasion.model_dump())
+                session.add(occasion)
+                session.flush()
+                occasion_id = occasion.id
+            if body.manual_wine is not None:
+                release = create_manual_release(session, owner.id, body.manual_wine)
+            else:
+                assert body.release_id is not None
+                release = read_owned_release(session, owner.id, body.release_id)
+            entry = insert_entry(
+                session, owner.id, release.id, body.consumed_date, occasion_id, body.notes
+            )
+            result = EntryResponse.model_validate(entry)
+            intent.response = result.model_dump(mode="json", by_alias=True)
+            return result
+    except OperationalError as error:
+        if getattr(error.orig, "sqlstate", None) == "55P03":
+            raise ApiError(
+                409, "SAVE_BUSY", "A save is in progress. Retry with the same key.", retry_after=3
+            ) from None
+        raise
