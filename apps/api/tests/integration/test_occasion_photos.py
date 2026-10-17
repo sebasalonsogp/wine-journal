@@ -19,8 +19,9 @@ from wine_journal.core.auth import Principal, require_principal
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
 from wine_journal.core.errors import ApiError
-from wine_journal.integrations.storage import Storage, new_staging_key
+from wine_journal.integrations.storage import Storage, StorageError, new_staging_key
 from wine_journal.main import create_app
+from wine_journal.media import sweep as media_sweep
 from wine_journal.media.attachments import attach_photo
 from wine_journal.media.cleanup import candidates, retire
 from wine_journal.media.cleanup import main as cleanup_main
@@ -216,6 +217,128 @@ def age_asset(p: AlbumFixture, asset: str) -> None:
             ),
             {"id": asset},
         )
+
+
+def make_sweep_due(p: AlbumFixture, asset: str) -> None:
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE app.upload_assets SET cleanup_attempted_at = now() - interval '6 minutes' "
+                "WHERE id = :id"
+            ),
+            {"id": asset},
+        )
+
+
+def test_deletion_rechecks_references_retries_and_revisits_late_objects(
+    album: AlbumFixture,
+) -> None:
+    p, asset = album, album.assets[0]
+    owner, identifier = UUID(p.owners[0]), UUID(asset)
+    age_asset(p, asset)
+    storage = Mock(spec=Storage)
+    assert not media_sweep.sweep(p.engine, storage, owner, identifier)
+    assert not storage.remove.called
+    assert retire(p.engine, owner, identifier)
+    assert (owner, identifier) in media_sweep.candidates(p.engine)
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, identifier)
+        assert row is not None
+        expected = (
+            row.object_key,
+            f"photos/{identifier.hex}/v1/display.jpg",
+            f"photos/{identifier.hex}/v1/thumbnail.webp",
+        )
+    objects = set(expected)
+
+    def remove(keys: tuple[str, ...]) -> None:
+        assert p.engine.pool.checkedout() == 0  # type: ignore[attr-defined]
+        assert keys == expected
+        objects.difference_update(keys)
+
+    storage.remove.side_effect = StorageError("private-body")
+    with pytest.raises(StorageError):
+        media_sweep.sweep(p.engine, storage, owner, identifier)
+    assert (owner, identifier) not in media_sweep.candidates(p.engine)
+    assert not media_sweep.sweep(p.engine, storage, owner, identifier)
+    make_sweep_due(p, asset)
+    storage.remove.side_effect = remove
+    assert not media_sweep.sweep(p.engine, storage, UUID(p.owners[1]), identifier)
+    assert media_sweep.sweep(p.engine, storage, owner, identifier) and not objects
+    objects.add(expected[0])  # Simulate an already-accepted upload arriving late.
+    make_sweep_due(p, asset)
+    assert media_sweep.sweep(p.engine, storage, owner, identifier) and not objects
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, identifier)
+        assert row is not None and row.retired_at is not None
+        assert row.reserved_bytes == RESERVATION_BYTES
+
+
+def test_sweep_rechecks_new_hold_and_claims_once_concurrently(album: AlbumFixture) -> None:
+    p, asset = album, album.assets[0]
+    owner, identifier = UUID(p.owners[0]), UUID(asset)
+    age_asset(p, asset)
+    assert retire(p.engine, owner, identifier)
+    assert (owner, identifier) in media_sweep.candidates(p.engine)
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.upload_assets SET unsettled_writes = 1 WHERE id = :id"),
+            {"id": identifier},
+        )
+    storage = Mock(spec=Storage)
+    assert not media_sweep.sweep(p.engine, storage, owner, identifier)
+    assert not storage.remove.called
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.upload_assets SET unsettled_writes = 0 WHERE id = :id"),
+            {"id": identifier},
+        )
+    barrier = Barrier(2)
+
+    def race(_: int) -> bool:
+        barrier.wait()
+        return media_sweep.sweep(p.engine, storage, owner, identifier)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert sorted(pool.map(race, range(2))) == [False, True]
+    assert storage.remove.call_count == 1
+
+
+def test_sweep_command_preview_failure_and_batch_progress(
+    album: AlbumFixture, database_urls: dict[str, SecretStr], capsys: pytest.CaptureFixture[str]
+) -> None:
+    p = album
+    for owner, asset in zip(p.owners, p.assets, strict=True):
+        age_asset(p, asset)
+        assert retire(p.engine, UUID(owner), UUID(asset))
+    settings = Settings.model_construct(database_url=database_urls["runtime"])
+    with (
+        patch.object(media_sweep, "Settings", return_value=settings),
+        patch.object(media_sweep, "Storage") as provider,
+        patch("sys.argv", ["sweep"]),
+    ):
+        assert media_sweep.main() == 0
+        assert json.loads(capsys.readouterr().out)["candidates"] == 2
+        provider.assert_not_called()
+    storage = Mock(spec=Storage)
+    storage.remove.side_effect = [StorageError("private-object-key"), None]
+    with (
+        patch.object(media_sweep, "Settings", return_value=settings),
+        patch.object(media_sweep, "StorageSettings"),
+        patch.object(media_sweep, "Storage", return_value=storage),
+        patch("sys.argv", ["sweep", "--apply"]),
+    ):
+        assert media_sweep.main() == 1
+        result = json.loads(capsys.readouterr().out)
+        assert result["failed"] == 1 and result["assetsConfirmedAbsent"] == 1
+        storage.close.assert_called_once()
+    assert not media_sweep.candidates(p.engine)
+    # A failed old item becomes eligible again after its backoff, not permanently lost.
+    make_sweep_due(p, p.assets[0])
+    assert media_sweep.candidates(p.engine, limit=1) == [(UUID(p.owners[0]), UUID(p.assets[0]))]
+    for limit in (0, 101, True):
+        with pytest.raises(ValueError):
+            media_sweep.candidates(p.engine, limit=limit)
 
 
 @pytest.mark.parametrize(

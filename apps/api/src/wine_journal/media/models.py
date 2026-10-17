@@ -30,6 +30,12 @@ class UploadAsset(Base):
             "id",
             postgresql_where=text("retired_at IS NULL"),
         ),
+        Index(
+            "ix_upload_cleanup_due",
+            text("coalesce(cleanup_attempted_at, retired_at)"),
+            "id",
+            postgresql_where=text("retired_at IS NOT NULL"),
+        ),
         CheckConstraint("declared_bytes BETWEEN 1 AND 20971520", name="ck_upload_size"),
         CheckConstraint("reserved_bytes >= 26738688", name="ck_upload_reservation"),
         CheckConstraint("unsettled_grants >= 0", name="ck_upload_grants"),
@@ -110,6 +116,7 @@ class UploadAsset(Base):
     processing_error: Mapped[str | None] = mapped_column(String(32))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cleanup_attempted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class EntryPhoto(Base):
