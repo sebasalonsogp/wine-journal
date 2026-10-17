@@ -158,7 +158,7 @@ def test_immutable_write_reconciles_uncertain_results(outcome: str) -> None:
             with pytest.raises(OutputConflict if outcome == "different" else StorageError):
                 storage.put_derivative(key, contents)
         else:
-            storage.put_derivative(key, contents)
+            assert storage.put_derivative(key, contents) is (outcome == "success")
         assert writes == 1
         with pytest.raises(ValueError):
             storage.sign_upload(key)

@@ -121,10 +121,14 @@ def publication(database_urls: dict[str, SecretStr]) -> Iterator[Publication]:
         assert source == b"source"
         return RESULT
 
-    def put(key: str, contents: bytes) -> None:
+    def put(key: str, contents: bytes) -> bool:
         assert engine.pool.checkedout() == 0  # type: ignore[attr-defined]
+        with Session(engine) as session:
+            asset = session.get(UploadAsset, identifier)
+            assert asset is not None and asset.unsettled_writes > 0
         assert key not in outputs or outputs[key] == contents
         outputs[key] = contents
+        return True
 
     storage.download.side_effect, storage.put_derivative.side_effect = download, put
     decoder.convert.side_effect = convert
@@ -158,6 +162,7 @@ def test_ready_requires_both_outputs_and_replays_after_commit(publication: Publi
         16,
     )
     assert asset.reserved_bytes == RESERVATION_BYTES and asset.unsettled_grants == 1
+    assert asset.unsettled_writes == 0
     assert set(p.outputs) == set(derivative_keys(p.asset_id))
     p.expire()
     assert run_once(p.engine, {"process_photo": p.publisher})
@@ -170,20 +175,56 @@ def test_partial_publication_reuses_exact_output_on_retry(publication: Publicati
     p = publication
     write = p.storage.put_derivative.side_effect
 
-    def interrupt(key: str, contents: bytes) -> None:
+    def interrupt(key: str, contents: bytes) -> bool:
         if key.endswith("thumbnail.webp"):
             assert p.asset().state == "PROCESSING"
             raise StorageError("synthetic interruption")
-        write(key, contents)
+        return bool(write(key, contents))
 
     p.storage.put_derivative.side_effect = interrupt
     assert run_once(p.engine, {"process_photo": p.publisher})
     assert p.asset().state == "PROCESSING" and p.job().state == "PENDING"
+    assert p.asset().unsettled_writes == 1
     assert len(p.outputs) == 1
     p.storage.put_derivative.side_effect = write
     p.due()
     assert run_once(p.engine, {"process_photo": p.publisher})
     assert p.asset().state == "READY" and len(p.outputs) == 2
+    assert p.asset().unsettled_writes == 1  # Retry success cannot settle the earlier request.
+
+
+def test_readback_after_timeout_retains_write_holds(publication: Publication) -> None:
+    p = publication
+    write = p.storage.put_derivative.side_effect
+
+    def uncertain(key: str, contents: bytes) -> bool:
+        write(key, contents)
+        return False
+
+    p.storage.put_derivative.side_effect = uncertain
+    assert run_once(p.engine, {"process_photo": p.publisher})
+    assert p.asset().state == "READY" and p.asset().unsettled_writes == 2
+    assert p.asset().reserved_bytes == RESERVATION_BYTES
+
+
+def test_lost_lease_retains_acknowledged_write_hold(publication: Publication) -> None:
+    p = publication
+    work = claim(p.engine)
+    assert work
+    write = p.storage.put_derivative.side_effect
+
+    def delayed(key: str, contents: bytes) -> bool:
+        write(key, contents)
+        p.expire()
+        return True
+
+    p.storage.put_derivative.side_effect = delayed
+    with pytest.raises(LeaseLost):
+        p.publisher(work)
+    assert p.asset().unsettled_writes == 1 and len(p.outputs) == 1
+    p.storage.put_derivative.side_effect = write
+    assert run_once(p.engine, {"process_photo": p.publisher})
+    assert p.asset().state == "READY" and p.asset().unsettled_writes == 1
 
 
 def test_changed_bucket_policy_stops_before_read_or_decode(publication: Publication) -> None:

@@ -274,8 +274,12 @@ class Storage:
             raise ObjectChanged("Object identity changed.")
         return bytes(data)
 
-    def put_derivative(self, key: str, contents: bytes) -> None:
-        """Never overwrite. A matching existing object also completes an uncertain write."""
+    def put_derivative(self, key: str, contents: bytes) -> bool:
+        """Verify readable bytes; separately report an acknowledged write request.
+
+        Readback can permit publication after a timeout, but cannot prove that this
+        request has stopped. Cleanup must retain its hold when False is returned.
+        """
         if not DERIVATIVE_PATTERN.fullmatch(key):
             raise ValueError("Invalid derivative key.")
         display = key.endswith("display.jpg")
@@ -283,14 +287,16 @@ class Storage:
         content_type = "image/jpeg" if display else "image/webp"
         if not 0 < len(contents) <= limit:
             raise ValueError("Invalid derivative size.")
+        acknowledged = False
         try:
             # Readback, rather than provider-specific conflict responses, determines success.
-            self._request(
+            status, _ = self._request(
                 "POST",
                 f"object/{self._object_path(key)}",
                 contents=contents,
                 content_type=content_type,
             )
+            acknowledged = status in {200, 201}
         except StorageError:
             pass
         info = self.info(key)
@@ -298,6 +304,7 @@ class Storage:
             raise OutputConflict("Existing derivative differs.")
         if self.download(info, limit=limit) != contents:
             raise OutputConflict("Existing derivative differs.")
+        return acknowledged
 
     def sign_view(self, key: str, *, seconds: int = VIEW_SECONDS) -> ViewCapability:
         """Issue a bounded read capability only for server-generated derivative paths."""

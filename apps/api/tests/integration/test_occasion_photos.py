@@ -219,7 +219,7 @@ def age_asset(p: AlbumFixture, asset: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "hold", ["recent", "grant", "uncertain", "processing", "pending", "running"]
+    "hold", ["recent", "grant", "uncertain", "write", "processing", "pending", "running"]
 )
 def test_retirement_preserves_live_or_uncertain_work(album: AlbumFixture, hold: str) -> None:
     p, asset = album, album.assets[0]
@@ -237,6 +237,8 @@ def test_retirement_preserves_live_or_uncertain_work(album: AlbumFixture, hold: 
                 "UPDATE app.upload_assets SET unsettled_grants = 1, "
                 "grant_expires_at = now() - interval '1 day' WHERE id = :id"
             )
+        elif hold == "write":
+            statement = "UPDATE app.upload_assets SET unsettled_writes = 1 WHERE id = :id"
         elif hold == "processing":
             statement = (
                 "UPDATE app.upload_assets SET state = 'PROCESSING', object_id = :object, "
@@ -360,6 +362,25 @@ def test_retirement_migration_preserves_rows_and_refuses_resurrection(
     migrate("check")
     assert p.client.get(f"/api/v1/media/{asset}").status_code == 200
     age_asset(p, asset)
+    # Migration conservatively fences legacy assets, even if they are old enough.
+    assert not retire(p.engine, UUID(p.owners[0]), UUID(asset))
+    with pytest.raises(AssertionError, match="Migration verification failed"):
+        migrate("downgrade", "0017_media_retirement")
+    with p.admin.begin() as connection:
+        rows = (
+            connection.execute(
+                text("SELECT unsettled_writes FROM app.upload_assets WHERE owner_id IN (:a, :b)"),
+                {"a": p.owners[0], "b": p.owners[1]},
+            )
+            .scalars()
+            .all()
+        )
+        assert rows == [1, 1]
+        # Synthetic fixture has never contacted Storage. Do not clear real legacy holds.
+        connection.execute(
+            text("UPDATE app.upload_assets SET unsettled_writes = 0 WHERE owner_id IN (:a, :b)"),
+            {"a": p.owners[0], "b": p.owners[1]},
+        )
     assert retire(p.engine, UUID(p.owners[0]), UUID(asset))
     with pytest.raises(AssertionError, match="Migration verification failed"):
         migrate("downgrade", "0016_occasion_photos")
