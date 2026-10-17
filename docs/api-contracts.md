@@ -8,8 +8,10 @@ The internal cleanup command can retire an unused upload after eligibility check
 there is no public cleanup endpoint. Retired uploads are unavailable (404) for
 status, completion, viewing, attachment and cover assignment. Retrying their
 original upload operation returns 409 `UPLOAD_RETIRED` with guidance to select the
-photo again. Neither retirement nor this response releases quota or deletes files;
-that remains M08b. Existing response shapes and OpenAPI operations are unchanged.
+photo again. Neither retirement nor this response releases quota or deletes files.
+The separate internal M08b sweep verifies deletion before releasing logical quota;
+the original operation still cannot be reused. Existing response shapes and
+OpenAPI operations are unchanged; no public cleanup controls are exposed.
 
 ### Implemented wine memories (M07)
 

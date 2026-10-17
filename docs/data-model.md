@@ -115,9 +115,25 @@ settled signing attempts, expired known upload grants and no unfinished processi
 job. It rechecks under the account lock used by reference mutations. Retired
 identities are hidden from access/completion and cannot be retried or reattached;
 the DB trigger forbids clearing or rewriting the timestamp. It does not change the
-asset's processing state or release its reservation. Physical object deletion,
-late-write reconciliation and quota accounting are the next M08 slice. Migration
+asset's processing state or release its reservation. Migration
 rollback refuses to discard retirement fences once they have been used.
+
+Migration 0018 adds nonnegative `unsettled_writes`: the DB default of one holds
+legacy rows and old-code inserts; new application inserts explicitly start at zero.
+Each derivative request increments before external I/O and settles only after a
+successful acknowledged response under a valid lease. Unknown outcomes survive
+retries and job termination and block retirement/deletion.
+
+Migration 0019 adds `cleanup_attempted_at` and a due-order index. The bounded sweep
+rechecks safety under the account lock, commits a five-minute retry backoff, then
+deletes three exact owned keys outside the transaction and verifies absence.
+Migration 0020 adds immutable `quota_released_at`, constrained to retired assets
+with a recorded cleanup attempt. Only verified deletion releases logical byte,
+asset and inflight reservations; the original reservation and operation stay intact.
+Repeated cleanup cannot double-release quota or resurrect an operation. Released
+tombstones remain in subsequent sweeps for late objects. Quota describes logical
+allocation; transient late provider objects require eventual reconciliation and
+are not a guaranteed hard physical-byte ceiling. Rollback after release is refused.
 
 | Action | Proposed behavior |
 | --- | --- |

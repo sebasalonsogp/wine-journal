@@ -41,6 +41,11 @@ class UploadAsset(Base):
         CheckConstraint("unsettled_grants >= 0", name="ck_upload_grants"),
         CheckConstraint("unsettled_writes >= 0", name="ck_upload_writes"),
         CheckConstraint(
+            "quota_released_at IS NULL OR "
+            "(retired_at IS NOT NULL AND cleanup_attempted_at IS NOT NULL)",
+            name="ck_upload_quota_release",
+        ),
+        CheckConstraint(
             "declared_type IN ('image/jpeg', 'image/png', 'image/webp', "
             "'image/heic', 'image/heif')",
             name="ck_upload_type",
@@ -117,6 +122,7 @@ class UploadAsset(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cleanup_attempted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    quota_released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class EntryPhoto(Base):

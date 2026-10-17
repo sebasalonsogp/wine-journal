@@ -342,6 +342,9 @@ def test_real_private_upload_flow(
                 )
             assert retire(engine, owners[0], identifier)
             assert sweep(engine, storage, owners[0], identifier)
+            with Session(engine) as session:
+                asset = session.get(UploadAsset, identifier)
+                assert asset is not None and asset.quota_released_at is not None
             for deleted_key in (expected.name, *derivative_keys(identifier)):
                 with pytest.raises(ObjectMissing):
                     storage.info(deleted_key)
@@ -382,6 +385,15 @@ def test_real_private_upload_flow(
                 )
                 assert result.status_code == 200, "Synthetic bucket cleanup failed."
             finally:
+                with admin.begin() as connection:
+                    for owner in owners:
+                        connection.execute(
+                            text("DELETE FROM app.jobs WHERE owner_id = :owner"), {"owner": owner}
+                        )
+                        connection.execute(
+                            text("DELETE FROM app.upload_assets WHERE owner_id = :owner"),
+                            {"owner": owner},
+                        )
                 storage.close()
                 engine.dispose()
                 admin.dispose()
