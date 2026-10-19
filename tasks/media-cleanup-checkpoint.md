@@ -1,7 +1,8 @@
 # M08 — Safe media cleanup and quota recovery
 
-Status: M08a and M08b implemented, October 17, 2026. M08 remains incomplete pending
-supervised recurring execution, legacy/uncertain-hold resolution and audit closeout.
+Status: M08a, M08b and M08c1 implemented, October 19, 2026. M08 remains incomplete
+pending legacy/uncertain-hold resolution, deployment supervision/alert routing and
+audit closeout.
 
 ## Slices and verification
 
@@ -25,9 +26,22 @@ supervised recurring execution, legacy/uncertain-hold resolution and audit close
    after confirmed deletion, preserving original reservations and retry identities.
    New uploads exclude released rows from byte/asset/inflight counts. Verify
    quota exhaustion/recovery, repeat cleanup, failure holds and rollback protection.
-5. M08c: supervised recurring retirement/sweep execution and aggregate alerts;
-   evidence-based resolution of legacy/uncertain write/signing holds. Both current
-   commands are one-shot; no scheduler has been installed or enabled.
+5. M08c1: add `media/maintenance.py` for serial retirement/sweep cycles,
+   default preview, explicit apply, bounded batches, interruptible polling and
+   redacted JSON status. Add `media/maintenance_status.py` for aggregate hold
+   diagnostics. Verify real SQL eligibility/hold totals, per-asset failures, restart
+   and shutdown behavior, configuration errors, and a preview subprocess. Document
+   supervisor/alert requirements; do not install an unattended deletion service on
+   the developer machine.
+6. M08c2: evidence-based resolution of legacy/uncertain write/signing holds. The
+   database counter cannot establish which remote request has stopped. Do not add
+   a force-clear flag or infer safety from age; provider-backed evidence remains
+   required. Deployment supervision and alert delivery remain release requirements.
+
+The runner's operational questions are: is cleanup progressing, are batches full,
+are failures delaying recovery, and how much reserved capacity is held? Structured
+cycle events answer the first three; read-only aggregate hold counts answer the
+last. No private identities or raw provider/DB exceptions appear in those events.
 
 ## Safety rules
 
@@ -119,3 +133,24 @@ The API and photo worker were restarted after migration. All seven targeted brow
 scenarios passed: covers, capture/retry/removal, occasion albums, wine highlights
 and cross-tab sign-out. Both cleanup previews reported zero candidates and made
 no changes. Exact-head CI outcomes are recorded on the PR after their runs finish.
+
+## M08c1 evidence — October 19
+
+All **346 API tests passed**, including real Storage and isolated Docker decoding.
+Seventeen new checks cover preview without Storage configuration, hold-count
+deduplication, real eligibility/deletion/quota orchestration, repeated runs,
+subprocess preview/restart, per-asset failure isolation, startup validation,
+redacted failures, watch-mode recovery and shutdown between assets/during waits.
+
+Ruff, formatting (146 files), strict typing (121 source files), package build and
+unchanged OpenAPI export passed. The browser secret scan again checked 19 scripts.
+No schema, dependencies, environment variables, public APIs or frontend behavior
+changed. The maintenance runner is a separate executable module; existing API and
+photo-worker processes do not need a migration or restart for this slice.
+
+A local one-cycle preview found 7 retirement candidates and 72 assets with write
+holds; zero assets were retired or deleted. Counts describe the whole local test
+database, and reserved capacity is not measured provider usage. No apply/watch
+deletion process or OS-level scheduler was installed. The PR records exact-head CI
+results. M08c2 remains open because counters alone cannot identify or certify each
+legacy/uncertain provider request; an elapsed-time or force-clear bypass is absent.

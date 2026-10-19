@@ -88,11 +88,10 @@ on provider bytes: an already-accepted client upload can arrive late. Every tomb
 including released ones, stays eligible for later sweeps to delete such objects.
 Never stop revisiting a row just because its first deletion succeeded.
 
-Run retirement followed by sweep periodically (at least every five minutes while
-media is enabled); these are one-shot operator commands, not an installed scheduler.
-Automatic supervision/scheduling and alerts are the next operational slice. Backlogs
-need enough batch throughput. Do not enable unattended deletion until every API and
-worker runs the new code. Stop old processes before applying migrations locally.
+Run retirement followed by sweep periodically while media is enabled. The recurring
+runner below combines these operations. Backlogs need enough batch throughput. Do
+not enable unattended deletion until every API and worker runs the new code. Stop
+old processes before applying migrations locally.
 
 Migration 0018 puts every pre-existing asset on a write hold. New code explicitly
 initializes tracking; inserts by old code retain the conservative DB default. A
@@ -102,6 +101,75 @@ publish a usable photo but cannot settle that uncertain request. Legacy/uncertai
 holds are never cleared automatically or by guessed timeouts; provider-backed
 resolution tooling remains future work. These assets retain their quota. Migration
 0018 refuses downgrade with holds; 0020 refuses downgrade after quota release.
+
+## Recurring maintenance and hold diagnostics (M08c1)
+
+From `repo/`, inspect one read-only cycle, or repeat previews:
+
+```sh
+uv run --directory apps/api --locked python -m wine_journal.media.maintenance
+uv run --directory apps/api --locked python -m wine_journal.media.maintenance --watch
+```
+
+After reviewing the preview and confirming all writers run the current code,
+explicitly enable the deletion runner under the deployment's process supervisor:
+
+```sh
+uv run --directory apps/api --locked python -m wine_journal.media.maintenance --watch --apply --limit 50 --interval-seconds 300
+```
+
+No scheduler or deletion service is installed by these repository changes. `--watch`
+runs immediately, then waits 300–3600 seconds **after each completed cycle**. Cycles
+are serial: slow runs do not overlap or accumulate catch-up work. Each cycle selects
+at most `--limit` (1–100) retirements and the same number of deletions. Both are
+rechecked by the existing account-lock guards. The second query runs after retirement
+so a newly retired asset can be deleted in the same cycle. SIGINT/SIGTERM stops the
+wait immediately and stops between assets; an in-flight operation finishes first.
+The runner continues cleanup even if new media uploads are disabled.
+
+Preview never loads Storage configuration and performs no mutations. Apply validates
+the private bucket before retiring anything. Per-asset failures are counted and do
+not stop other candidates. A cycle-level failure emits a fixed error and retries
+after the interval in watch mode. One-shot mode exits nonzero on failure. Startup
+configuration errors exit nonzero; the supervisor should restart with backoff.
+Use the existing ignored server `.env`/`.env.storage`, not credentials in arguments.
+
+Stdout contains JSON events with UTC timestamp, `runId`, `entryPoint` and a fixed
+event name. Each cycle emits start/finish or failure; finish includes duration,
+batch counts, successful work and independent retirement/deletion failure counts.
+Only aggregate values are emitted—no account/asset IDs, keys, URLs or exception
+bodies. These are operator diagnostics, not a public API.
+
+- `HELD_ASSETS`: investigate persistent/growing holds. `heldAssets` counts each
+  unreleased asset with signing or write uncertainty once. `signingHeldAssets` and
+  `writeHeldAssets` overlap. `heldReservedBytes` is reserved capacity, not measured
+  provider usage. Referenced photos can have holds; this is not a deletion backlog.
+- `BATCH_FULL`: the selected retirement or deletion batch reached its limit. This
+  is a possible backlog signal, not proof of more work. Increase capacity only
+  after inspecting repeated cycles and provider costs.
+- `CLEANUP_FAILED` or `maintenance_cycle_failed`: investigate sustained failures
+  and quota recovery delays. For deployment, alert after repeated failures, missing
+  cycle starts, or a start with no finish within the deployment's operation budget.
+  The runner emits signals; routing them to an alert destination is deployment work.
+
+The supervisor must capture/rotate logs, restart failed processes with backoff and
+enforce a shutdown/run deadline suited to batch size and provider latency. The
+existing durable retirement and attempt timestamps make restart/replay safe. Avoid
+running both a supervisor loop and a separate scheduler for the same deployment.
+
+### Held-upload investigation
+
+The current counters cannot distinguish a legacy migration hold from every possible
+unacknowledged request or identify individual provider requests. A successful retry,
+an existing file, an absent file, an expired lease, or elapsed time is not evidence
+that all earlier requests stopped. Therefore this runner never clears holds.
+
+Before releasing a hold, stop/fence all relevant writers, account for upload
+capabilities, and obtain authoritative provider evidence that each outstanding
+operation is terminal. Keep that evidence in a restricted operational record and
+recheck ownership/references under the account lock. If historical evidence is
+unavailable, preserve the reservation. An auditable resolution tool and per-attempt
+provenance are M08c2; there is intentionally no force-clear command in M08c1.
 
 ## Contract
 

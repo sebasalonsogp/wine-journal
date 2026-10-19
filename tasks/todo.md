@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, October 17, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. Automatic scheduling, legacy-hold resolution and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 19, 2026. **Twenty-eight of 59 tasks are complete; 31 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. M08c1 adds the preview-first recurring runner and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -768,10 +768,13 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 **Slices:** M08a retirement preview/fencing and M08b derivative-write holds,
 exact-key deletion, persistent retry scheduling and logical quota release are
 implemented. Both commands default to preview. M08b was implemented in separate
-write-accounting, deletion and quota commits. M08c must add supervised recurring
-execution/alerts and an evidence-based resolution path for legacy/uncertain holds;
-no elapsed-time heuristic may clear them. M08 stays unchecked until operational
-acceptance and the full audit gate pass. See the [media cleanup checkpoint](media-cleanup-checkpoint.md).
+write-accounting, deletion and quota commits. M08c1 adds a preview-first recurring
+runner, bounded serial cycles, shutdown/retry handling and aggregate hold/failure
+diagnostics. No unattended deletion service has been enabled. M08c2 needs an
+evidence-based resolution path for legacy/uncertain holds; deployment still needs
+supervision and alert routing. No elapsed-time heuristic may clear holds. M08 stays
+unchecked until operational acceptance and the full audit gate pass. See the
+[media cleanup checkpoint](media-cleanup-checkpoint.md).
 
 **Stories:** OM-03, AC-03, TJ-04.
 
