@@ -125,6 +125,28 @@ class UploadAsset(Base):
     quota_released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class PhotoWriteAttempt(Base):
+    __tablename__ = "photo_write_attempts"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["owner_id", "asset_id"],
+            ["app.upload_assets.owner_id", "app.upload_assets.id"],
+            name="fk_photo_write_asset_owner",
+            ondelete="CASCADE",
+        ),
+        Index("ix_photo_write_asset", "owner_id", "asset_id"),
+        CheckConstraint("derivative IN ('display', 'thumbnail')", name="ck_photo_write_kind"),
+        {"schema": "app"},
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    owner_id: Mapped[UUID] = mapped_column()
+    asset_id: Mapped[UUID] = mapped_column()
+    lease_token: Mapped[UUID] = mapped_column()
+    derivative: Mapped[str] = mapped_column(String(16))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class EntryPhoto(Base):
     __tablename__ = "entry_photos"
     __table_args__ = (

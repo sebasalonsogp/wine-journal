@@ -14,6 +14,7 @@ from wine_journal.media.jobs import Claim, renew
 from wine_journal.media.models import Job, UploadAsset
 from wine_journal.media.photo_protocol import PhotoRejected, PhotoResult
 from wine_journal.media.photo_sandbox import PhotoSandbox
+from wine_journal.media.write_attempts import acknowledge, register
 
 SOURCE_TYPES = {
     "JPEG": ("image/jpeg",),
@@ -139,13 +140,12 @@ class PhotoPublisher:
                     if asset is None:
                         return
                     # Commit the hold before releasing the DB connection for I/O.
-                    asset.unsettled_writes += 1
+                    attempt = register(
+                        asset, work.token, "display" if key.endswith("display.jpg") else "thumbnail"
+                    )
                 acknowledged = self.storage.put_derivative(key, contents)
                 if acknowledged:
-                    with self._asset(work) as asset:
-                        if asset is None:
-                            return
-                        asset.unsettled_writes -= 1
+                    acknowledge(self.engine, work.owner_id, work.reference_id, attempt)
             self._ready(work, result)
         except PhotoRejected as error:
             if error.reason == "DECODER_UNAVAILABLE":

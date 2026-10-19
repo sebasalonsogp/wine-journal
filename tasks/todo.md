@@ -770,8 +770,10 @@ exact-key deletion, persistent retry scheduling and logical quota release are
 implemented. Both commands default to preview. M08b was implemented in separate
 write-accounting, deletion and quota commits. M08c1 adds a preview-first recurring
 runner, bounded serial cycles, shutdown/retry handling and aggregate hold/failure
-diagnostics. No unattended deletion service has been enabled. M08c2 needs an
-evidence-based resolution path for legacy/uncertain holds; deployment still needs
+diagnostics. No unattended deletion service has been enabled. M08c2's first slice
+records exact derivative attempts and settles confirmed responses independently of
+worker lease expiry. Historical/lost-response and signing holds still need an
+evidence-based resolution path; deployment still needs
 supervision and alert routing. No elapsed-time heuristic may clear holds. M08 stays
 unchecked until operational acceptance and the full audit gate pass. See the
 [media cleanup checkpoint](media-cleanup-checkpoint.md).

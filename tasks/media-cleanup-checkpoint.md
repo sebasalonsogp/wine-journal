@@ -1,6 +1,6 @@
 # M08 — Safe media cleanup and quota recovery
 
-Status: M08a, M08b and M08c1 implemented, October 19, 2026. M08 remains incomplete
+Status: M08a, M08b, M08c1 and the first M08c2 slice implemented, October 19, 2026. M08 remains incomplete
 pending legacy/uncertain-hold resolution, deployment supervision/alert routing and
 audit closeout.
 
@@ -37,6 +37,13 @@ audit closeout.
    database counter cannot establish which remote request has stopped. Do not add
    a force-clear flag or infer safety from age; provider-backed evidence remains
    required. Deployment supervision and alert delivery remain release requirements.
+   First slice: retain one immutable identity per new derivative write, registered
+   atomically with its counter before I/O. A confirmed response settles only that
+   attempt under the account lock, independently of a subsequently expired worker
+   lease. Publication still requires the current lease. Verify duplicate/concurrent
+   acknowledgements, ownership, transaction rollback, prior uncertainty, immutable
+   evidence and migration preservation. Historical counters and signing holds stay
+   unchanged; this does not invent provider evidence for requests already lost.
 
 The runner's operational questions are: is cleanup progressing, are batches full,
 are failures delaying recovery, and how much reserved capacity is held? Structured
@@ -154,3 +161,31 @@ database, and reserved capacity is not measured provider usage. No apply/watch
 deletion process or OS-level scheduler was installed. The PR records exact-head CI
 results. M08c2 remains open because counters alone cannot identify or certify each
 legacy/uncertain provider request; an elapsed-time or force-clear bypass is absent.
+
+## M08c2 first-slice evidence — October 19
+
+Migration 0021 and the photo publisher now retain exact derivative-attempt identities
+before I/O. A confirmed response atomically records acknowledgement and settles
+only its own hold, even after lease expiry or a replacement worker finishing. This
+never authorizes stale publication. Lost responses, readback-only success, legacy
+counters and signing holds are unchanged. There is no manual settlement bypass.
+
+All **352 API tests passed**, including real Storage and Docker decoding. Six new
+scenarios verify concurrent/idempotent acknowledgement with other/legacy holds,
+ownership checks, registration rollback, inconsistent-counter failure, immutable
+evidence and protected downgrade, acknowledgement after a replacement completes,
+and migration preservation. Existing publication tests now verify committed attempt
+records before I/O, retained uncertainty after retry, and late acknowledgement
+without stale publication.
+
+Ruff, formatting (148 files), strict typing (122 source files), package build,
+unchanged OpenAPI export and the 19-script browser secret scan passed. Migration
+0021 was applied locally with journal/media counts, total reservations, both hold
+counters and retirement/release counts unchanged. No uploads were retired, deleted
+or quota-released by this rollout. API and photo worker run the updated code.
+
+This is prospective evidence tracking, not historical recovery. Requests whose
+responses were lost still need authoritative terminal evidence; internal UUIDs are
+not provider request IDs. A safe operational resolution workflow, deployment
+supervision/alert routing and full dependency-audit closeout remain open. Exact-head
+CI results are recorded on the PR.

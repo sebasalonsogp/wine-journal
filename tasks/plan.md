@@ -4,6 +4,10 @@ Status: implementation underway, October 19, 2026. F01–F07, J01–J10 and O01�
 
 Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 28 complete and 31 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
+The first M08c2 slice adds exact derivative-attempt records and idempotent settlement
+of confirmed responses after lease expiry. Historical/lost-response and signing
+holds remain protected; this does not complete M08's operational acceptance.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.

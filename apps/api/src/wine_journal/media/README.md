@@ -96,7 +96,7 @@ old processes before applying migrations locally.
 Migration 0018 puts every pre-existing asset on a write hold. New code explicitly
 initializes tracking; inserts by old code retain the conservative DB default. A
 worker records a hold before each external write and settles it only after an
-acknowledged successful response and a valid lease. Readback after timeout can
+acknowledged successful response for that exact attempt. Readback after timeout can
 publish a usable photo but cannot settle that uncertain request. Legacy/uncertain
 holds are never cleared automatically or by guessed timeouts; provider-backed
 resolution tooling remains future work. These assets retain their quota. Migration
@@ -159,7 +159,7 @@ running both a supervisor loop and a separate scheduler for the same deployment.
 
 ### Held-upload investigation
 
-The current counters cannot distinguish a legacy migration hold from every possible
+Historical counters cannot distinguish a legacy migration hold from every possible
 unacknowledged request or identify individual provider requests. A successful retry,
 an existing file, an absent file, an expired lease, or elapsed time is not evidence
 that all earlier requests stopped. Therefore this runner never clears holds.
@@ -168,8 +168,38 @@ Before releasing a hold, stop/fence all relevant writers, account for upload
 capabilities, and obtain authoritative provider evidence that each outstanding
 operation is terminal. Keep that evidence in a restricted operational record and
 recheck ownership/references under the account lock. If historical evidence is
-unavailable, preserve the reservation. An auditable resolution tool and per-attempt
-provenance are M08c2; there is intentionally no force-clear command in M08c1.
+unavailable, preserve the reservation. An operational resolution tool for historical
+or lost responses remains open; there is intentionally no force-clear command.
+
+### Exact derivative-write acknowledgements (M08c2, first slice)
+
+Migration 0021 adds `photo_write_attempts`. Before external I/O, the worker commits
+an attempt UUID, owner/asset identity, worker lease token, derivative kind and creation
+time in the same transaction as its counter increment. This is an internal attempt
+identity, **not** a provider request ID. No credentials, URLs or image contents are
+stored in this ledger. Existing counters are preserved without fabricated backfill.
+
+After Storage returns a confirmed successful response and verifies the bytes, the
+worker records an immutable acknowledgement timestamp and decrements exactly one
+hold in a transaction under the account lock. Duplicate/concurrent acknowledgements
+are no-ops. A late response can settle its own attempt after lease expiry, account
+disablement or another worker completing the job; this operation cannot publish a
+photo or change queue state. Publication and further writes still require a valid
+current lease. Retries never acknowledge a different attempt or a legacy hold.
+
+Timeouts, readback-only success, lost responses, and failure to commit the
+acknowledgement remain unresolved. This slice does not establish provider evidence
+after a crash, resolve historical counters, or change signing-attempt handling.
+No new public endpoint or operator settlement command is exposed.
+
+Apply migration 0021 before restarting the photo worker with this code. Older
+workers remain conservative but cannot produce attempt evidence; upgrade all workers
+before relying on the ledger. Runtime identity updates/deletion are denied, and
+acknowledgements cannot be cleared or changed. Asset deletion cascades only through
+an administrative operation; runtime asset deletion remains denied and cleanup keeps
+the tombstone and its ledger. Downgrade refuses once any attempt evidence exists,
+including acknowledged attempts. Code rollback to the prior worker may retain the
+additive table; do not discard the ledger to force schema rollback.
 
 ## Contract
 
