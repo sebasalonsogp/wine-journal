@@ -46,7 +46,22 @@ def test_cycle_rejects_apply_without_storage_before_any_query(
     summary.assert_not_called()
 
 
-@pytest.mark.parametrize("problem", [None, "settings", "bucket", "cycle", "partial"])
+def test_mismatch_stops_before_candidate_queries(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        maintenance, "hold_summary", Mock(return_value={"writeAccountingMismatchAssets": 1})
+    )
+    retirement, deletion = Mock(), Mock()
+    monkeypatch.setattr(cleanup, "candidates", retirement)
+    monkeypatch.setattr(sweep, "candidates", deletion)
+    storage = Mock()
+    result = maintenance.run_cycle(Mock(), storage, Event(), apply=True)
+    assert result["writeAccountingMismatchAssets"] == 1
+    retirement.assert_not_called()
+    deletion.assert_not_called()
+    assert not storage.mock_calls
+
+
+@pytest.mark.parametrize("problem", [None, "settings", "bucket", "cycle", "partial", "mismatch"])
 @pytest.mark.parametrize("apply", [False, True])
 def test_cli_defaults_validates_before_mutation_and_redacts_failures(
     problem: str | None,
@@ -73,16 +88,24 @@ def test_cli_defaults_validates_before_mutation_and_redacts_failures(
             "deletionFailures": 0,
             "heldAssets": 1,
             "batchFull": True,
+            "writeAccountingMismatchAssets": int(problem == "mismatch"),
         }
     )
     if problem == "cycle":
         run.side_effect = RuntimeError("SYNTHETIC_PRIVATE")
     monkeypatch.setattr(maintenance, "run_cycle", run)
-    fails = problem in {"settings", "cycle", "partial"} or (apply and problem == "bucket")
+    fails = problem in {"settings", "cycle", "partial", "mismatch"} or (
+        apply and problem == "bucket"
+    )
     assert maintenance.main() == int(fails)
     output = capsys.readouterr().out
     assert "SYNTHETIC_PRIVATE" not in output
     rows = [json.loads(line) for line in output.splitlines()]
+    if problem == "mismatch":
+        finished = next(row for row in rows if row["event"] == "maintenance_cycle_finished")
+        assert "WRITE_ACCOUNTING_MISMATCH" in finished["alerts"]
+        assert "CLEANUP_FAILED" not in finished["alerts"]
+        assert finished["level"] == "warning"
     assert all(row["runId"] and row["entryPoint"] == "maintenance_cli" for row in rows)
     if not apply:
         factory.assert_not_called()

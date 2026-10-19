@@ -774,6 +774,8 @@ diagnostics. No unattended deletion service has been enabled. M08c2's first slic
 records exact derivative attempts and settles confirmed responses independently of
 worker lease expiry. Its second slice records those confirmations before fallible
 readback while retaining mandatory verification before publication.
+The third slice distinguishes pending tracked attempts from unattributed holds and
+stops maintenance on ledger/counter deficits, without attempting automatic repair.
 Historical/lost-response and signing holds still need an
 evidence-based resolution path; deployment still needs
 supervision and alert routing. No elapsed-time heuristic may clear holds. M08 stays

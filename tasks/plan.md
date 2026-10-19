@@ -7,7 +7,8 @@ Use this document for sequence and scope, [todo.md](todo.md) for executable task
 M08c2 adds exact derivative-attempt records and idempotent settlement of confirmed
 responses after lease expiry, persisted before fallible image readback. Mandatory
 verification still guards publication. Historical/lost-response and signing
-holds remain protected; this does not complete M08's operational acceptance.
+holds remain protected. Maintenance now reports tracked versus unattributed holds
+and stops on ledger/counter deficits; this does not complete M08's operational acceptance.
 
 ## Original starting point (foundation baseline)
 

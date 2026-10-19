@@ -20,7 +20,7 @@ from wine_journal.core.database import database_engine
 from wine_journal.integrations.storage import Storage, new_staging_key
 from wine_journal.media.maintenance import run_cycle
 from wine_journal.media.maintenance_status import hold_summary
-from wine_journal.media.models import UploadAsset
+from wine_journal.media.models import PhotoWriteAttempt, UploadAsset
 from wine_journal.media.uploads import RESERVATION_BYTES
 
 
@@ -71,6 +71,9 @@ def test_cycle_uses_real_eligibility_and_preserves_holds(media: MaintenanceFixtu
     assert preview["heldAssets"] == 3
     assert preview["signingHeldAssets"] == preview["writeHeldAssets"] == 2
     assert preview["heldReservedBytes"] == 3 * RESERVATION_BYTES
+    assert preview["pendingWriteAttempts"] == 0
+    assert preview["unattributedWriteHolds"] == 2
+    assert preview["writeAccountingMismatchAssets"] == 0
     assert preview["retirementCandidates"] == 1 and preview["retired"] == 0
     with Session(p.engine) as session:
         row = session.get(UploadAsset, p.assets[0])
@@ -97,6 +100,93 @@ def test_cycle_uses_real_eligibility_and_preserves_holds(media: MaintenanceFixtu
     storage.remove.assert_called_once()
 
 
+def test_hold_summary_distinguishes_pending_evidence_and_unknown_counters(
+    media: MaintenanceFixture,
+) -> None:
+    p = media
+    with Session(p.engine) as session, session.begin():
+        row = session.get(UploadAsset, p.assets[1])
+        assert row is not None
+        row.unsettled_writes = 2
+        for index, acknowledged in ((1, False), (1, False), (1, True), (3, True)):
+            session.add(
+                PhotoWriteAttempt(
+                    id=uuid4(),
+                    owner_id=p.owner,
+                    asset_id=p.assets[index],
+                    lease_token=uuid4(),
+                    derivative="display",
+                    acknowledged_at=datetime.now(UTC) if acknowledged else None,
+                )
+            )
+    result = hold_summary(p.engine)
+    assert result["pendingWriteAttempts"] == 2
+    assert result["unattributedWriteHolds"] == 1
+    assert result["writeAccountingMismatchAssets"] == 0
+    assert result["heldAssets"] == 3 and result["heldReservedBytes"] == 3 * RESERVATION_BYTES
+
+
+def test_released_evidence_is_excluded_from_unreleased_hold_diagnostics(
+    media: MaintenanceFixture,
+) -> None:
+    p = media
+    with Session(p.engine) as session, session.begin():
+        row = session.get(UploadAsset, p.assets[4])
+        assert row is not None
+        row.retired_at = row.cleanup_attempted_at = row.quota_released_at = datetime.now(UTC)
+        session.add(
+            PhotoWriteAttempt(
+                id=uuid4(),
+                owner_id=p.owner,
+                asset_id=p.assets[4],
+                lease_token=uuid4(),
+                derivative="display",
+            )
+        )  # Synthetic historical evidence; this report covers unreleased capacity only.
+    result = hold_summary(p.engine)
+    assert result["pendingWriteAttempts"] == result["writeAccountingMismatchAssets"] == 0
+    assert result["unattributedWriteHolds"] == 2
+    assert result["heldReservedBytes"] == 3 * RESERVATION_BYTES
+
+
+def test_empty_hold_summary_has_numeric_zeros(database_urls: dict[str, SecretStr]) -> None:
+    engine = database_engine(database_urls["runtime"])
+    try:
+        result = hold_summary(engine)
+        assert len(result) == 7 and all(
+            type(value) is int and value == 0 for value in result.values()
+        )
+    finally:
+        engine.dispose()
+
+
+@pytest.mark.parametrize("apply", [False, True])
+def test_accounting_mismatch_stops_cycle_without_settling_or_deleting(
+    media: MaintenanceFixture,
+    apply: bool,
+) -> None:
+    p, storage = media, Mock(spec=Storage)
+    with Session(p.engine) as session, session.begin():
+        session.add(
+            PhotoWriteAttempt(
+                id=uuid4(),
+                owner_id=p.owner,
+                asset_id=p.assets[0],
+                lease_token=uuid4(),
+                derivative="thumbnail",
+            )
+        )  # Synthetic inconsistency: pending evidence, but counter is zero.
+    result = run_cycle(p.engine, storage if apply else None, Event(), apply=apply)
+    assert result["writeAccountingMismatchAssets"] == 1
+    assert result["pendingWriteAttempts"] == 1
+    assert result["unattributedWriteHolds"] == 2  # No cross-asset cancellation.
+    assert result["retirementCandidates"] == result["deletionCandidates"] == 0
+    assert not storage.mock_calls
+    with Session(p.engine) as session:
+        row = session.get(UploadAsset, p.assets[0])
+        assert row is not None and row.retired_at is None and row.unsettled_writes == 0
+
+
 def test_preview_subprocess_restarts_without_mutation_or_private_output(
     media: MaintenanceFixture, database_urls: dict[str, SecretStr]
 ) -> None:
@@ -119,6 +209,8 @@ def test_preview_subprocess_restarts_without_mutation_or_private_output(
         result = next(row for row in events if row["event"] == "maintenance_cycle_finished")
         assert result["retired"] == result["assetsConfirmedAbsent"] == 0
         assert result["heldAssets"] == 3 and result["retirementCandidates"] == 1
+        assert result["pendingWriteAttempts"] == 0 and result["unattributedWriteHolds"] == 2
+        assert result["writeAccountingMismatchAssets"] == 0
         for identifier in (media.owner, *media.assets):
             assert str(identifier) not in process.stdout and identifier.hex not in process.stdout
         assert database_urls["runtime"].get_secret_value() not in process.stdout + process.stderr

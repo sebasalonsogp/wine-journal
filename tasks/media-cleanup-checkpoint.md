@@ -1,6 +1,6 @@
 # M08 — Safe media cleanup and quota recovery
 
-Status: M08a, M08b, M08c1 and the first two M08c2 slices implemented, October 19, 2026. M08 remains incomplete
+Status: M08a, M08b, M08c1 and the first three M08c2 slices implemented, October 19, 2026. M08 remains incomplete
 pending legacy/uncertain-hold resolution, deployment supervision/alert routing and
 audit closeout.
 
@@ -49,6 +49,12 @@ audit closeout.
    failure cannot discard known terminal evidence. Verify that failed readback still
    blocks publication, unknown writes retain their holds, and a failed acknowledgement
    commit stops further I/O. No historical settlement or schema change is involved.
+   Third slice: report pending tracked attempts separately from counter holds without
+   attempt records, using one database snapshot. Detect counters smaller than their
+   pending ledgers; abort the maintenance cycle before selecting/mutating assets and
+   emit a fixed alert. Verify mixed evidence, acknowledged/released exclusions,
+   single-statement totals, empty totals and CLI failure behavior. Never label all
+   unattributed holds as legacy or infer that pending attempts are failed requests.
 
 The runner's operational questions are: is cleanup progressing, are batches full,
 are failures delaying recovery, and how much reserved capacity is held? Structured
@@ -217,3 +223,30 @@ Ruff, formatting, strict typing, package build, unchanged OpenAPI export and the
 with this code; no cleanup apply process was run. Historical/lost-response and
 signing holds, deployment supervision and dependency-audit closeout remain open.
 Exact-head CI results are recorded on the PR.
+
+## M08c2 third-slice evidence — October 19
+
+Maintenance now reports pending tracked write attempts, counter holds without
+attempt records, and assets whose pending ledger exceeds their counter. One SQL
+statement compares both sources in the same snapshot. These are aggregate diagnostics
+for unreleased assets; they neither classify all unknown holds as legacy nor prove
+that pending requests failed. Multiple attempts do not multiply reserved capacity.
+
+A detected deficit stops the maintenance cycle before candidate selection or
+Storage access. The fixed `WRITE_ACCOUNTING_MISMATCH` alert returns a nonzero
+one-shot exit; watch mode retries normally. No counter repair or settlement is
+performed. The snapshot guard does not replace existing per-asset safety checks.
+
+All **370 API tests passed**, including real Storage and Docker decoding. Eight new
+cases cover mixed/acknowledged evidence, released exclusions, empty numeric totals,
+deficits in preview/apply, no candidate queries on mismatch and CLI alert/exit
+behavior. The existing subprocess test verifies the added counts remain private
+and read-only. Ruff, formatting, strict typing, build, unchanged OpenAPI and the
+19-script browser secret scan passed.
+
+The local read-only preview found 72 unattributed write holds, zero pending tracked
+attempts and zero mismatches. It retired/deleted/released nothing. No schema,
+dependency, configuration or public API change was needed, and existing API/worker
+processes need no restart for this maintenance-only change. Historical resolution,
+supervision/alert delivery and audit acceptance remain open. Exact-head CI evidence
+is recorded on the PR.

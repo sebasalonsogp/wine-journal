@@ -36,6 +36,10 @@ def run_cycle(
         "interrupted": False,
     }
     result.update(hold_summary(engine))
+    if result.get("writeAccountingMismatchAssets", 0):
+        # A ledger entry without its counter hold invalidates cleanup assumptions.
+        # Report only; do not select candidates, repair counters or touch Storage.
+        return result
     retirements = cleanup.candidates(engine, limit=limit)
     result["retirementCandidates"] = len(retirements)
     for owner, asset in retirements if apply else ():
@@ -111,10 +115,14 @@ def main() -> int:
             emit("maintenance_cycle_started", run_id, entry_point)
             try:
                 result = run_cycle(engine, storage, stop, apply=args.apply, limit=args.limit)
-                failed = bool(result["retirementFailures"] or result["deletionFailures"])
+                cleanup_failed = bool(result["retirementFailures"] or result["deletionFailures"])
+                mismatch = bool(result.get("writeAccountingMismatchAssets", 0))
+                failed = cleanup_failed or mismatch
                 alerts = []
-                if failed:
+                if cleanup_failed:
                     alerts.append("CLEANUP_FAILED")
+                if mismatch:
+                    alerts.append("WRITE_ACCOUNTING_MISMATCH")
                 if result["heldAssets"]:
                     alerts.append("HELD_ASSETS")
                 if result["batchFull"]:

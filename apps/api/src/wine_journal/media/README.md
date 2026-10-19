@@ -147,6 +147,12 @@ bodies. These are operator diagnostics, not a public API.
 - `BATCH_FULL`: the selected retirement or deletion batch reached its limit. This
   is a possible backlog signal, not proof of more work. Increase capacity only
   after inspecting repeated cycles and provider costs.
+- `WRITE_ACCOUNTING_MISMATCH`: an unreleased asset has more pending attempt records
+  than its write-hold counter. The cycle stops before candidate selection or cleanup;
+  it does not repair the counter. One-shot mode exits nonzero; watch mode reports the
+  alert and retries after its normal interval. Investigate before enabling/resuming
+  apply. The guard is a snapshot check in this runner, not a replacement for per-asset
+  retirement/deletion checks or a database-wide constraint.
 - `CLEANUP_FAILED` or `maintenance_cycle_failed`: investigate sustained failures
   and quota recovery delays. For deployment, alert after repeated failures, missing
   cycle starts, or a start with no finish within the deployment's operation budget.
@@ -158,6 +164,25 @@ existing durable retirement and attempt timestamps make restart/replay safe. Avo
 running both a supervisor loop and a separate scheduler for the same deployment.
 
 ### Held-upload investigation
+
+Each maintenance report also includes three aggregate fields, computed together in
+one SQL statement so concurrent attempt registration/acknowledgement cannot skew
+the comparison between the ledger and counters:
+
+- `pendingWriteAttempts`: unacknowledged ledger records attached to unreleased assets.
+  These can be actively running requests; the count does not establish failure.
+- `unattributedWriteHolds`: the sum of each asset's positive difference between its
+  write counter and pending ledger count. These may be migration holds or uncertain
+  requests predating the ledger; they cannot all be classified as legacy. A deficit
+  on one asset never cancels an excess on another.
+- `writeAccountingMismatchAssets`: unreleased assets whose pending ledger count
+  exceeds their counter, including assets whose counter is zero.
+
+Acknowledged attempts and released assets do not contribute to these new counts.
+Multiple attempts on one asset do not multiply `heldAssets` or reserved bytes.
+These are investigation signals, not settlement evidence; age, matching counts and
+zero mismatches do not authorize releasing a hold. Only counts enter the report,
+never owner/asset/attempt IDs, lease tokens, object keys or provider responses.
 
 Historical counters cannot distinguish a legacy migration hold from every possible
 unacknowledged request or identify individual provider requests. A successful retry,
