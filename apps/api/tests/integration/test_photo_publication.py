@@ -150,7 +150,12 @@ def publication(database_urls: dict[str, SecretStr]) -> Iterator[Publication]:
         outputs[key] = contents
         return True
 
+    def verify(key: str, contents: bytes) -> None:
+        assert engine.pool.checkedout() == 0  # type: ignore[attr-defined]
+        assert outputs[key] == contents
+
     storage.download.side_effect, storage.put_derivative.side_effect = download, put
+    storage.verify_derivative.side_effect = verify
     decoder.convert.side_effect = convert
     try:
         yield Publication(engine, admin, owner, identifier, storage, decoder, outputs)
@@ -190,6 +195,7 @@ def test_ready_requires_both_outputs_and_replays_after_commit(publication: Publi
     assert p.job().state == "SUCCEEDED" and p.job().attempts == 2
     assert p.decoder.convert.call_count == 1
     assert p.storage.put_derivative.call_count == 2
+    assert p.storage.verify_derivative.call_count == 2
 
 
 def test_partial_publication_reuses_exact_output_on_retry(publication: Publication) -> None:
@@ -263,6 +269,7 @@ def test_concurrent_acknowledgements_preserve_legacy_and_other_attempts(
             {"id": p.asset_id},
         )
     p.storage.put_derivative.side_effect = lambda *_: False
+    p.storage.verify_derivative.side_effect = None
     assert run_once(p.engine, {"process_photo": p.publisher})
     assert p.asset().unsettled_writes == 3
     attempt = p.writes()[0]
@@ -320,6 +327,7 @@ def test_inconsistent_counter_does_not_record_false_acknowledgement(
 ) -> None:
     p = publication
     p.storage.put_derivative.side_effect = lambda *_: False
+    p.storage.verify_derivative.side_effect = None
     assert run_once(p.engine, {"process_photo": p.publisher})
     with p.admin.begin() as connection:
         connection.execute(
@@ -380,6 +388,63 @@ def test_changed_bucket_policy_stops_before_read_or_decode(publication: Publicat
     assert run_once(p.engine, {"process_photo": p.publisher})
     assert p.asset().state == "PROCESSING" and p.job().state == "PENDING"
     assert not p.storage.download.called and not p.decoder.convert.called and not p.outputs
+
+
+@pytest.mark.parametrize(
+    "failure,state,reason",
+    [
+        (StorageError("readback unavailable"), "PROCESSING", None),
+        (OutputConflict("readback conflict"), "FAILED", "OUTPUT_CONFLICT"),
+        (ObjectChanged("readback changed"), "FAILED", "SOURCE_CHANGED"),
+    ],
+)
+def test_readback_failure_keeps_confirmation_but_prevents_publication(
+    publication: Publication, failure: Exception, state: str, reason: str | None
+) -> None:
+    p = publication
+    with p.admin.begin() as connection:
+        connection.execute(
+            text("UPDATE app.upload_assets SET unsettled_writes = 1 WHERE id = :id"),
+            {"id": p.asset_id},
+        )
+
+    def failed_readback(_: str, __: bytes) -> None:
+        # Known completion is durable before the independent read starts.
+        assert p.asset().unsettled_writes == 1
+        assert len(p.writes()) == 1 and p.writes()[0].acknowledged_at
+        assert p.engine.pool.checkedout() == 0  # type: ignore[attr-defined]
+        raise failure
+
+    p.storage.verify_derivative.side_effect = failed_readback
+    assert run_once(p.engine, {"process_photo": p.publisher})
+    asset = p.asset()
+    assert asset.state == state and asset.processing_error == reason
+    assert asset.unsettled_writes == 1  # The legacy/other request is still unresolved.
+    assert asset.display_sha256 is None and asset.quota_released_at is None
+    assert p.job().state == ("PENDING" if state == "PROCESSING" else "SUCCEEDED")
+    assert p.storage.put_derivative.call_count == 1
+    if state == "PROCESSING":
+        p.storage.verify_derivative.side_effect = None
+        p.due()
+        assert run_once(p.engine, {"process_photo": p.publisher})
+        assert p.asset().state == "READY" and p.asset().unsettled_writes == 1
+        assert len(p.writes()) == 3 and all(row.acknowledged_at for row in p.writes())
+
+
+def test_failed_acknowledgement_stops_before_readback(
+    publication: Publication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    p = publication
+    monkeypatch.setattr(
+        "wine_journal.media.photo_processing.acknowledge",
+        Mock(side_effect=RuntimeError("synthetic database failure")),
+    )
+    assert run_once(p.engine, {"process_photo": p.publisher})
+    assert p.asset().state == "PROCESSING" and p.asset().unsettled_writes == 1
+    assert len(p.writes()) == 1 and p.writes()[0].acknowledged_at is None
+    assert p.job().state == "PENDING"
+    assert not p.storage.verify_derivative.called
+    assert p.storage.put_derivative.call_count == 1
 
 
 @pytest.mark.parametrize(

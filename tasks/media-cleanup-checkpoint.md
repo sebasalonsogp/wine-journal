@@ -1,6 +1,6 @@
 # M08 — Safe media cleanup and quota recovery
 
-Status: M08a, M08b, M08c1 and the first M08c2 slice implemented, October 19, 2026. M08 remains incomplete
+Status: M08a, M08b, M08c1 and the first two M08c2 slices implemented, October 19, 2026. M08 remains incomplete
 pending legacy/uncertain-hold resolution, deployment supervision/alert routing and
 audit closeout.
 
@@ -44,6 +44,11 @@ audit closeout.
    acknowledgements, ownership, transaction rollback, prior uncertainty, immutable
    evidence and migration preservation. Historical counters and signing holds stay
    unchanged; this does not invent provider evidence for requests already lost.
+   Second slice: persist a confirmed derivative-write response before readback.
+   Separate write acknowledgement from byte/identity verification so a later read
+   failure cannot discard known terminal evidence. Verify that failed readback still
+   blocks publication, unknown writes retain their holds, and a failed acknowledgement
+   commit stops further I/O. No historical settlement or schema change is involved.
 
 The runner's operational questions are: is cleanup progressing, are batches full,
 are failures delaying recovery, and how much reserved capacity is held? Structured
@@ -189,3 +194,26 @@ responses were lost still need authoritative terminal evidence; internal UUIDs a
 not provider request IDs. A safe operational resolution workflow, deployment
 supervision/alert routing and full dependency-audit closeout remain open. Exact-head
 CI results are recorded on the PR.
+
+## M08c2 second-slice evidence — October 19
+
+The Storage adapter now separates write acknowledgement from derivative readback.
+The publisher records confirmed completion before verifying bytes, so a later read
+failure cannot discard that evidence. Verification remains mandatory before READY;
+unknown write responses still retain their holds. An acknowledgement commit failure
+stops the worker before verification or further writes. This is an internal boundary
+change without a migration, new configuration, dependency or public API change.
+
+All **362 API tests passed** with real Storage and Docker decoding. Six HTTP cases
+first reproduced confirmation loss on 200/201 responses followed by timeout, missing
+object or changed size; they pass after the split. Four integration cases verify
+durable confirmation before failed readback, rejection/retry without publication,
+recovery after transient failure, preservation of other holds and stopping on an
+acknowledgement failure. Existing real JPEG/HEIF tests verify the split operations,
+immutable output conflicts, restart, deletion and late-upload reconciliation.
+
+Ruff, formatting, strict typing, package build, unchanged OpenAPI export and the
+19-script browser secret scan passed. The idle local photo worker was restarted
+with this code; no cleanup apply process was run. Historical/lost-response and
+signing holds, deployment supervision and dependency-audit closeout remain open.
+Exact-head CI results are recorded on the PR.

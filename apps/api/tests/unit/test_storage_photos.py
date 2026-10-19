@@ -157,11 +157,12 @@ def test_immutable_write_reconciles_uncertain_results(outcome: str) -> None:
 
     storage = configured(httpx.MockTransport(respond))
     try:
+        assert storage.put_derivative(key, contents) is (outcome == "success")
         if outcome in {"different", "changed", "missing"}:
             with pytest.raises(OutputConflict if outcome == "different" else StorageError):
-                storage.put_derivative(key, contents)
+                storage.verify_derivative(key, contents)
         else:
-            assert storage.put_derivative(key, contents) is (outcome == "success")
+            storage.verify_derivative(key, contents)
         assert writes == 1
         with pytest.raises(ValueError):
             storage.sign_upload(key)
@@ -169,9 +170,43 @@ def test_immutable_write_reconciles_uncertain_results(outcome: str) -> None:
             storage.put_derivative(new_staging_key(uuid4()), contents)
         with pytest.raises(ValueError):
             storage.put_derivative(key, b"x" * (5 * 1024 * 1024 + 1))
+        with pytest.raises(ValueError):
+            storage.verify_derivative(new_staging_key(uuid4()), contents)
+        with pytest.raises(ValueError):
+            storage.verify_derivative(key, b"x" * (5 * 1024 * 1024 + 1))
         with pytest.raises(ObjectChanged):
             storage.download(info.model_copy(update={"size": 0}))
         assert writes == 1
+    finally:
+        storage.close()
+
+
+@pytest.mark.parametrize("status", [200, 201])
+@pytest.mark.parametrize("failure", ["timeout", "missing", "changed"])
+def test_confirmed_write_is_available_before_failed_readback(status: int, failure: str) -> None:
+    contents = b"synthetic-image"
+    key = f"photos/{uuid4().hex}/v1/display.jpg"
+    calls: list[str] = []
+    info = info_for(key, contents)
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        calls.append(request.method)
+        if request.method == "POST":
+            return httpx.Response(status, json={})
+        if failure == "timeout":
+            raise httpx.ReadTimeout("private-provider-body")
+        if failure == "missing":
+            return httpx.Response(404, json={})
+        return httpx.Response(200, json=info.model_copy(update={"size": 1}).model_dump(mode="json"))
+
+    storage = configured(httpx.MockTransport(respond))
+    try:
+        assert storage.put_derivative(key, contents) is True
+        assert calls == ["POST"]
+        with pytest.raises(StorageError) as error:
+            storage.verify_derivative(key, contents)
+        assert "private-provider-body" not in str(error.value)
+        assert calls.count("POST") == 1
     finally:
         storage.close()
 

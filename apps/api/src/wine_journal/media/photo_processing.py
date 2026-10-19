@@ -146,6 +146,9 @@ class PhotoPublisher:
                 acknowledged = self.storage.put_derivative(key, contents)
                 if acknowledged:
                     acknowledge(self.engine, work.owner_id, work.reference_id, attempt)
+                # Persist known completion before fallible readback. Settlement never
+                # replaces byte verification or the lease check guarding publication.
+                self.storage.verify_derivative(key, contents)
             self._ready(work, result)
         except PhotoRejected as error:
             if error.reason == "DECODER_UNAVAILABLE":

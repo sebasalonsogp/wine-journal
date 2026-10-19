@@ -169,11 +169,14 @@ def test_real_private_upload_flow(
             probe = jpeg.getvalue()
             cleanup_derivatives.append(display_key)
             storage.put_derivative(display_key, probe)
+            storage.verify_derivative(display_key, probe)
             first_output = storage.info(display_key)
             storage.put_derivative(display_key, probe)
+            storage.verify_derivative(display_key, probe)
             assert storage.info(display_key) == first_output
+            storage.put_derivative(display_key, probe + b"different")
             with pytest.raises(OutputConflict):
-                storage.put_derivative(display_key, probe + b"different")
+                storage.verify_derivative(display_key, probe + b"different")
             assert not client.get(
                 f"{config.url}/object/authenticated/{config.bucket}/{display_key}", headers=headers
             ).is_success

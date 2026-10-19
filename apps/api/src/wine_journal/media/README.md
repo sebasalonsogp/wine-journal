@@ -171,7 +171,7 @@ recheck ownership/references under the account lock. If historical evidence is
 unavailable, preserve the reservation. An operational resolution tool for historical
 or lost responses remains open; there is intentionally no force-clear command.
 
-### Exact derivative-write acknowledgements (M08c2, first slice)
+### Exact derivative-write acknowledgements (M08c2)
 
 Migration 0021 adds `photo_write_attempts`. Before external I/O, the worker commits
 an attempt UUID, owner/asset identity, worker lease token, derivative kind and creation
@@ -179,13 +179,22 @@ time in the same transaction as its counter increment. This is an internal attem
 identity, **not** a provider request ID. No credentials, URLs or image contents are
 stored in this ledger. Existing counters are preserved without fabricated backfill.
 
-After Storage returns a confirmed successful response and verifies the bytes, the
+After Storage returns a confirmed successful write response, the
 worker records an immutable acknowledgement timestamp and decrements exactly one
 hold in a transaction under the account lock. Duplicate/concurrent acknowledgements
 are no-ops. A late response can settle its own attempt after lease expiry, account
 disablement or another worker completing the job; this operation cannot publish a
 photo or change queue state. Publication and further writes still require a valid
 current lease. Retries never acknowledge a different attempt or a legacy hold.
+
+Write acknowledgement and readback are separate operations. The worker persists
+the acknowledgement **before** calling `verify_derivative`, which checks size,
+type, exact contents and object identity. A later timeout, missing file or changed
+image cannot erase known write completion. Failed verification still blocks READY;
+transient failures use the queue retry policy and conflicts remain rejected. If
+the acknowledgement transaction fails, the worker stops before readback and keeps
+the unresolved hold. Neither step holds a database connection across Storage I/O.
+Only both verified derivatives plus the current lease permit publication.
 
 Timeouts, readback-only success, lost responses, and failure to commit the
 acknowledgement remain unresolved. This slice does not establish provider evidence

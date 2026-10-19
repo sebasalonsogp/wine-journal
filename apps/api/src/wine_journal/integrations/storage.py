@@ -274,12 +274,8 @@ class Storage:
             raise ObjectChanged("Object identity changed.")
         return bytes(data)
 
-    def put_derivative(self, key: str, contents: bytes) -> bool:
-        """Verify readable bytes; separately report an acknowledged write request.
-
-        Readback can permit publication after a timeout, but cannot prove that this
-        request has stopped. Cleanup must retain its hold when False is returned.
-        """
+    @staticmethod
+    def _derivative_spec(key: str, contents: bytes) -> tuple[int, str]:
         if not DERIVATIVE_PATTERN.fullmatch(key):
             raise ValueError("Invalid derivative key.")
         display = key.endswith("display.jpg")
@@ -287,24 +283,34 @@ class Storage:
         content_type = "image/jpeg" if display else "image/webp"
         if not 0 < len(contents) <= limit:
             raise ValueError("Invalid derivative size.")
-        acknowledged = False
+        return limit, content_type
+
+    def put_derivative(self, key: str, contents: bytes) -> bool:
+        """Report only this write's acknowledgement; callers must verify before publication.
+
+        Record a True result durably before readback can fail. False is uncertain:
+        successful readback may allow publication but cannot settle the write hold.
+        """
+        _, content_type = self._derivative_spec(key, contents)
         try:
-            # Readback, rather than provider-specific conflict responses, determines success.
             status, _ = self._request(
                 "POST",
                 f"object/{self._object_path(key)}",
                 contents=contents,
                 content_type=content_type,
             )
-            acknowledged = status in {200, 201}
+            return status in {200, 201}
         except StorageError:
-            pass
+            return False
+
+    def verify_derivative(self, key: str, contents: bytes) -> None:
+        """Read and verify exact bytes/identity without issuing another write."""
+        limit, content_type = self._derivative_spec(key, contents)
         info = self.info(key)
         if (info.size, info.content_type) != (len(contents), content_type):
             raise OutputConflict("Existing derivative differs.")
         if self.download(info, limit=limit) != contents:
             raise OutputConflict("Existing derivative differs.")
-        return acknowledged
 
     def sign_view(self, key: str, *, seconds: int = VIEW_SECONDS) -> ViewCapability:
         """Issue a bounded read capability only for server-generated derivative paths."""
