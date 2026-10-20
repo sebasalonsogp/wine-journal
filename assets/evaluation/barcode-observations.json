@@ -1,0 +1,22 @@
+[
+  {
+    "sample_id": "B001",
+    "gtin": "089121288122",
+    "expected_fixture_ids": ["W016"],
+    "bottle_ml": 750,
+    "source_url": "https://sites.salsify.com/ac717bbc-c69e-474f-ba68-2f08ae725959/cfdbf0ab-2c72-459e-b846-5473ab4b1d68/product/CSES2375/J--Lohr-Estates-Seven-Oaks-Cabernet-Sauvignon/",
+    "retrieved_on": "2026-10-20",
+    "evidence_status": "WEB_TEXT",
+    "market": "UNVERIFIED"
+  },
+  {
+    "sample_id": "B002",
+    "gtin": "00089121288122",
+    "expected_fixture_ids": ["W015"],
+    "bottle_ml": 750,
+    "source_url": "https://www.thefreshgrocer.com/sm/pickup/rsid/486/product/j-lohr-2022-seven-oaks-paso-robles-cabernet-sauvignon-750-ml-id-00089121288122",
+    "retrieved_on": "2026-10-20",
+    "evidence_status": "WEB_TEXT",
+    "market": "UNVERIFIED"
+  }
+]

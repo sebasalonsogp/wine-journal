@@ -1,0 +1,32 @@
+{
+  "evaluated_at": "2026-10-20T21:48:45.340186+00:00",
+  "mode": "LIVE_PUBLIC_READ",
+  "provider": "Open Food Facts API v3",
+  "source_observations": 2,
+  "distinct_package_codes": 1,
+  "requested_package_codes": 1,
+  "unrequested_package_codes": 0,
+  "confirmed_wine_releases": 0,
+  "camera_decoding_tested": false,
+  "results": [
+    {
+      "canonical_gtin": "00089121288122",
+      "sample_ids": [
+        "B001",
+        "B002"
+      ],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "status": "PRODUCT_FOUND_UNVERIFIED",
+      "product": {
+        "code": "0089121288122",
+        "product_name": "Cabernet Sauvignon",
+        "brands": "J. Lohr",
+        "quantity": null
+      },
+      "elapsed_ms": 453
+    }
+  ]
+}

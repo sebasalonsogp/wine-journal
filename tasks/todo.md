@@ -59,6 +59,13 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** WI-01, WI-03, WI-04.
 
+**Execution split (October 20):** [R02a](provider-evaluation.md) adds tested GTIN
+validation, offline preflight and a bounded public-read probe enabled by `--live`.
+Two independently sourced text observations collapse to one package code
+associated with two vintages. The recorded provider result is unverified product
+data, not a resolved wine. R02b still needs R01b assets, measured coverage and a
+physical iPhone decoder check; R02 and C04 remain unchecked.
+
 <a id="r03"></a>
 ### R03: Prove the label-photo route
 

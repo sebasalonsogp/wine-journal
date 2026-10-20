@@ -36,6 +36,12 @@ The [entry correction checkpoint](entry-wine-correction-checkpoint.md) records
 concurrency, ownership, stable IDs and photo/occasion preservation. C03 is
 complete; barcode/label identification still depends on R01b/R02/R03 evidence.
 
+[R02a](provider-evaluation.md) now supplies bounded GTIN validation and a
+repeatable offline/public-read evaluation tool. Two source observations share
+one package code across two vintages; the first provider response lacks the
+offering designation and year. R02b's image/physical-device and wider coverage
+evidence remains open. The parent count stays 31/59; scanning is not exposed yet.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.

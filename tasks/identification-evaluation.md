@@ -46,6 +46,13 @@ These are **authored text scenarios**, not captured OCR output, provider results
 
 ## R01b: remaining input collection
 
+October 20 update: [two web-text barcode observations](../assets/evaluation/barcode-observations.json)
+now establish one normalized package code associated with the existing 2022/2023
+Seven Oaks references. They remain WEB_TEXT with unverified package market;
+there are still zero barcode/label images or camera observations. The separate
+[provider checkpoint](provider-evaluation.md) records one unverified product
+result and the repeatable R02a probe. This does not complete R01b or R02.
+
 Before R02/R03 coverage claims, extend the same evaluation set with independently checked physical-bottle or traceable label/barcode assets. Obtain a bounded collection rather than searching indefinitely for a universal free catalog. Keep these requirements open:
 
 1. Record a sample ID, linked expected fixture(s), observed package market (or explicit unknown), bottle size if known, capture/source date, asset path and SHA-256. A package code may identify several vintages; record candidate sets rather than forcing one release.
