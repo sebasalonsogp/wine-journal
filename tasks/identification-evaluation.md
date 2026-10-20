@@ -1,6 +1,6 @@
 # Wine identity evaluation checkpoint
 
-October 19, 2026. **R01a is complete: a source-backed identity baseline. R01 remains open.** The [manifest](../assets/evaluation/manifest.csv) contains 30 reference identities across 16 named offerings from five producers. It contains no physical-bottle observations, barcodes or recognition images. No barcode/OCR provider has been evaluated and no public catalog has been imported.
+October 19, 2026. **R01a is complete: a source-backed identity baseline. R01 remains open.** The [manifest](../assets/evaluation/manifest.csv) contains 30 reference identities across 16 named offerings from five producers. It contains no physical-bottle observations, barcodes or recognition images. No barcode/OCR provider has been evaluated. The later C01 import checkpoint is recorded below.
 
 ## Scope and evidence
 
@@ -60,6 +60,12 @@ R02 additionally needs a physical iPhone camera test; R03 needs measured provide
 
 The manifest can support **curated text-catalog** implementation independently of camera feasibility. This explicitly splits R01's dependency: C01 consumes R01a; R02/R03 still need R01b. It does not complete C01, R01, or the lookup coverage/market gate. Build a controlled import with separate public identities and provenance; never turn the existing owner-scoped `WineDefinition`/`WineRelease` rows public merely by clearing an owner field. Keep price/artwork/availability unknown until separately sourced. A later catalog import should not overwrite the frozen evaluation answers using provider output.
 
-Next C01 acceptance: validate input before writes; import twice without duplicates; retain source/retrieval metadata; distinguish vintage/edition keys; reject invalid or conflicting rows without a partial batch; prove a journal client cannot publish private wine records. Then C02 can expose guest text search/details without recording a drinking event.
+The C01 acceptance handed off from this baseline was: validate input before writes; import twice without duplicates; retain source/retrieval metadata; distinguish vintage/edition keys; reject invalid or conflicting rows without a partial batch; prove a journal client cannot publish private wine records. C02 can then expose guest text search/details without recording a drinking event.
 
-Validation for this baseline: manually reviewed the linked producer evidence; parsed all 30 CSV rows; checked unique fixture and release identities, stable producer/name per definition, year/edition rules, HTTPS source URLs, dates and evidence/market markers. Counts: 16 definitions, 26 YEAR, 2 MULTI_VINTAGE, 2 NON_VINTAGE; zero barcode/image observations. This is a data/documentation change, so application tests were not rerun locally. Parent task counts remain 28/59 complete.
+Validation for the R01a baseline: manually reviewed the linked producer evidence; parsed all 30 CSV rows; checked unique fixture and release identities, stable producer/name per definition, year/edition rules, HTTPS source URLs, dates and evidence/market markers. Counts: 16 definitions, 26 YEAR, 2 MULTI_VINTAGE, 2 NON_VINTAGE; zero barcode/image observations. That data/documentation-only change did not rerun application tests locally and left 28/59 parent tasks complete.
+
+## C01 import checkpoint — October 19
+
+C01 subsequently completed the controlled import and local seed under [ADR 0007](../docs/decisions/0007-public-catalog-boundary.md). Migration 0022 adds separate public definition/release/source tables with read-only API grants. The CLI preview reported 16/30/30 new rows without writing; apply created them, and a second apply reported zero additions. Existing private journal/media counts, reserved bytes and unsettled holds remained unchanged. Full API verification passed all 394 tests, including 24 new catalog cases. See [task verification](todo.md#c01) and [operator commands](../apps/api/src/wine_journal/catalog/README.md).
+
+This completes C01 and moves the parent count to 29/59, without completing R01b or claiming recognition coverage. No guest catalog endpoint/UI, catalog artwork, pricing or public user content was introduced. The existing web dependency audit continues to block merging the overall PR.

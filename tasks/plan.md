@@ -2,7 +2,7 @@
 
 Status: implementation underway, October 19, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02–M04 deliver durable jobs, private uploads, isolated photo processing and owner-only entry galleries. Capture and saved entries now support photos, captions and retry/removal without repeating a text save. Local media is enabled with the registered worker. M05 adds independent personal bottle covers, with failed replacements preserving the current image. M06a occasion attachment/album APIs and M06b scrapbook controls are implemented and functionally verified. M07 adds wine photo highlights and a paginated gallery with exact source links. M06/M07 closeout awaits the development dependency audit fix; M08a retirement fencing and M08b write tracking, physical cleanup and logical quota recovery are implemented; M08c1 adds recurring execution and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). See the [occasion album checkpoint](occasion-album-checkpoint.md) and [wine moments checkpoint](wine-moments-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 28 complete and 31 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 29 complete and 30 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 M08c2 adds exact derivative-attempt records and idempotent settlement of confirmed
 responses after lease expiry, persisted before fallible image readback. Mandatory
@@ -15,6 +15,13 @@ for the catalog lane. R01b barcode/label inputs, package markets and real-camera
 evidence remain open, so R01 is not complete. C01 can use the identity baseline
 for curated text import; R02/R03 retain their image-evidence dependency. This
 allows useful catalog work while historical media holds remain protected.
+
+C01 is complete: separate public catalog tables and a preview-first importer now
+hold 30 source-backed releases locally. Repeat import adds zero rows; private
+journal/media counts and holds are preserved. All 394 API tests and backend
+quality checks pass. [ADR 0007](../docs/decisions/0007-public-catalog-boundary.md)
+records the boundary. C02 guest browse/search and explicit catalog-to-private
+capture are next; the existing web audit blocker remains unresolved.
 
 ## Original starting point (foundation baseline)
 
