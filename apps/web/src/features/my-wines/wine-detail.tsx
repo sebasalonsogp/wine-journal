@@ -4,10 +4,13 @@ import { CoverEditor } from "@/features/media/cover-editor";
 import { BottleCover } from "@/features/media/bottle-cover";
 
 import Link from "next/link";
+import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useJournalApi } from "@/features/auth/journal-shell";
 import { EntryEditor } from "@/features/capture/entry-editor";
+import { EntryWineMove } from "@/features/capture/entry-wine-move";
+import type { Entry } from "@/features/capture/edit-draft";
 import { EntryOccasion } from "@/features/occasions/entry-occasion";
 import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
@@ -20,6 +23,13 @@ export function WineDetail({ wineId }: { wineId: string }) {
   const api = useJournalApi();
   const account = useAccount();
   const queries = useQueryClient();
+  const [moving, setMoving] = useState<Entry | null>(null);
+  const [pendingPhotos, setPendingPhotos] = useState<Record<string, number>>({});
+  const photoSelection = useCallback((id: string, count: number) => {
+    setPendingPhotos((previous) =>
+      previous[id] === count ? previous : { ...previous, [id]: count },
+    );
+  }, []);
   const params = useSearchParams();
   const filters = readWineFilters(params);
   const requestedEntry = params.get("entry");
@@ -102,6 +112,18 @@ export function WineDetail({ wineId }: { wineId: string }) {
             </details>
             <WineRating key={wine.id} wine={wine} />
             {!focusedEntry && <WineMoments wineId={wineId} />}
+            {moving && (
+              <EntryWineMove
+                key={moving.id}
+                entry={moving}
+                source={wine}
+                pendingPhotos={Boolean(pendingPhotos[moving.id])}
+                close={() => {
+                  setMoving(null);
+                  requestAnimationFrame(() => document.getElementById("history-title")?.focus());
+                }}
+              />
+            )}
             <section className="wine-history" aria-labelledby="history-title">
               <div className="history-heading">
                 <h2 id="history-title" tabIndex={-1}>
@@ -147,7 +169,25 @@ export function WineDetail({ wineId }: { wineId: string }) {
                         label={`${wine.name} · ${dateLabel(entry.consumedDate)}`}
                       />
                       <EntryOccasion entry={entry} />
-                      <EntryPhotos api={api} entryId={entry.id} />
+                      <button
+                        type="button"
+                        className="text-button"
+                        disabled={Boolean(moving) || Boolean(pendingPhotos[entry.id])}
+                        onClick={() => setMoving(entry)}
+                      >
+                        Move to another wine
+                      </button>
+                      {Boolean(pendingPhotos[entry.id]) && (
+                        <p className="form-footnote">
+                          Save photo captions and finish or remove selected files before moving this
+                          entry.
+                        </p>
+                      )}
+                      <EntryPhotos
+                        api={api}
+                        entryId={entry.id}
+                        onSelectionChange={(count) => photoSelection(entry.id, count)}
+                      />
                     </li>
                   ))}
                 </ol>

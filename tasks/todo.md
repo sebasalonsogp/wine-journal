@@ -873,7 +873,7 @@ and [catalog capture checkpoint](catalog-capture-checkpoint.md).
   conflicts, new-destination rollback, owner isolation, capture receipt recovery,
   preserved ratings and entry/occasion photo membership. Tests live in
   `test_entry_wines.py` and the existing occasion-photo integration suite.
-- [ ] C03b: Connect a deliberate move/review flow to drinking history, with
+- [x] C03b: Connect a deliberate move/review flow to drinking history, with
   existing/new destination selection, stale-state review and uncertain-response
   recovery. Verify keyboard/phone behavior and account changes in the browser.
 - [ ] C03c: Correct provisional identity facts with shared-entry impact context

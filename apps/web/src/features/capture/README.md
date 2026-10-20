@@ -28,3 +28,17 @@ O02 adds quick wine notes and `capture-occasion.tsx`: a paginated existing-occas
 The inline entry editor adds date, optional local time/timezone, custom place and plain-text notes to the same entry. Its draft key includes the verified owner and entry ID; sign-out clears the shared private-draft prefix. Conflicts show the latest record alongside the retained draft and require an explicit choice. Successful changes invalidate wine/list/history queries. Offline sync, occasion-first batch capture and uploads remain future work.
 
 The separate deletion control is available outside edit mode. A native confirmation dialog names the selected entry and freezes its version until confirmation. Cancel restores trigger focus; a completed deletion refreshes affected lists and focuses the history heading. The personal wine record remains even after its final entry is deleted.
+
+`entry-wine-move.tsx` handles one saved entry correction from the wine detail
+screen. Search/page an existing owned wine or reuse `CaptureFields` for a new
+manual identity (`showDate=false`, scoped IDs). Review the source/destination
+before confirming. Saved entry context and photo references remain intact;
+ratings and covers stay with each wine. Pending photo selections/captions block
+moving so a history refresh cannot discard them.
+
+The correction panel is mounted outside individual history rows, so it remains
+available after a successful move removes that row. Uncertain responses read
+the current entry and wine; stale versions require explicit review and a second
+confirmation. A changed wine is linked for inspection rather than creating a
+second manual destination. Selections live in page state and clear on account
+changes. Success invalidates affected owner-scoped journal/gallery queries.

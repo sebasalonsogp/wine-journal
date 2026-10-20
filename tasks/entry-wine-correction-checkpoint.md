@@ -1,8 +1,7 @@
 # C03a — Move one entry to the correct wine
 
-October 20, 2026. Backend contract and transaction slice; C03 remains open.
-The browser move/review controls are C03b, and editing provisional facts shared
-by all of a wine's entries is C03c.
+October 20, 2026. C03a supplies the backend contract and C03b adds browser controls.
+C03 remains open for C03c: editing provisional facts shared by a wine's entries.
 
 ## Contract and behavior
 
@@ -73,12 +72,45 @@ The prior C02b head's GitHub API/browser and secret-check jobs passed. Its web
 job failed only at the existing full npm audit gate. That dependency blocker
 remains enabled and unresolved; the PR remains unmerged.
 
-## Next slice
+## C03b — Browser move and review
 
-C03b should show the source and selected destination before saving, explain
-that ratings/covers stay with their wines, and provide paginated existing-wine
-selection plus manual entry. Preserve selection on errors; review the current
-entry/wine after 409 or an uncertain response. Account changes must clear
-private state. Refresh source/destination history, wine counts, occasion wines
-and photo source links after success. Verify this through connected browser
-journeys before marking the user-facing behavior complete.
+Drinking history now offers **Move to another wine** per entry. One correction
+panel at a time appears above history and receives keyboard focus. Existing
+wines can be searched and paged; each option includes vintage/edition and
+producer. A new manual wine reuses capture's identity fields without exposing
+the entry date as an editable field. IDs are scoped so other forms stay valid.
+
+The explicit review names source and destination and explains that other entries,
+wine ratings/history and covers stay put. Cancel performs no mutation. File
+selections, pending caption edits and photo mutations block moving that entry
+until resolved, including work started after the correction panel was opened.
+
+A successful move stays visible with a link to the entry under its destination.
+The panel survives the source history refresh when the entry leaves the list.
+Wine/history/occasion/gallery caches are invalidated by account. No automatic
+navigation discards other pending media work.
+
+An uncertain response offers **Check saved entry**, reading both the current
+entry and wine. If it is still under the original wine, the user may explicitly
+review a move using that version, then confirm again. If its wine changed,
+the panel links to the current entry rather than creating another destination.
+A stale response never silently substitutes the latest version.
+
+Destination choices are temporary page state, retained through failed requests
+and review, not offline-synced or persisted across reload/navigation. The private
+shell clears/unmounts them on sign-out or account change. Saved moves remain
+visible after reload. Shared provisional-fact editing and record merging are
+not part of this slice.
+
+The three new browser journeys cover failed/paginated/searchable selection,
+cancel/confirm, real private photo upload and caption retention, pending-photo
+guards, occasion membership, preserved ratings/other entries, a dropped committed
+response creating exactly one new wine, stale-entry review and cross-tab
+sign-out followed by another account. Desktop and 390px screenshots were inspected;
+axe checks found no violations or phone overflow.
+
+All 32 browser journeys and 35 frontend unit tests passed. Frontend lint/types,
+formatting and production build passed; Impeccable reported no findings. The
+browser secret scan checked 20 scripts without finding generated private values.
+The prior C03a backend suite remains at 416 passing tests; API behavior,
+database schema, dependencies and environment variables are unchanged in C03b.

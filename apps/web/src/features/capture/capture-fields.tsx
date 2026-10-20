@@ -3,10 +3,15 @@ import type { Fields } from "./draft";
 export function CaptureFields({
   fields,
   change,
+  idPrefix = "",
+  showDate = true,
 }: {
   fields: Fields;
   change: (values: Partial<Fields>) => void;
+  idPrefix?: string;
+  showDate?: boolean;
 }) {
+  const id = (name: string) => `${idPrefix}${name}`;
   return (
     <>
       {fields.releaseId || fields.catalogReleaseId ? (
@@ -23,9 +28,9 @@ export function CaptureFields({
       ) : (
         <>
           <div className="form-field">
-            <label htmlFor="wine-name">Wine name</label>
+            <label htmlFor={id("wine-name")}>Wine name</label>
             <input
-              id="wine-name"
+              id={id("wine-name")}
               required
               maxLength={200}
               value={fields.name}
@@ -35,9 +40,9 @@ export function CaptureFields({
           </div>
           <div className="capture-columns">
             <div className="form-field">
-              <label htmlFor="vintage">Vintage</label>
+              <label htmlFor={id("vintage")}>Vintage</label>
               <select
-                id="vintage"
+                id={id("vintage")}
                 value={fields.vintageStatus}
                 onChange={(event) =>
                   change({ vintageStatus: event.target.value as Fields["vintageStatus"], year: "" })
@@ -51,9 +56,9 @@ export function CaptureFields({
             </div>
             {fields.vintageStatus === "YEAR" && (
               <div className="form-field">
-                <label htmlFor="year">Vintage year</label>
+                <label htmlFor={id("year")}>Vintage year</label>
                 <input
-                  id="year"
+                  id={id("year")}
                   required
                   type="number"
                   min={1000}
@@ -67,34 +72,36 @@ export function CaptureFields({
           </div>
         </>
       )}
-      <div className="form-field date-field">
-        <label htmlFor="date-tried">Date tried</label>
-        <input
-          id="date-tried"
-          type="date"
-          required
-          value={fields.consumedDate}
-          onChange={(event) => change({ consumedDate: event.target.value })}
-        />
-      </div>
+      {showDate && (
+        <div className="form-field date-field">
+          <label htmlFor={id("date-tried")}>Date tried</label>
+          <input
+            id={id("date-tried")}
+            type="date"
+            required
+            value={fields.consumedDate}
+            onChange={(event) => change({ consumedDate: event.target.value })}
+          />
+        </div>
+      )}
       {!fields.releaseId && !fields.catalogReleaseId && (
         <details className="capture-extras">
           <summary>
             More label details <span>Optional</span>
           </summary>
           <div className="form-field">
-            <label htmlFor="producer">Producer</label>
+            <label htmlFor={id("producer")}>Producer</label>
             <input
-              id="producer"
+              id={id("producer")}
               maxLength={200}
               value={fields.producer}
               onChange={(event) => change({ producer: event.target.value })}
             />
           </div>
           <div className="form-field">
-            <label htmlFor="edition">Edition or release</label>
+            <label htmlFor={id("edition")}>Edition or release</label>
             <input
-              id="edition"
+              id={id("edition")}
               maxLength={120}
               value={fields.edition}
               onChange={(event) => change({ edition: event.target.value })}

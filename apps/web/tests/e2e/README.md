@@ -33,6 +33,15 @@ Deletion verifies dialog cancellation and keyboard focus, stale confirmation aft
 
 No traces, HAR, storage state, or videos are recorded. The pinned runner's automatic DOM snapshot feature is disabled. Explicit screenshots cover blank sign-in, synthetic wine lists/detail and capture forms, never code fields or account details. CI uploads only `auth-check-summary.json`, containing fixed test titles, statuses, durations and error counts. Do not broaden the artifact glob to `test-results/**`; local failure files may still include diagnostic data. Codes/tokens/cookies remain only in process memory and are never printed by fixtures.
 
+# Entry correction acceptance
+
+`entry-wine-move.spec.ts` covers paginated/searchable destination selection,
+load failure/retry, cancellation, new manual destinations, dropped successful
+responses, stale-entry review and cross-tab sign-out. A real upload/worker
+journey verifies saved photos/captions and occasion membership after moving,
+and blocks a move while files or captions are unfinished. Screenshots use
+synthetic records only and check desktop/390px layout and axe.
+
 # Personal cover acceptance
 
 `covers.spec.ts` checks manual file validation and sign-out, independent text save

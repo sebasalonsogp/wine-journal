@@ -16,11 +16,13 @@ export function PhotoCard({
   api,
   refresh,
   children,
+  onPendingChange,
 }: {
   photo: EntryPhoto | OccasionPhoto;
   api: PhotoApi;
   refresh: () => void;
   children?: React.ReactNode;
+  onPendingChange?: (pending: boolean) => void;
 }) {
   const id = useId();
   const [draft, setDraft] = useState<{ caption: string; version: number } | null>(null);
@@ -29,6 +31,10 @@ export function PhotoCard({
   const [error, setError] = useState("");
   const submitting = useRef(false);
   const lifetime = useRef<AbortController | null>(null);
+  const pending = draft !== null || busy;
+  useEffect(() => {
+    onPendingChange?.(pending);
+  }, [onPendingChange, pending]);
 
   useEffect(() => {
     const controller = new AbortController();

@@ -27,6 +27,9 @@ unit tests and 29 browser journeys pass. C02 is complete; C03 private identity
 corrections are next. The existing web audit blocker remains unresolved.
 
 C03a's entry-move transaction/contract is complete with 416 passing API tests.
+C03b's browser controls pass all 32 browser journeys, including real photo
+retention, pending-caption protection, conflict review and uncertain saves.
+C03c shared provisional identity editing is next.
 C03 is split into that backend slice (C03a), its browser
 move/review controls (C03b), and correction of shared provisional identity facts
 (C03c). The [entry correction checkpoint](entry-wine-correction-checkpoint.md)

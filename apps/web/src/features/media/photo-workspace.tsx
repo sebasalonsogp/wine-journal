@@ -19,15 +19,28 @@ export function PhotoWorkspace({
   entryId,
   onSelectionChange,
   onPhotosChange,
+  onPendingChange,
 }: {
   api: PhotoApi;
   entryId?: string;
   onSelectionChange?: (count: number) => void;
   onPhotosChange?: () => void;
+  onPendingChange?: (count: number) => void;
 }) {
   const id = useId();
   const [selected, setSelected] = useState<SelectedPhoto[]>([]);
   const [photos, setPhotos] = useState<EntryPhoto[]>([]);
+  const [pendingCards, setPendingCards] = useState<Record<string, boolean>>({});
+  const cardPending = useCallback((asset: string, pending: boolean) => {
+    setPendingCards((previous) =>
+      previous[asset] === pending ? previous : { ...previous, [asset]: pending },
+    );
+  }, []);
+  const pendingCount =
+    selected.length + photos.filter((photo) => pendingCards[photo.assetId]).length;
+  useEffect(() => {
+    onPendingChange?.(pendingCount);
+  }, [onPendingChange, pendingCount]);
   const [loading, setLoading] = useState(Boolean(entryId));
   const [error, setError] = useState("");
   const [selectionError, setSelectionError] = useState("");
@@ -184,7 +197,13 @@ export function PhotoWorkspace({
       {visible.length > 0 && (
         <ul className="photo-gallery">
           {visible.map((photo) => (
-            <PhotoCard key={photo.assetId} photo={photo} api={api} refresh={refresh} />
+            <PhotoCard
+              key={photo.assetId}
+              photo={photo}
+              api={api}
+              refresh={refresh}
+              onPendingChange={(pending) => cardPending(photo.assetId, pending)}
+            />
           ))}
         </ul>
       )}
@@ -192,7 +211,15 @@ export function PhotoWorkspace({
   );
 }
 
-export function EntryPhotos({ api, entryId }: { api: PhotoApi; entryId: string }) {
+export function EntryPhotos({
+  api,
+  entryId,
+  onSelectionChange,
+}: {
+  api: PhotoApi;
+  entryId: string;
+  onSelectionChange?: (count: number) => void;
+}) {
   const queries = useQueryClient();
   const refreshMoments = useCallback(() => {
     void queries.invalidateQueries({ queryKey: ["wine-moments"] });
@@ -206,7 +233,14 @@ export function EntryPhotos({ api, entryId }: { api: PhotoApi; entryId: string }
       }}
     >
       <summary>Photos & memories</summary>
-      {opened && <PhotoWorkspace api={api} entryId={entryId} onPhotosChange={refreshMoments} />}
+      {opened && (
+        <PhotoWorkspace
+          api={api}
+          entryId={entryId}
+          onPhotosChange={refreshMoments}
+          onPendingChange={onSelectionChange}
+        />
+      )}
     </details>
   );
 }
