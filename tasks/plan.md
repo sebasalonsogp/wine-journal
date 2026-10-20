@@ -52,8 +52,13 @@ iPhone testing, and the images cannot independently resolve a vintage.
 The [expanded barcode checkpoint](barcode-coverage-checkpoint.md) now totals seven
 images across five offerings/two producers. It records one decoder miss and three
 additional provider misses. Open Food Facts is not a viable primary source for
-this tested scope. Next design curated barcode associations with explicit vintage
-ambiguity; broader samples and physical iPhone evidence still gate scanning.
+this tested scope. C04a now stores reviewed barcode associations with explicit
+vintage ambiguity through a preview-first curator import. Migration 0026 and the
+five-observation/four-code seed are applied locally; repeat import adds zero and
+journal/media counts and holds are unchanged. All 485 API tests pass, including
+atomic import, concurrency and read-only runtime access. [ADR 0008](../docs/decisions/0008-curated-barcode-evidence.md)
+records the boundary. C04b's lookup contract and C05's camera flow remain open;
+broader samples and physical iPhone evidence still gate scanning.
 
 ## Original starting point (foundation baseline)
 

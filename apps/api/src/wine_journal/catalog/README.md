@@ -67,3 +67,46 @@ uv run --project apps/api --locked python scripts/run_api_tests.py tests/integra
 ```
 
 Guest browse/search and explicit catalog-to-private capture are C02 work. There is no UI change in C01.
+
+## Reviewed barcode evidence (C04a)
+
+After migration 0026, `CatalogBarcodeObservation` stores source-backed retail
+GTIN associations to public **definitions**, not releases. The same code may
+have several sources, sizes or offerings; later lookup must preserve ambiguity.
+Even a single matching catalog release is not proof of barcode/vintage uniqueness.
+See [ADR 0008](../../../../../docs/decisions/0008-curated-barcode-evidence.md).
+
+From `apps/api`, using the existing ignored migration configuration:
+
+```text
+uv run --locked python ../../scripts/seed_barcodes.py ../../assets/catalog/barcode-evidence.json
+uv run --locked python ../../scripts/seed_barcodes.py ../../assets/catalog/barcode-evidence.json --apply
+```
+
+The first command only previews. Output fields `observations` and `package_codes`
+count new evidence rows and new distinct codes, not recognized wines. The reviewed
+batch adds five observations for four codes; an unchanged repeat adds zero. Public
+definitions must already exist with matching producer/name. No private wine or
+new catalog identity can be created through this command. Migration credentials
+remain server/operator-only, never command-line arguments or frontend variables.
+
+Input is a UTF-8 JSON array capped at 64 KiB/100 rows. All fields are required:
+`gtin`, `definition_key`, `producer`, `wine_name`, `bottle_ml`, `source_url`,
+`retrieved_on`, `market`, `evidence_status`, `source_sha256`. Reject extra fields,
+including year/release selection. GTIN is a string with a valid checksum and
+normalizes to 14 digits. Leading-zero equivalents compare equally; nonzero
+GTIN-14 packaging indicators are out of scope. Eight digits mean EAN-8, not UPC-E.
+Source URLs use the existing HTTPS/credential/query restrictions and are never
+fetched. Retrieval dates cannot be in the future. Market remains UNVERIFIED.
+WEB_TEXT requires a null hash; PRODUCER_WEB_IMAGE requires the original source's
+lowercase SHA-256, not a resized evaluation derivative's hash. The hash records
+curator evidence; the importer does not independently verify the remote image.
+
+The evidence key is `(gtin, definition, source URL, retrieval date)`. Conflicting
+size/kind/hash under that key aborts the entire batch; it never overwrites stored
+facts. Separate sources can disagree and remain separate evidence for future
+candidate review. Duplicate normalized evidence within a batch is rejected.
+Imports serialize with catalog changes using bounded locks and commit atomically.
+Runtime has SELECT only; no public endpoint or scanner consumes this table yet.
+Populated evidence prevents downgrade. Roll back application code while retaining
+the additive schema; retraction/correction needs an explicit curator workflow.

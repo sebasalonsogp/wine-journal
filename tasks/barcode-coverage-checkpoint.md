@@ -99,3 +99,33 @@ original offline decoder check pass. The new offline preflight retains source
 identity without network requests or release confirmation. The expanded decoder
 gate fails honestly on I005. Production code, dependencies and schema are
 unchanged; the previous build and 34-browser-journey evidence is retained.
+
+## C04a import foundation — October 20
+
+[ADR 0008](../docs/decisions/0008-curated-barcode-evidence.md) now implements the
+curated association decision. Migration 0026 adds public offering-level evidence
+with no release/year binding. The [reviewed seed](../assets/catalog/README.md)
+contains five observations for four codes; source URLs, retrieval dates, package
+sizes and original image hashes retain provenance. Two Seven Oaks observations
+remain independent sources for the same offering across different vintages.
+
+The offline CLI defaults to preview, rejects conflicting or invalid batches and
+serializes imports with bounded locks. Repeated/concurrent imports preserve IDs
+and insert each observation once. No private records, network requests, new
+environment variables or dependencies are introduced. Runtime can only read;
+provider-managed roles have no access. Populated evidence prevents downgrade.
+
+Verification: all **485 API tests** pass with disposable Postgres, real local
+Storage and Docker-isolated photo decoding, including 22 new import tests. Fresh
+migration/metadata/downgrade checks, CLI error redaction, atomic rollback,
+normalized duplicates, conflicting sources and role grants pass. An inverted
+apply guard fails the preview-write assertion (five stored rows instead of zero);
+byte-for-byte restoration passes the same test. Ruff, formatting, mypy and backend
+package build pass; regenerated OpenAPI is unchanged.
+
+Local migration/import: preview 5 observations/4 codes, apply 5/4, repeat 0/0.
+Journal, catalog-release and media counts plus unsettled holds are unchanged.
+C04a completes only the import foundation. C04b still needs the bounded lookup
+contract, source revalidation, explicit correction/retraction and release
+confirmation. C05 still requires physical-camera evidence and UI. Parent task
+completion remains 31/59; the existing frontend development audit blocker remains.

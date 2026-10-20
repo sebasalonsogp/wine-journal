@@ -114,3 +114,37 @@ class CatalogSource(Base):
     retrieved_on: Mapped[date] = mapped_column()
     market: Mapped[str] = mapped_column(String(16))
     evidence_status: Mapped[str] = mapped_column(String(16))
+
+
+class CatalogBarcodeObservation(Base):
+    """Reviewed package-to-offering evidence, never a unique vintage match."""
+
+    __tablename__ = "catalog_barcode_observations"
+    __table_args__ = (
+        UniqueConstraint(
+            "gtin", "definition_id", "url", "retrieved_on", name="uq_catalog_barcode_evidence"
+        ),
+        CheckConstraint(
+            "gtin ~ '^0[0-9]{13}$' AND gtin <> '00000000000000'", name="ck_catalog_barcode_gtin"
+        ),
+        CheckConstraint("bottle_ml BETWEEN 1 AND 30000", name="ck_catalog_barcode_size"),
+        CheckConstraint("url LIKE 'https://%'", name="ck_catalog_barcode_https"),
+        CheckConstraint("market = 'UNVERIFIED'", name="ck_catalog_barcode_market"),
+        CheckConstraint(
+            "(evidence_status = 'WEB_TEXT' AND source_sha256 IS NULL) OR "
+            "(evidence_status = 'PRODUCER_WEB_IMAGE' AND source_sha256 IS NOT NULL "
+            "AND source_sha256 ~ '^[a-f0-9]{64}$')",
+            name="ck_catalog_barcode_evidence",
+        ),
+        {"schema": "app"},
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    gtin: Mapped[str] = mapped_column(String(14))
+    definition_id: Mapped[UUID] = mapped_column(ForeignKey("app.catalog_definitions.id"))
+    bottle_ml: Mapped[int] = mapped_column()
+    url: Mapped[str] = mapped_column(String(500))
+    retrieved_on: Mapped[date] = mapped_column()
+    market: Mapped[str] = mapped_column(String(16))
+    evidence_status: Mapped[str] = mapped_column(String(24))
+    source_sha256: Mapped[str | None] = mapped_column(String(64))

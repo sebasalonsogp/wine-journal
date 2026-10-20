@@ -925,6 +925,23 @@ See the [entry correction checkpoint](entry-wine-correction-checkpoint.md).
 
 **Primary change areas:** apps/api/src/wine_journal/identification routes/service; integrations/wine lookup; candidate schemas; adapter tests.
 
+**Execution split (October 20):** C04a prepares reviewed package-to-offering
+evidence independently of camera readiness. [ADR 0008](../docs/decisions/0008-curated-barcode-evidence.md)
+defines a preview-first curator import, provenance, canonical GTINs and read-only
+runtime access. C04b must still implement guest/user request budgets, source
+revalidation, ambiguous candidates, server-validated selection and explicit
+vintage confirmation. No endpoint or scanner is enabled by C04a, and R01/R02/C04/C05
+remain open. Parent completion stays 31/59.
+
+**C04a completed:** Migration 0026, bounded offline importer/CLI and reviewed seed
+are implemented. Local preview/apply reports five observations and four codes;
+repeat apply adds zero. Private journal/catalog release/media counts and holds
+remain unchanged. All 485 API tests pass, including 22 new import cases and fresh
+migration/downgrade checks. Runtime writes and provider-role reads are denied.
+Inverting the apply guard makes the preview-write test fail; restoring it passes.
+Ruff, formatting, mypy, package build and unchanged OpenAPI checks pass. See the
+[implementation evidence](barcode-coverage-checkpoint.md#c04a-import-foundation--october-20).
+
 **Stories:** WI-01, WI-03, WI-04.
 
 <a id="c05"></a>
