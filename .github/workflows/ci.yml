@@ -100,6 +100,9 @@ jobs:
         run: uv run --project apps/api --locked python scripts/start_local.py
       - name: Configure private local Storage without displaying credentials
         run: uv run --project apps/api --locked python scripts/configure_storage.py
+      - name: Seed reviewed public wine identities for guest browser checks
+        working-directory: apps/api
+        run: uv run --locked python ../../scripts/seed_catalog.py ../../assets/evaluation/manifest.csv --apply
       - name: Verify real private Storage capabilities and upload limits
         run: uv run --project apps/api --locked python scripts/smoke_local_storage.py
       - name: Build isolated decoder for real Storage publication

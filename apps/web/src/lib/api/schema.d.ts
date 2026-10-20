@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/api/v1/catalog/wines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Browse Wines */
+        get: operations["browse_wines_api_v1_catalog_wines_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/wines/{release_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Wine Details */
+        get: operations["wine_details_api_v1_catalog_wines__release_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/entries": {
         parameters: {
             query?: never;
@@ -526,6 +560,70 @@ export interface components {
         AttachPhoto: Record<string, never>;
         /** BootstrapAccount */
         BootstrapAccount: Record<string, never>;
+        /** CatalogDetails */
+        CatalogDetails: {
+            /** Edition */
+            edition: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Producer */
+            producer: string;
+            /** Sources */
+            sources: components["schemas"]["CatalogReference"][];
+            /**
+             * Vintagestatus
+             * @enum {string}
+             */
+            vintageStatus: "YEAR" | "NON_VINTAGE" | "MULTI_VINTAGE";
+            /** Year */
+            year: number | null;
+        };
+        /** CatalogPage */
+        CatalogPage: {
+            /** Items */
+            items: components["schemas"]["CatalogWine"][];
+            /** Nextoffset */
+            nextOffset: number | null;
+        };
+        /** CatalogReference */
+        CatalogReference: {
+            /**
+             * Retrievedon
+             * Format: date
+             */
+            retrievedOn: string;
+            /** Url */
+            url: string;
+        };
+        /**
+         * CatalogWine
+         * @description Explicit public allowlist; never serialize a private wine/journal model.
+         */
+        CatalogWine: {
+            /** Edition */
+            edition: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Producer */
+            producer: string;
+            /**
+             * Vintagestatus
+             * @enum {string}
+             */
+            vintageStatus: "YEAR" | "NON_VINTAGE" | "MULTI_VINTAGE";
+            /** Year */
+            year: number | null;
+        };
         /** ChangeCover */
         ChangeCover: {
             /** Assetid */
@@ -1106,6 +1204,124 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    browse_wines_api_v1_catalog_wines_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPage"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    wine_details_api_v1_catalog_wines__release_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     create_entry_api_v1_entries_post: {
         parameters: {
             query?: never;

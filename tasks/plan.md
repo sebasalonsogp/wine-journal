@@ -20,8 +20,10 @@ C01 is complete: separate public catalog tables and a preview-first importer now
 hold 30 source-backed releases locally. Repeat import adds zero rows; private
 journal/media counts and holds are preserved. All 394 API tests and backend
 quality checks pass. [ADR 0007](../docs/decisions/0007-public-catalog-boundary.md)
-records the boundary. C02 guest browse/search and explicit catalog-to-private
-capture are next; the existing web audit blocker remains unresolved.
+records the boundary. [C02a](catalog-browse-checkpoint.md) adds guest search and
+release details; C02b explicit catalog-to-private capture is next. C02 remains
+open until its sign-in/save-return journey passes. The existing web audit
+blocker remains unresolved.
 
 ## Original starting point (foundation baseline)
 

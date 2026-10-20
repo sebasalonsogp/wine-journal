@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Literal, Self
-from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
@@ -14,6 +13,7 @@ from sqlalchemy import Engine, select, text
 from sqlalchemy.orm import Session
 
 from wine_journal.catalog.models import CatalogDefinition, CatalogRelease, CatalogSource
+from wine_journal.catalog.references import safe_reference
 
 MAX_BYTES = 1_048_576
 MAX_ROWS = 1_000
@@ -49,20 +49,7 @@ class CatalogRow(BaseModel):
     @field_validator("source_url")
     @classmethod
     def safe_reference(cls, value: str) -> str:
-        parsed = urlsplit(value)
-        if (
-            parsed.scheme != "https"
-            or not parsed.hostname
-            or "." not in parsed.hostname
-            or parsed.username
-            or parsed.password
-            or parsed.query
-            or parsed.fragment
-            or parsed.port not in (None, 443)
-            or any(char.isspace() for char in value)
-        ):
-            raise ValueError("Use a plain HTTPS source URL without credentials or query strings.")
-        return value
+        return safe_reference(value)
 
     @field_validator("retrieved_on")
     @classmethod

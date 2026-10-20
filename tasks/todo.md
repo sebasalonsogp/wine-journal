@@ -829,9 +829,23 @@ unchecked until operational acceptance and the full audit gate pass. See the
 
 **Dependencies:** [C01](#c01), [J04](#j04). **Size:** M.
 
-**Primary change areas:** apps/api/src/wine_journal/catalog public queries/routes; apps/web/src/features/browse and public routes; guest journey tests.
+**Primary change areas:** apps/api/src/wine_journal/catalog public queries/routes; apps/web/src/features/catalog and public routes; guest journey tests.
 
 **Stories:** WC-01, WC-02, WC-05, WD-04, AC-01.
+
+**Execution split:** C02a delivers the public read path in catalog schemas,
+queries/routes, Next browse/detail routes and a small catalog feature folder.
+Tests cover anonymous pagination/search, two vintages/editions, literal wildcard
+terms, missing/invalid references, private UUID isolation, unchanged entry counts
+and desktop/phone navigation. C02b adds the explicit catalog-to-owned identity
+link, transactional capture/retry handling, guest draft/sign-in return and repeat
+release reuse. The parent stays open until that save-return journey passes.
+See [the catalog browse checkpoint](catalog-browse-checkpoint.md).
+
+- [x] C02a: Guest public search/details, source validation, missing-data states
+  and browser verification.
+- [ ] C02b: Explicit catalog selection through sign-in and idempotent private
+  capture, retaining the correct release and reusing an owner's existing wine.
 
 <a id="c03"></a>
 ### C03: Correct private identity mistakes

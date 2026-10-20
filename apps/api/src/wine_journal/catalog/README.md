@@ -2,6 +2,31 @@
 
 `WineDefinition` and `WineRelease` remain owner-only provisional identities used by the journal. `CatalogDefinition`, `CatalogRelease` and `CatalogSource` hold operator-reviewed public facts. No query or ordinary journal payload promotes one into the other. See [ADR 0007](../../../../../docs/decisions/0007-public-catalog-boundary.md).
 
+## Guest reads
+
+`GET /api/v1/catalog/wines` accepts `q` (at most 200 characters), `limit` (1–48,
+default 24), and `offset` (0–10,000). Space-separated terms must each match the
+name, producer, edition or year. Matching is case-insensitive and SQL wildcard
+characters are literal. Ordering is producer/name, newest vintage, edition, then
+release UUID. The response includes `items` and `nextOffset`; offset paging is
+appropriate to this small curated catalog and is not a snapshot across imports.
+Search indexing/keyset pagination should be revisited if the catalog grows.
+
+`GET /api/v1/catalog/wines/{release_id}` returns that exact public release and
+up to 20 distinct source references with their latest retrieval dates. URLs are
+validated again before returning them; invalid references are omitted. A source
+reference is not a purchase offer or a claim of verified specifications.
+
+Both endpoints are anonymous, bounded, read-only and `no-store`. Their explicit
+response schemas contain only public identity/source fields. Queries never join
+owner-scoped tables. The Next server calls this API without forwarding cookies or
+authorization, through the existing configured API origin and a five-second
+timeout. No new environment variables or provider keys are needed.
+
+The first browser slice supports guest search/details. Catalog-to-journal saving
+is a separate C02b step: never submit a catalog UUID as a private `releaseId` or
+silently turn a public selection into a new manual identity.
+
 ## Import a reviewed batch
 
 From the repository root, after applying migration 0022:

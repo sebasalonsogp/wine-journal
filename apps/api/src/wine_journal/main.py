@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import sessionmaker
 
 from wine_journal.accounts.routes import router as accounts_router
+from wine_journal.catalog.routes import router as catalog_router
 from wine_journal.core.auth import TokenVerifier
 from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
@@ -59,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     application.include_router(health_router, prefix="/api/v1")
     application.include_router(accounts_router, prefix="/api/v1")
+    application.include_router(catalog_router, prefix="/api/v1")
     application.include_router(journal_router, prefix="/api/v1")
     application.include_router(rating_router, prefix="/api/v1")
     application.include_router(occasion_router, prefix="/api/v1")

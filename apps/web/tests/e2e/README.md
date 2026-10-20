@@ -2,6 +2,14 @@
 
 Run `npm run test:e2e` after guarded local Supabase setup and `npm run build`. Playwright starts the production web/API servers if they are not already running. Default browser: Chromium (`npx playwright install chromium`); on Windows an installed Edge can be selected with `$env:PLAYWRIGHT_CHANNEL='msedge'`. Always use `http://localhost:3000`, matching the configured Origin.
 
+Guest catalog tests require the reviewed 30-release seed after migration 0022:
+`uv run --project apps/api --locked python scripts/seed_catalog.py assets/evaluation/manifest.csv --apply`
+from the repository root. Repeating this import adds no duplicate identities.
+CI seeds its disposable local database with the same command. `catalog.spec.ts`
+covers paging, two vintages, retained search, producer references, missing prices,
+no results, invalid links, desktop/phone layout and axe checks. Its screenshots
+contain public reference data only. Catalog-to-private capture remains C02b.
+
 Photo scenarios also require `uv run --project apps/api --locked python scripts/configure_storage.py` and `uv run --project apps/api --locked python scripts/build_photo_decoder.py` from the repository root. The test API starts with media enabled; an already-running API must also have media enabled. Tests invoke the registered worker with `--once` and capture its output privately. They use a tiny synthetic PNG and invalid JPEG bytes, never personal files. Synthetic assets remain in local development storage until cleanup; CI services are disposable. No hosted provider configuration is accepted.
 
 The photo tests cover text save during upload failure, retry with one entry, caption persistence, reload/removal, later attachments, processing failure and cross-tab sign-out while an upload is unfinished. A controlled visibilitychange event verifies that a real session recheck preserves the selected file; headless tab activation alone does not reliably emit it. Desktop/390px photo screenshots and axe checks cover the journal controls, not physical-device HEIC selection.
