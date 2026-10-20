@@ -2,7 +2,7 @@
 
 Status: implementation underway, October 19, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02–M04 deliver durable jobs, private uploads, isolated photo processing and owner-only entry galleries. Capture and saved entries now support photos, captions and retry/removal without repeating a text save. Local media is enabled with the registered worker. M05 adds independent personal bottle covers, with failed replacements preserving the current image. M06a occasion attachment/album APIs and M06b scrapbook controls are implemented and functionally verified. M07 adds wine photo highlights and a paginated gallery with exact source links. M06/M07 closeout awaits the development dependency audit fix; M08a retirement fencing and M08b write tracking, physical cleanup and logical quota recovery are implemented; M08c1 adds recurring execution and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). See the [occasion album checkpoint](occasion-album-checkpoint.md) and [wine moments checkpoint](wine-moments-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. As of October 20, the plan has **59 bounded tasks: 30 complete and 29 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. As of October 20, the plan has **59 bounded tasks: 31 complete and 28 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 M08c2 adds exact derivative-attempt records and idempotent settlement of confirmed
 responses after lease expiry, persisted before fallible image readback. Mandatory
@@ -23,18 +23,18 @@ quality checks pass. [ADR 0007](../docs/decisions/0007-public-catalog-boundary.m
 records the boundary. [C02a](catalog-browse-checkpoint.md) adds guest search and
 release details; [C02b](catalog-capture-checkpoint.md) completes catalog capture
 through sign-in, repeat saves and draft recovery. All 409 API tests, 35 frontend
-unit tests and 29 browser journeys pass. C02 is complete; C03 private identity
-corrections are next. The existing web audit blocker remains unresolved.
+unit tests and 29 browser journeys passed at that checkpoint. C02 is complete.
+The existing web audit blocker remains unresolved.
 
 C03a's entry-move transaction/contract is complete with 416 passing API tests.
 C03b's browser controls pass all 32 browser journeys, including real photo
 retention, pending-caption protection, conflict review and uncertain saves.
-C03c shared provisional identity editing is next.
-C03 is split into that backend slice (C03a), its browser
-move/review controls (C03b), and correction of shared provisional identity facts
-(C03c). The [entry correction checkpoint](entry-wine-correction-checkpoint.md)
-records concurrency, ownership and photo-membership evidence. C03 remains open
-until the user-facing correction paths pass; the task count is unchanged.
+C03c completes manual identity corrections with shared-tasting impact, a separate
+identity version, catalog protection and explicit stale/uncertain-save review.
+All 420 API tests, 35 frontend unit tests and 34 browser journeys pass.
+The [entry correction checkpoint](entry-wine-correction-checkpoint.md) records
+concurrency, ownership, stable IDs and photo/occasion preservation. C03 is
+complete; barcode/label identification still depends on R01b/R02/R03 evidence.
 
 ## Original starting point (foundation baseline)
 

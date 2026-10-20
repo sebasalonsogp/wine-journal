@@ -1,6 +1,6 @@
 # Wine Journal implementation tasks
 
-Status: implementation underway, October 20, 2026. **Thirty of 59 tasks are complete; 29 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. M08c1 adds the preview-first recurring runner and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
+Status: implementation underway, October 20, 2026. **Thirty-one of 59 tasks are complete; 28 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. M08c1 adds the preview-first recurring runner and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
 
@@ -851,7 +851,7 @@ and [catalog capture checkpoint](catalog-capture-checkpoint.md).
 <a id="c03"></a>
 ### C03: Correct private identity mistakes
 
-- [ ] **Outcome:** Allow safe correction before adding automatic identification.
+- [x] **Outcome:** Allow safe correction before adding automatic identification.
 
 **Acceptance:**
 
@@ -876,10 +876,14 @@ and [catalog capture checkpoint](catalog-capture-checkpoint.md).
 - [x] C03b: Connect a deliberate move/review flow to drinking history, with
   existing/new destination selection, stale-state review and uncertain-response
   recovery. Verify keyboard/phone behavior and account changes in the browser.
-- [ ] C03c: Correct provisional identity facts with shared-entry impact context
+- [x] C03c: Correct provisional identity facts with shared-entry impact context
   and conflict protection. Catalog facts remain separate; no automatic merges.
 
-Keep C03 open until these user-facing paths and their regression checks pass.
+C03 is complete. Identity corrections preserve wine/release IDs, entries,
+ratings and media. Catalog-linked/shared-definition facts remain protected.
+All 420 API tests and 34 browser journeys pass; see the
+[correction checkpoint](entry-wine-correction-checkpoint.md). Whole-record
+merging and public catalog editing remain separate future decisions.
 See the [entry correction checkpoint](entry-wine-correction-checkpoint.md).
 
 **Checkpoint after C01, C02, C03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.

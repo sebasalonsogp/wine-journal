@@ -96,6 +96,8 @@ class WineResponse(BaseModel):
     rating_version: int
     cover_asset_id: UUID | None = None
     cover_version: int = 0
+    identity_version: int = 0
+    can_edit_identity: bool = False
 
 
 class WinePage(BaseModel):

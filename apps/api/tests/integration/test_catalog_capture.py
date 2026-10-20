@@ -83,6 +83,16 @@ def test_catalog_save_reuses_owner_wine_but_keeps_vintages_and_accounts_separate
         key = {"Idempotency-Key": str(uuid4())}
         first = client.post("/api/v1/entries", json=body, headers=key)
         assert first.status_code == 200
+        wine_url = f"/api/v1/me/wines/{first.json()['userWineId']}"
+        catalog_snapshot = client.get(wine_url).json()
+        assert catalog_snapshot["canEditIdentity"] is False
+        assert (
+            client.put(
+                f"{wine_url}/identity", json={"version": 0, "wine": {"name": "Rewrite catalog"}}
+            ).status_code
+            == 409
+        )
+        assert client.get(wine_url).json() == catalog_snapshot
         assert client.post("/api/v1/entries", json=body, headers=key).json() == first.json()
         repeat = client.post(
             "/api/v1/entries", json=body, headers={"Idempotency-Key": str(uuid4())}

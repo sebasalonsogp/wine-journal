@@ -1031,6 +1031,22 @@ def test_removing_general_reference_keeps_shared_entry_photo_and_excludes_cover(
     assert items[0]["sourceCount"] == 1
     assert items[0]["source"]["caption"] == "From the wine entry"
     assert items[0]["source"]["userWineId"] == entry["userWineId"]
+    wine_url = f"/api/v1/me/wines/{entry['userWineId']}"
+    before_entry_photos = p.client.get(f"/api/v1/entries/{p.entries[0]}/photos").json()
+    corrected = p.client.put(
+        f"{wine_url}/identity",
+        json={
+            "version": 0,
+            "wine": {"name": "Corrected memory bottle", "vintageStatus": "NON_VINTAGE"},
+        },
+    )
+    assert corrected.status_code == 200
+    assert corrected.json()["coverAssetId"] == cover
+    assert p.client.get(f"/api/v1/entries/{p.entries[0]}").json() == entry
+    assert p.client.get(f"/api/v1/entries/{p.entries[0]}/photos").json() == before_entry_photos
+    after_album = p.client.get(url).json()
+    assert after_album["items"][0]["assetId"] == asset
+    assert after_album["items"][0]["source"]["caption"] == "From the wine entry"
     # Remove the fixture cover so its asset is no longer referenced at teardown.
     assert (
         p.client.put(

@@ -23,6 +23,7 @@ from wine_journal.journal.schemas import (
 )
 from wine_journal.journal.service import save_entry
 from wine_journal.journal.wine_filters import RatingFilter, VintageFilter, WineFilters, WineSort
+from wine_journal.journal.wine_identity import EditWineIdentity, edit_wine_identity
 
 router = APIRouter(
     tags=["journal"],
@@ -137,3 +138,15 @@ def entries(
     return queries.list_entries(
         session, read_account(session, principal).id, wine_id, limit, cursor
     )
+
+
+@router.put("/me/wines/{wine_id}/identity", response_model=WineResponse)
+def update_wine_identity(
+    wine_id: UUID,
+    body: EditWineIdentity,
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> WineResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return edit_wine_identity(session, principal, wine_id, body)

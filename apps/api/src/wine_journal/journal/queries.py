@@ -6,7 +6,7 @@ from datetime import date
 from uuid import UUID
 
 from sqlalchemy import Select, String, and_, cast, func, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from wine_journal.catalog.models import WineDefinition, WineRelease
 from wine_journal.core.errors import ApiError
@@ -33,6 +33,8 @@ type WineRow = tuple[
     int,
     UUID | None,
     int,
+    int,
+    bool,
 ]
 
 
@@ -54,6 +56,16 @@ def decode_cursor(value: str, scope: str, owner: UUID) -> tuple[date | None, UUI
 
 
 def wine_query(owner: UUID, occasion_id: UUID | None = None) -> Select[WineRow]:
+    sibling = aliased(WineRelease)
+    shared_definition = (
+        select(sibling.id)
+        .where(
+            sibling.owner_id == owner,
+            sibling.definition_id == WineRelease.definition_id,
+            sibling.id != WineRelease.id,
+        )
+        .exists()
+    )
     history = (
         select(
             DrinkingEntry.user_wine_id,
@@ -82,6 +94,10 @@ def wine_query(owner: UUID, occasion_id: UUID | None = None) -> Select[WineRow]:
             UserWine.rating_version,
             UserWine.cover_asset_id,
             UserWine.cover_version,
+            WineRelease.identity_version,
+            and_(WineRelease.catalog_release_id.is_(None), ~shared_definition).label(
+                "can_edit_identity"
+            ),
         )
         .join(WineRelease, UserWine.release_id == WineRelease.id)
         .join(WineDefinition, WineRelease.definition_id == WineDefinition.id)

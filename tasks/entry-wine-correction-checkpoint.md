@@ -114,3 +114,63 @@ formatting and production build passed; Impeccable reported no findings. The
 browser secret scan checked 20 scripts without finding generated private values.
 The prior C03a backend suite remains at 416 passing tests; API behavior,
 database schema, dependencies and environment variables are unchanged in C03b.
+
+## C03c — Correct shared manual label details
+
+My Wines → a manual wine → **Correct wine details** edits name, producer,
+vintage status/year and edition. The review explains that every tasting under
+this wine uses the same label facts, including occasion-linked tastings. It
+points to entry moves when only one tasting is wrong. Explicit confirmation
+precedes the write; closing the editor performs no mutation.
+
+`PUT /api/v1/me/wines/{wine_id}/identity` accepts a strict version and the
+existing validated manual-wine input. The transaction checks the active owner,
+locks the release/definition and compares an independent identity version.
+Conflicting versions and lock timeouts return 409; foreign/missing wine IDs
+return 404. Catalog-linked identities and definitions shared by multiple
+releases are protected. There is no public-catalog edit or automatic merge,
+even when the corrected facts exactly match another private record.
+
+Migration 0025 adds a nonnegative identity revision with an initial value of
+zero and grants UPDATE only for the editable private fact columns and revision.
+Owner IDs, record IDs, definition/catalog links and public facts remain outside
+the runtime UPDATE grants. Existing wine/release/definition IDs, entry versions,
+capture receipts, ratings, rating history, occasions, covers and attachments
+are preserved. The local migration preserved aggregate journal/catalog/media
+counts and upload reservations/holds.
+
+After an uncertain response, **Check saved wine** reads back the current facts.
+If they match the proposed facts, it confirms the saved state without another
+write. Otherwise it shows the latest saved identity, keeps the proposed changes,
+and requires explicit review with the latest revision before confirmation.
+The same rule handles stale edits; there is no silent version substitution.
+Private list, occasion and gallery caches are invalidated by account.
+
+The editor keeps temporary page state through failed requests, not a persistent
+offline draft across reload/navigation. Account sign-out/switch unmounts it.
+Stable child keys retain unfinished photo caption edits through a correction.
+Keyboard focus moves to the editor when opening or changing review stages and
+returns to its opener on close.
+
+Verification: all 420 API tests passed with disposable Postgres, local Storage
+and Docker-isolated decoding; all 34 browser journeys and 35 frontend unit tests
+passed. Coverage includes one winning concurrent edit, cross-owner and disabled
+accounts, invalid inputs, shared-definition/catalog protection, matching-name
+non-merges, capture retries, migration grants and preserved photo/cover/occasion
+references. The new browser journeys cover cancel/review/save, pending captions,
+stale revisions, a dropped committed response and cross-tab sign-out.
+
+Desktop and 390px screenshots were inspected; axe found no violations and the
+phone layout had no horizontal overflow. A final keyboard-focus correction was
+checked with both affected browser journeys. A deliberately inverted revision
+guard failed the regression as expected; the source was restored byte-for-byte
+and all four focused identity API tests passed again.
+
+Ruff/formatting, mypy, frontend lint/types, production build, backend package
+build and generated contracts passed. Impeccable reported no findings. No new
+dependency, environment variable or provider credential was introduced.
+The built-browser secret check inspected 20 scripts without finding generated
+private values. The web/API preview and photo worker were restored.
+C03 is complete. Full dependency audit remains the separate known development
+dependency blocker; the PR remains unmerged. The prior C03b head's API/browser
+and secret CI jobs passed; web failed only at the enabled npm audit gate.

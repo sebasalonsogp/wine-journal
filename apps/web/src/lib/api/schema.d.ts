@@ -233,6 +233,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/wines/{wine_id}/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Wine Identity */
+        put: operations["update_wine_identity_api_v1_me_wines__wine_id__identity_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/wines/{wine_id}/moments": {
         parameters: {
             query?: never;
@@ -727,6 +744,12 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** EditWineIdentity */
+        EditWineIdentity: {
+            /** Version */
+            version: number;
+            wine: components["schemas"]["ManualWine"];
+        };
         /** EntryPage */
         EntryPage: {
             /** Items */
@@ -1191,6 +1214,11 @@ export interface components {
         };
         /** WineResponse */
         WineResponse: {
+            /**
+             * Caneditidentity
+             * @default false
+             */
+            canEditIdentity: boolean;
             /** Coverassetid */
             coverAssetId?: string | null;
             /**
@@ -1209,6 +1237,11 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /**
+             * Identityversion
+             * @default 0
+             */
+            identityVersion: number;
             /** Lastconsumeddate */
             lastConsumedDate: string | null;
             /** Name */
@@ -2603,6 +2636,95 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EntryPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_wine_identity_api_v1_me_wines__wine_id__identity_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wine_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditWineIdentity"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WineResponse"];
                 };
             };
             /** @description Unauthorized */

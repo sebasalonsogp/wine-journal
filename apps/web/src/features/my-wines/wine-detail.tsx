@@ -14,6 +14,7 @@ import type { Entry } from "@/features/capture/edit-draft";
 import { EntryOccasion } from "@/features/occasions/entry-occasion";
 import { EntryPhotos } from "@/features/media/photo-workspace";
 import { WineRating } from "./wine-rating";
+import { WineIdentityEditor } from "./wine-identity-editor";
 import { WineMoments } from "./wine-moments";
 import { readWineFilters, wineFilterQuery } from "./wine-filters";
 import { dateLabel, releaseLabel, JournalError } from "./wine-display";
@@ -98,6 +99,7 @@ export function WineDetail({ wineId }: { wineId: string }) {
                 </Link>
               </div>
             </section>
+            <WineIdentityEditor key={wine.id} wine={wine} />
             <details className="entry-photo-disclosure">
               <summary>Manage bottle cover</summary>
               <CoverEditor

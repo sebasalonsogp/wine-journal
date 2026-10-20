@@ -26,6 +26,7 @@ class WineRelease(Base):
     __table_args__ = (
         UniqueConstraint("owner_id", "id", name="uq_wine_releases_owner"),
         UniqueConstraint("owner_id", "catalog_release_id", name="uq_owned_catalog_release"),
+        CheckConstraint("identity_version >= 0", name="ck_wine_identity_version"),
         ForeignKeyConstraint(
             ["owner_id", "definition_id"],
             ["app.wine_definitions.owner_id", "app.wine_definitions.id"],
@@ -47,6 +48,7 @@ class WineRelease(Base):
     vintage_status: Mapped[str] = mapped_column(String(16))
     year: Mapped[int | None] = mapped_column()
     edition: Mapped[str | None] = mapped_column(String(120))
+    identity_version: Mapped[int] = mapped_column(default=0, server_default="0")
 
 
 class CatalogDefinition(Base):
