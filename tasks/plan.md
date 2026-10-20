@@ -10,6 +10,12 @@ verification still guards publication. Historical/lost-response and signing
 holds remain protected. Maintenance now reports tracked versus unattributed holds
 and stops on ledger/counter deficits; this does not complete M08's operational acceptance.
 
+R01a now records [30 sourced reference identities](identification-evaluation.md)
+for the catalog lane. R01b barcode/label inputs, package markets and real-camera
+evidence remain open, so R01 is not complete. C01 can use the identity baseline
+for curated text import; R02/R03 retain their image-evidence dependency. This
+allows useful catalog work while historical media holds remain protected.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.

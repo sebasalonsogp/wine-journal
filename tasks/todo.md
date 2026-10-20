@@ -39,6 +39,8 @@ These are bounded evidence tasks, not one prerequisite wall. R02/R03 gate their 
 
 **Stories:** WC-06, WI-03.
 
+**Execution split (October 19):** [R01a identity baseline](identification-evaluation.md) is complete: 30 source-backed reference identities, 16 offerings, explicit source dates and unverified markets. R01b remains open: independently verified barcode/label assets, imperfect images and unknown-year observations. The baseline is source-only, not 30 acquired bottles or measured recognition coverage. Parent R01 stays unchecked; child checkpoints do not change the 59-task count. C01 may consume R01a for curated text data; R02/R03 still require R01b.
+
 <a id="r02"></a>
 ### R02: Prove the barcode route
 
@@ -803,7 +805,7 @@ unchecked until operational acceptance and the full audit gate pass. See the
 
 **Verify:** Import twice, inspect identity/source constraints, and verify private records cannot become public through a client payload.
 
-**Dependencies:** [J01](#j01), [R01](#r01). **Size:** M.
+**Dependencies:** [J01](#j01), [R01a](identification-evaluation.md) source-backed identities. R01b image/package evidence remains required for recognition evaluations, not curated text import. **Size:** M.
 
 **Primary change areas:** apps/api/src/wine_journal/catalog import/service/models; migrations; scripts/seed_catalog.py; catalog fixtures/tests.
 
