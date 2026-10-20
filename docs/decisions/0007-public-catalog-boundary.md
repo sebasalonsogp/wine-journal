@@ -23,3 +23,20 @@ One transaction locks the three catalog tables in SHARE ROW EXCLUSIVE mode befor
 The importer can be retried without duplicating data, and a later write failure rolls back definitions, releases and sources together. Empty-schema migration rollback is supported; populated catalog downgrade is refused. Roll back application code while retaining the additive schema.
 
 Separate public and private representations introduce an explicit translation/linking step for future catalog-to-journal capture. C02 must implement that deliberately; a public UUID cannot currently be passed as a private release ID. No guest catalog endpoint or publishing endpoint is added by C01. Public reviews, provider mappings, barcode ambiguity, metadata enrichment and catalog corrections remain separate work. Structured validation does not prove a source is accurate: review the source before an operator applies a manifest.
+
+## C02 implementation follow-up — October 20, 2026
+
+C02a adds anonymous read-only search and detail endpoints. C02b adds the explicit
+`catalogReleaseId` entry input and nullable `wine_releases.catalog_release_id`
+foreign key, with unique owner/catalog-release pairs. The first save snapshots
+public facts into private owner-scoped rows; repeats reuse those rows under an
+account lock acquired before occasion/wine locks. No global/private owner
+constraint is relaxed. Manual wines retain NULL links and are never merged by
+name. Catalog edits do not silently change existing journal snapshots.
+
+Identity links are written at INSERT time using existing runtime grants.
+Release UPDATE remains denied; public catalog tables remain SELECT-only to the
+API role. This is not a public publishing capability. Migration 0023 refuses a
+downgrade that would discard links. Guest drafts retain only a public release
+selection plus user-entered context, and an explicit authenticated save remains
+necessary before creating journal rows.

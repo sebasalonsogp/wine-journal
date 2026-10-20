@@ -195,7 +195,12 @@ def test_old_receipts_and_occasion_fk_migration(
         with Session(engine) as session, session.begin():
             receipt = session.get(EntrySave, (owner, key))
             assert receipt is not None and receipt.response is not None
-            legacy_json = body.model_dump_json(exclude={"occasion_id", "new_occasion", "notes"})
+            # Frozen pre-occasion input: deriving it from today's model includes new fields.
+            legacy_json = (
+                '{"consumed_date":"2026-09-29","manual_wine":{"name":"Legacy bottle",'
+                '"producer":null,"vintage_status":"UNKNOWN","year":null,"edition":null},'
+                '"release_id":null}'
+            )
             assert receipt.request_hash == hashlib.sha256(legacy_json.encode()).hexdigest()
             receipt.response = {k: v for k, v in receipt.response.items() if k != "occasionId"}
         migrate("downgrade", "0007_occasions")

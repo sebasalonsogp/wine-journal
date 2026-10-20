@@ -8,7 +8,14 @@ from the repository root. Repeating this import adds no duplicate identities.
 CI seeds its disposable local database with the same command. `catalog.spec.ts`
 covers paging, two vintages, retained search, producer references, missing prices,
 no results, invalid links, desktop/phone layout and axe checks. Its screenshots
-contain public reference data only. Catalog-to-private capture remains C02b.
+contain public reference data only.
+
+`catalog-capture.spec.ts` requires migration 0023 and covers exact-vintage
+selection through sign-in, a dropped save response and retry, repeat capture,
+separate vintages, unfinished/uncertain draft choices, signed-out draft privacy
+and account-switch isolation. It verifies that lookup and sign-in do not
+automatically save entries. Screenshots contain synthetic context only, with
+desktop/390px layout and axe checks.
 
 Photo scenarios also require `uv run --project apps/api --locked python scripts/configure_storage.py` and `uv run --project apps/api --locked python scripts/build_photo_decoder.py` from the repository root. The test API starts with media enabled; an already-running API must also have media enabled. Tests invoke the registered worker with `--once` and capture its output privately. They use a tiny synthetic PNG and invalid JPEG bytes, never personal files. Synthetic assets remain in local development storage until cleanup; CI services are disposable. No hosted provider configuration is accepted.
 

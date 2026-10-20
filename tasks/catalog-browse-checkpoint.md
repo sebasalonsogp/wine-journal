@@ -61,7 +61,12 @@ Browser CI now seeds the same reviewed identities into its disposable database
 before testing. Tests and screenshots use public references or synthetic private
 records only. The PR remains unmerged while the full audit blocker is open.
 
-## Next slice: C02b
+## Follow-up: C02b (completed October 20)
+
+The scope below is now implemented and verified in the
+[catalog capture checkpoint](catalog-capture-checkpoint.md). C02 is complete;
+C03 private identity correction is next. The earlier verification above records
+the C02a implementation independently.
 
 Add an explicit public-release link to an owner-scoped wine, preserving existing
 owner constraints. Repeated saves of one catalog release should reuse that

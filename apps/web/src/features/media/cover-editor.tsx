@@ -260,7 +260,7 @@ export function CoverEditor({
             </p>
           )}
           <div className="photo-actions">
-            {selected && wineId && !busy && !conflict && ready && (
+            {selected && wineId && error && !busy && !conflict && ready && (
               <button
                 type="button"
                 className="button button-secondary"

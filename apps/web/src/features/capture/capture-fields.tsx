@@ -9,7 +9,7 @@ export function CaptureFields({
 }) {
   return (
     <>
-      {fields.releaseId ? (
+      {fields.releaseId || fields.catalogReleaseId ? (
         <div className="selected-wine">
           <h2>{fields.name}</h2>
           <p>{fields.producer}</p>
@@ -77,7 +77,7 @@ export function CaptureFields({
           onChange={(event) => change({ consumedDate: event.target.value })}
         />
       </div>
-      {!fields.releaseId && (
+      {!fields.releaseId && !fields.catalogReleaseId && (
         <details className="capture-extras">
           <summary>
             More label details <span>Optional</span>

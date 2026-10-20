@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { entryBody, newDraft, parseDraft } from "../../src/features/capture/draft";
+import { catalogDraft, entryBody, newDraft, parseDraft } from "../../src/features/capture/draft";
 import { returnPath } from "../../src/features/auth/validation";
 import { newOccasionDraft } from "../../src/features/occasions/occasion-draft";
 
@@ -80,4 +80,51 @@ test("sign-in can return only to capture or a valid private wine path", () => {
     "/my-wines/not-a-uuid",
   ])
     assert.equal(returnPath(input), "/my-wines");
+});
+
+test("catalog drafts retain exact identity, optional context and legacy compatibility", () => {
+  const wine = {
+    id: crypto.randomUUID(),
+    name: "Estate wine",
+    producer: "Estate",
+    vintageStatus: "MULTI_VINTAGE" as const,
+    year: null,
+    edition: "172ème Édition",
+  };
+  const draft = catalogDraft(null, wine);
+  draft.fields.notes = "An evening with friends";
+  draft.fields.consumedDate = "2026-10-20";
+  draft.intentKey = crypto.randomUUID();
+  const restored = parseDraft(JSON.stringify(draft))!;
+  assert.deepEqual(restored, draft);
+  assert.deepEqual(entryBody(restored.fields), {
+    consumedDate: "2026-10-20",
+    notes: "An evening with friends",
+    catalogReleaseId: wine.id,
+  });
+  assert.equal(
+    parseDraft(
+      JSON.stringify({ ...draft, fields: { ...draft.fields, releaseId: crypto.randomUUID() } }),
+    ),
+    null,
+  );
+  assert.equal(
+    parseDraft(
+      JSON.stringify({ ...draft, fields: { ...draft.fields, catalogReleaseId: "bad-id" } }),
+    ),
+    null,
+  );
+  const legacy = JSON.parse(JSON.stringify(newDraft(null)));
+  delete legacy.fields.catalogReleaseId;
+  assert.equal(parseDraft(JSON.stringify(legacy))?.fields.catalogReleaseId, null);
+  const destination = `/capture?catalog=${wine.id}`;
+  assert.equal(returnPath(destination), destination);
+  for (const value of [
+    destination + "&next=https://evil.test",
+    destination + "#other",
+    "/capture?catalog=bad",
+    `/capture?wine=${wine.id}&catalog=${wine.id}`,
+  ]) {
+    assert.equal(returnPath(value), "/my-wines");
+  }
 });

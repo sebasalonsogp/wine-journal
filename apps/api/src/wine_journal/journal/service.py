@@ -7,7 +7,11 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from wine_journal.accounts.service import read_account
-from wine_journal.catalog.service import create_manual_release, read_owned_release
+from wine_journal.catalog.service import (
+    capture_catalog_release,
+    create_manual_release,
+    read_owned_release,
+)
 from wine_journal.core.auth import Principal
 from wine_journal.core.errors import ApiError
 from wine_journal.journal.entry_creation import insert_entry
@@ -19,13 +23,16 @@ from wine_journal.journal.schemas import EntryResponse, SaveEntry
 def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntry) -> EntryResponse:
     # Preserve pre-occasion receipt hashes for unchanged, minimal capture requests.
     absent = {
-        field for field in ("occasion_id", "new_occasion", "notes") if getattr(body, field) is None
+        field
+        for field in ("occasion_id", "new_occasion", "notes", "catalog_release_id")
+        if getattr(body, field) is None
     }
     digest = hashlib.sha256(body.model_dump_json(exclude=absent).encode()).hexdigest()
     try:
         with session.begin():
             session.execute(text("SET LOCAL lock_timeout = '3s'"))
-            owner = read_account(session, principal)
+            # Serialize first capture per account before taking occasion or wine locks.
+            owner = read_account(session, principal, lock=body.catalog_release_id is not None)
             claimed = session.scalar(
                 insert(EntrySave)
                 .values(owner_id=owner.id, key=key, request_hash=digest)
@@ -53,6 +60,8 @@ def save_entry(session: Session, principal: Principal, key: UUID, body: SaveEntr
                 occasion_id = occasion.id
             if body.manual_wine is not None:
                 release = create_manual_release(session, owner.id, body.manual_wine)
+            elif body.catalog_release_id is not None:
+                release = capture_catalog_release(session, owner.id, body.catalog_release_id)
             else:
                 assert body.release_id is not None
                 release = read_owned_release(session, owner.id, body.release_id)

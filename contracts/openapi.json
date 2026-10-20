@@ -1732,6 +1732,18 @@
       "SaveEntry": {
         "additionalProperties": false,
         "properties": {
+          "catalogReleaseId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalogreleaseid"
+          },
           "consumedDate": {
             "format": "date",
             "title": "Consumeddate",

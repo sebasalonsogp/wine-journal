@@ -36,6 +36,10 @@ test("occasion composer rejects invalid, nested or excessive batches", () => {
     { ...draft, wines: Array(21).fill(wine) },
     { ...draft, wines: [wine], editing: 2, child: wine },
     { ...draft, wines: [{ ...wine, fields: { ...wine.fields, newOccasion: newOccasionDraft() } }] },
+    {
+      ...draft,
+      wines: [{ ...wine, fields: { ...wine.fields, catalogReleaseId: crypto.randomUUID() } }],
+    },
     { ...draft, wines: [{ ...wine, extraEntries: [{ consumedDate: "2026-09-29", notes: 123 }] }] },
     { ...draft, wines: Array(20).fill(wine), child: wine },
   ])

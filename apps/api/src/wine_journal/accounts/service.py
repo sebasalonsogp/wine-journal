@@ -7,12 +7,11 @@ from wine_journal.core.auth import Principal
 from wine_journal.core.errors import ApiError
 
 
-def read_account(session: Session, principal: Principal) -> AppUser:
-    account = session.scalar(
-        select(AppUser).where(
-            AppUser.auth_issuer == principal.issuer, AppUser.auth_subject == principal.subject
-        )
+def read_account(session: Session, principal: Principal, *, lock: bool = False) -> AppUser:
+    statement = select(AppUser).where(
+        AppUser.auth_issuer == principal.issuer, AppUser.auth_subject == principal.subject
     )
+    account = session.scalar(statement.with_for_update() if lock else statement)
     if account is None:
         raise ApiError(404, "ACCOUNT_NOT_FOUND", "Finish signing in to create your journal.")
     if account.state != "ACTIVE":

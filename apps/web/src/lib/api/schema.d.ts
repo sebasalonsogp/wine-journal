@@ -1043,6 +1043,8 @@ export interface components {
         };
         /** SaveEntry */
         SaveEntry: {
+            /** Catalogreleaseid */
+            catalogReleaseId?: string | null;
             /**
              * Consumeddate
              * Format: date

@@ -34,6 +34,11 @@ export default async function CatalogWinePage({
             <h1>{result.wine.name}</h1>
             <p className="catalog-producer">{result.wine.producer}</p>
             <p className="wine-release">{vintageLabel(result.wine)}</p>
+            <div className="capture-actions">
+              <Link className="button" href={`/capture?catalog=${result.wine.id}`} prefetch={false}>
+                I tried this wine
+              </Link>
+            </div>
           </header>
           <div className="catalog-detail-columns">
             <section aria-labelledby="wine-facts">

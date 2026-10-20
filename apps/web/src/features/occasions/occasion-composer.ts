@@ -26,7 +26,13 @@ function parseWine(value: WineDraft): WineDraft | null {
   const parsed = parseDraft(
     JSON.stringify({ version: 1, ownerId: null, intentKey: null, fields: value.fields }),
   );
-  if (!parsed || parsed.fields.newOccasion || parsed.fields.occasionId) return null;
+  if (
+    !parsed ||
+    parsed.fields.newOccasion ||
+    parsed.fields.occasionId ||
+    parsed.fields.catalogReleaseId
+  )
+    return null;
   const extraEntries = [];
   for (const entry of value.extraEntries) {
     if (

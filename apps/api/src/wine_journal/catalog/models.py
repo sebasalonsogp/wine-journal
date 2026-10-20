@@ -25,6 +25,7 @@ class WineRelease(Base):
     __tablename__ = "wine_releases"
     __table_args__ = (
         UniqueConstraint("owner_id", "id", name="uq_wine_releases_owner"),
+        UniqueConstraint("owner_id", "catalog_release_id", name="uq_owned_catalog_release"),
         ForeignKeyConstraint(
             ["owner_id", "definition_id"],
             ["app.wine_definitions.owner_id", "app.wine_definitions.id"],
@@ -40,6 +41,9 @@ class WineRelease(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     owner_id: Mapped[UUID] = mapped_column()
     definition_id: Mapped[UUID] = mapped_column(index=True)
+    catalog_release_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("app.catalog_releases.id", name="fk_wine_release_catalog")
+    )
     vintage_status: Mapped[str] = mapped_column(String(16))
     year: Mapped[int | None] = mapped_column()
     edition: Mapped[str | None] = mapped_column(String(120))

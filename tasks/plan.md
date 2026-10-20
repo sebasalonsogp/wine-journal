@@ -2,7 +2,7 @@
 
 Status: implementation underway, October 19, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02–M04 deliver durable jobs, private uploads, isolated photo processing and owner-only entry galleries. Capture and saved entries now support photos, captions and retry/removal without repeating a text save. Local media is enabled with the registered worker. M05 adds independent personal bottle covers, with failed replacements preserving the current image. M06a occasion attachment/album APIs and M06b scrapbook controls are implemented and functionally verified. M07 adds wine photo highlights and a paginated gallery with exact source links. M06/M07 closeout awaits the development dependency audit fix; M08a retirement fencing and M08b write tracking, physical cleanup and logical quota recovery are implemented; M08c1 adds recurring execution and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). See the [occasion album checkpoint](occasion-album-checkpoint.md) and [wine moments checkpoint](wine-moments-checkpoint.md).
 
-Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. The plan has **59 bounded tasks: 29 complete and 30 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
+Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. As of October 20, the plan has **59 bounded tasks: 30 complete and 29 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
 
 M08c2 adds exact derivative-attempt records and idempotent settlement of confirmed
 responses after lease expiry, persisted before fallible image readback. Mandatory
@@ -21,9 +21,10 @@ hold 30 source-backed releases locally. Repeat import adds zero rows; private
 journal/media counts and holds are preserved. All 394 API tests and backend
 quality checks pass. [ADR 0007](../docs/decisions/0007-public-catalog-boundary.md)
 records the boundary. [C02a](catalog-browse-checkpoint.md) adds guest search and
-release details; C02b explicit catalog-to-private capture is next. C02 remains
-open until its sign-in/save-return journey passes. The existing web audit
-blocker remains unresolved.
+release details; [C02b](catalog-capture-checkpoint.md) completes catalog capture
+through sign-in, repeat saves and draft recovery. All 409 API tests, 35 frontend
+unit tests and 29 browser journeys pass. C02 is complete; C03 private identity
+corrections are next. The existing web audit blocker remains unresolved.
 
 ## Original starting point (foundation baseline)
 

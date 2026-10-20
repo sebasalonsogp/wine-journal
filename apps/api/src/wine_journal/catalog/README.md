@@ -23,9 +23,25 @@ owner-scoped tables. The Next server calls this API without forwarding cookies o
 authorization, through the existing configured API origin and a five-second
 timeout. No new environment variables or provider keys are needed.
 
-The first browser slice supports guest search/details. Catalog-to-journal saving
-is a separate C02b step: never submit a catalog UUID as a private `releaseId` or
-silently turn a public selection into a new manual identity.
+## Capture a public release
+
+After migration 0023, `POST /api/v1/entries` accepts `catalogReleaseId` as an
+exclusive alternative to `manualWine` or the existing owned `releaseId`. The
+ordinary authentication, date, optional notes/occasion and idempotency rules
+apply. A public UUID is never accepted as a private `releaseId`.
+
+The first save creates an owner-scoped identity snapshot linked to that public
+release; repeats reuse it. An account row lock is taken before occasion/wine
+locks, and a unique `(owner_id, catalog_release_id)` constraint protects against
+concurrent duplicate identities. NULL links preserve all existing manual wines.
+Matching names never merge manual wines or different releases. Catalog facts
+changing later do not silently rewrite personal history.
+
+The link is inserted with the private release. Existing runtime permissions
+still forbid release UPDATEs, and public tables remain SELECT-only. Missing
+catalog selections roll back the new occasion, identities, entry and receipt
+together. Downgrade is refused while catalog links exist; retain the additive
+schema if rolling back application code.
 
 ## Import a reviewed batch
 

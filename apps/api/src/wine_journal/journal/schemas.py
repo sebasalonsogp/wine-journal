@@ -16,14 +16,21 @@ class SaveEntry(BaseModel):
     consumed_date: date
     manual_wine: ManualWine | None = None
     release_id: UUID | None = None
+    catalog_release_id: UUID | None = None
     occasion_id: UUID | None = None
     new_occasion: OccasionFields | None = None
     notes: str | None = Field(default=None, max_length=10000, pattern=r"^[^\x00]*$")
 
     @model_validator(mode="after")
     def exactly_one_wine(self) -> Self:
-        if (self.manual_wine is None) == (self.release_id is None):
-            raise ValueError("Choose an existing wine or enter a manual wine.")
+        if (
+            sum(
+                value is not None
+                for value in (self.manual_wine, self.release_id, self.catalog_release_id)
+            )
+            != 1
+        ):
+            raise ValueError("Choose one manual, owned or catalog wine.")
         if self.occasion_id is not None and self.new_occasion is not None:
             raise ValueError("Choose an existing occasion or enter a new occasion, not both.")
         return self

@@ -9,9 +9,12 @@ import { CaptureFields } from "./capture-fields";
 import { CaptureOccasion } from "./capture-occasion";
 import { CoverEditor } from "@/features/media/cover-editor";
 import { PhotoWorkspace } from "@/features/media/photo-workspace";
+import type { components } from "@/lib/api/schema";
+import { vintageLabel } from "@/features/catalog/catalog-display";
 import {
   entryBody,
   newDraft,
+  catalogDraft,
   readDraft,
   writeDraft,
   removeDraft,
@@ -19,13 +22,21 @@ import {
   type Fields,
 } from "./draft";
 
-export function CaptureForm({ wineId }: { wineId?: string }) {
+export function CaptureForm({
+  wineId,
+  catalogWine,
+}: {
+  wineId?: string;
+  catalogWine?: components["schemas"]["CatalogWine"];
+}) {
   const [api] = useState(createTransport);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [status, setStatus] = useState<"checking" | "ready" | "locked" | "error">("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [catalogConflict, setCatalogConflict] = useState(false);
+  const declinedCatalog = useRef(false);
   const [savedEntry, setSavedEntry] = useState<{ id: string; userWineId: string } | null>(null);
   const photoCount = useRef(0);
   const coverCount = useRef(0);
@@ -60,6 +71,10 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
         saved = null;
         setNotice("The previous account’s unfinished entry was cleared.");
       }
+      if (catalogWine && !declinedCatalog.current) {
+        if (!saved) saved = catalogDraft(owner, catalogWine);
+        setCatalogConflict(saved.fields.catalogReleaseId !== catalogWine.id);
+      }
       if (!saved && wineId) {
         if (!owner) {
           setStatus("locked");
@@ -92,7 +107,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
       setError(failure instanceof Error ? failure.message : "Please try again.");
       setStatus("error");
     }
-  }, [api, wineId]);
+  }, [api, wineId, catalogWine]);
 
   useEffect(() => {
     const checks = checkVersion;
@@ -134,9 +149,28 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
       setNotice("Draft storage is unavailable. Keep this tab open until you finish saving.");
   }
 
+  function resolveCatalog(useSelectedWine: boolean) {
+    if (!draft || !catalogWine || (useSelectedWine && draft.intentKey)) return;
+    if (useSelectedWine) {
+      const next = catalogDraft(draft.ownerId, catalogWine);
+      if (!writeDraft(next)) {
+        setError(
+          "Your browser couldn’t keep the new draft. Enable session storage, then try again.",
+        );
+        return;
+      }
+      setDraft(next);
+    }
+    declinedCatalog.current = true;
+    setCatalogConflict(false);
+    setError("");
+    // Keep the explicit choice through reloads and session checks.
+    window.history.replaceState(null, "", "/capture");
+  }
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!draft || savedEntry || submitting.current) return;
+    if (!draft || catalogConflict || savedEntry || submitting.current) return;
     submitting.current = true;
     setBusy(true);
     setError("");
@@ -215,7 +249,12 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
         <section className="empty-state">
           <h2>Your unfinished entry is private.</h2>
           <p>Sign in to the same account to continue.</p>
-          <Link className="button" href="/auth/sign-in?next=%2Fcapture">
+          <Link
+            className="button"
+            href={`/auth/sign-in?${new URLSearchParams({
+              next: catalogWine ? `/capture?catalog=${catalogWine.id}` : "/capture",
+            })}`}
+          >
             Sign in to continue
           </Link>
         </section>
@@ -225,6 +264,37 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
           <button className="button" onClick={() => void checkAccount()}>
             Try again
           </button>
+        </section>
+      ) : catalogConflict && draft && catalogWine ? (
+        <section className="save-notice" aria-labelledby="capture-choice">
+          <h2 id="capture-choice">You already have an unfinished entry.</h2>
+          <p>
+            Your current entry is for {draft.fields.name || "an unnamed wine"}. Its date and notes
+            are still kept.
+          </p>
+          <p>
+            You selected {catalogWine.name} · {vintageLabel(catalogWine)}.
+          </p>
+          {draft.intentKey && (
+            <p>
+              The current entry has an unconfirmed save. Continue it and retry before starting
+              another.
+            </p>
+          )}
+          {error && <p role="alert">{error}</p>}
+          <div className="capture-actions">
+            <button className="button" onClick={() => resolveCatalog(false)}>
+              Continue my unfinished entry
+            </button>
+            {!draft.intentKey && (
+              <button className="button button-secondary" onClick={() => resolveCatalog(true)}>
+                Discard draft and use selected wine
+              </button>
+            )}
+          </div>
+          <Link className="text-link" href={`/browse/${catalogWine.id}`}>
+            Back to selected wine
+          </Link>
         </section>
       ) : (
         draft && (
@@ -317,7 +387,7 @@ export function CaptureForm({ wineId }: { wineId?: string }) {
                 </p>
               </form>
             )}
-            {draft.ownerId && !draft.fields.releaseId && (
+            {draft.ownerId && !draft.fields.releaseId && !draft.fields.catalogReleaseId && (
               <CoverEditor
                 key={`cover-${draft.ownerId}`}
                 api={api}

@@ -15,6 +15,7 @@ export type Fields = {
   edition: string;
   consumedDate: string;
   releaseId: string | null;
+  catalogReleaseId: string | null;
   notes: string;
   occasionId: string | null;
   newOccasion: OccasionDraft | null;
@@ -43,6 +44,7 @@ export function newDraft(ownerId: string | null): Draft {
       edition: "",
       consumedDate,
       releaseId: null,
+      catalogReleaseId: null,
       notes: "",
       occasionId: null,
       newOccasion: null,
@@ -72,6 +74,10 @@ export function parseDraft(raw: string | null): Draft | null {
         (typeof value.intentKey !== "string" || !uuid.test(value.intentKey))) ||
       (fields.releaseId !== null &&
         (typeof fields.releaseId !== "string" || !uuid.test(fields.releaseId))) ||
+      (fields.catalogReleaseId != null &&
+        (typeof fields.catalogReleaseId !== "string" ||
+          !uuid.test(fields.catalogReleaseId) ||
+          fields.releaseId !== null)) ||
       !["YEAR", "NON_VINTAGE", "MULTI_VINTAGE", "UNKNOWN"].includes(fields.vintageStatus) ||
       !["name", "producer", "year", "edition", "consumedDate"].every(
         (name) => typeof fields[name] === "string" && fields[name].length <= 200,
@@ -91,6 +97,7 @@ export function parseDraft(raw: string | null): Draft | null {
         consumedDate: fields.consumedDate,
         vintageStatus: fields.vintageStatus,
         releaseId: fields.releaseId,
+        catalogReleaseId: fields.catalogReleaseId ?? null,
         notes: fields.notes ?? "",
         occasionId: fields.occasionId ?? null,
         newOccasion: nested,
@@ -132,6 +139,7 @@ export function entryBody(fields: Fields): SaveEntry {
     ...(fields.newOccasion ? { newOccasion: occasionBody(fields.newOccasion) } : {}),
   };
   if (fields.releaseId) return { ...context, releaseId: fields.releaseId };
+  if (fields.catalogReleaseId) return { ...context, catalogReleaseId: fields.catalogReleaseId };
   return {
     ...context,
     manualWine: {
@@ -140,6 +148,25 @@ export function entryBody(fields: Fields): SaveEntry {
       vintageStatus: fields.vintageStatus,
       year: fields.vintageStatus === "YEAR" ? Number(fields.year) : null,
       edition: fields.edition.trim() || null,
+    },
+  };
+}
+
+export function catalogDraft(
+  ownerId: string | null,
+  wine: components["schemas"]["CatalogWine"],
+): Draft {
+  const draft = newDraft(ownerId);
+  return {
+    ...draft,
+    fields: {
+      ...draft.fields,
+      catalogReleaseId: wine.id,
+      name: wine.name,
+      producer: wine.producer,
+      vintageStatus: wine.vintageStatus,
+      year: wine.year?.toString() ?? "",
+      edition: wine.edition ?? "",
     },
   };
 }
