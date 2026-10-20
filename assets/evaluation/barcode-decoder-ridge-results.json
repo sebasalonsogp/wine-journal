@@ -1,0 +1,101 @@
+{
+  "measured_at": "2026-10-20T22:50:44.977Z",
+  "manifest": "barcode-images-ridge.json",
+  "manifest_sha256": "4296070f54fe5d315bd745faefac438a84be0913321135cf5857a70d0c74cba2",
+  "browser": "Chromium 153.0.8010.12",
+  "decoder": "0.2.1",
+  "core": "0.23.0",
+  "source_images": 4,
+  "physical_bottles": 0,
+  "unique_expected_codes": 3,
+  "camera_tested": false,
+  "iphone_tested": false,
+  "confirmed_wine_releases": 0,
+  "network_attempts": 0,
+  "results": [
+    {
+      "id": "I004",
+      "expected_gtin": "00744442301003",
+      "attempts": [
+        {
+          "rotation": 0,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 51.2
+        },
+        {
+          "rotation": 90,
+          "status": "DECODED",
+          "text": "744442301003",
+          "format": "UPC_A",
+          "elapsed_ms": 45.9
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "I005",
+      "expected_gtin": "00744442081004",
+      "attempts": [
+        {
+          "rotation": 0,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 43.6
+        },
+        {
+          "rotation": 90,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 63.3
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "I006",
+      "expected_gtin": "00744442479009",
+      "attempts": [
+        {
+          "rotation": 0,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 41.9
+        },
+        {
+          "rotation": 90,
+          "status": "DECODED",
+          "text": "744442479009",
+          "format": "UPC_A",
+          "elapsed_ms": 51.5
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "I007",
+      "expected_gtin": null,
+      "attempts": [
+        {
+          "rotation": 0,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 41.2
+        },
+        {
+          "rotation": 90,
+          "status": "NOT_FOUND",
+          "text": null,
+          "format": null,
+          "elapsed_ms": 54.3
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

@@ -3,12 +3,20 @@ import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import { build } from "esbuild";
 import { chromium } from "@playwright/test";
 
 const require = createRequire(import.meta.url);
 const assets = new URL("../../../assets/evaluation/", import.meta.url);
-const manifest = JSON.parse(await readFile(new URL("barcode-images.json", assets), "utf8"));
+const { values } = parseArgs({
+  options: { manifest: { type: "string", default: "barcode-images.json" } },
+});
+assert.match(values.manifest, /^barcode-images(?:-[a-z]+)?\.json$/);
+const manifestPath = new URL(values.manifest, assets);
+assert.ok((await stat(manifestPath)).size <= 65536);
+const manifestBytes = await readFile(manifestPath);
+const manifest = JSON.parse(manifestBytes.toString("utf8"));
 assert.ok(manifest.images.length > 0 && manifest.images.length <= 10);
 const inputs = [];
 for (const sample of manifest.images) {
@@ -69,6 +77,8 @@ try {
   }
   const report = {
     measured_at: new Date().toISOString(),
+    manifest: values.manifest,
+    manifest_sha256: createHash("sha256").update(manifestBytes).digest("hex"),
     browser: `Chromium ${browser.version()}`,
     decoder: require("@zxing/browser/package.json").version,
     core: require("@zxing/library/package.json").version,

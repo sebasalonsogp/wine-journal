@@ -18,8 +18,10 @@ Both normalize to `00089121288122`. The listings associate the same code with
 different vintages; they do not establish which bottle a person currently holds.
 The retailer page is a historical listing, not evidence of current stock or
 price. These are source claims, not photographed/physically verified bottles.
-Market remains UNVERIFIED, symbology has not been observed, and no source image
-has been downloaded or decoded. Expected fixture IDs remain separate from
+At this initial text checkpoint, market remained UNVERIFIED, symbology had not
+been observed, and no source image had been downloaded or decoded. The image
+checkpoints below and [expanded coverage report](barcode-coverage-checkpoint.md)
+record subsequent evidence. Expected fixture IDs remain separate from
 provider output and are checked against the existing identity manifest.
 
 ## Observed provider result

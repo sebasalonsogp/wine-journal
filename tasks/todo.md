@@ -73,6 +73,13 @@ The [checkpoint and report](provider-evaluation.md#r02b-first-image-checkpoint--
 retain missing-vintage ambiguity, a repeatable CI check and zero physical-device
 claims. Wider R01b coverage and physical iPhone testing remain open.
 
+**Expanded coverage checkpoint (October 20):** [Four Ridge inputs](barcode-coverage-checkpoint.md)
+add three independently read UPCs and a no-barcode rear view. Two of the three
+positive images decode; Three Valleys remains a recorded miss. All three direct
+provider lookups return NOT_FOUND. Do not choose Open Food Facts as the primary
+wine source; the next lookup design should use reviewed catalog associations and
+explicit vintage confirmation. R01b/R02/C04/C05 remain unchecked.
+
 <a id="r03"></a>
 ### R03: Prove the label-photo route
 

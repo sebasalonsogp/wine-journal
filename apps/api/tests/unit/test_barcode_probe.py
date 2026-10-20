@@ -211,6 +211,25 @@ def test_bad_manifest_is_rejected_before_evaluation(
         load_observations(path)
 
 
+def test_producer_image_observations_remain_independent_of_provider_results(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    from evaluate_barcode import evaluate, load_observations
+
+    observations = load_observations(ROOT / "assets/evaluation/barcode-observations-ridge.json")
+    assert [item.gtin for item in observations] == ["744442301003", "744442081004", "744442479009"]
+    assert all(item.evidence_status == "PRODUCER_WEB_IMAGE" for item in observations)
+    with patch(
+        "evaluate_barcode.probe_product", side_effect=AssertionError("Unexpected network request")
+    ):
+        report = asyncio.run(evaluate(observations, False))
+    assert report["distinct_package_codes"] == 3
+    assert report["requested_package_codes"] == 0
+    assert report["confirmed_wine_releases"] == 0
+    assert report["camera_decoding_tested"] is False
+
+
 def test_rate_limit_stops_the_batch_and_counts_unattempted_codes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

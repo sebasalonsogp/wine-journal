@@ -1,0 +1,49 @@
+{
+  "evaluated_at": "2026-10-20T22:51:16.176086+00:00",
+  "mode": "LIVE_PUBLIC_READ",
+  "provider": "Open Food Facts API v3",
+  "source_observations": 3,
+  "distinct_package_codes": 3,
+  "requested_package_codes": 3,
+  "unrequested_package_codes": 0,
+  "confirmed_wine_releases": 0,
+  "camera_decoding_tested": false,
+  "results": [
+    {
+      "canonical_gtin": "00744442301003",
+      "sample_ids": [
+        "B003"
+      ],
+      "expected_fixture_ids": [
+        "W008"
+      ],
+      "status": "NOT_FOUND",
+      "product": null,
+      "elapsed_ms": 500
+    },
+    {
+      "canonical_gtin": "00744442081004",
+      "sample_ids": [
+        "B004"
+      ],
+      "expected_fixture_ids": [
+        "W014"
+      ],
+      "status": "NOT_FOUND",
+      "product": null,
+      "elapsed_ms": 125
+    },
+    {
+      "canonical_gtin": "00744442479009",
+      "sample_ids": [
+        "B005"
+      ],
+      "expected_fixture_ids": [
+        "W006"
+      ],
+      "status": "NOT_FOUND",
+      "product": null,
+      "elapsed_ms": 125
+    }
+  ]
+}

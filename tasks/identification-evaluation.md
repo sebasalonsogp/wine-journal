@@ -56,6 +56,13 @@ still zero physical-bottle/camera observations. The separate
 [provider checkpoint](provider-evaluation.md) records one unverified product
 result and the repeatable R02a probe. This does not complete R01b or R02.
 
+The [expanded Ridge checkpoint](barcode-coverage-checkpoint.md) brings the image
+total to seven across five offerings/two producers, including three new UPCs and
+a no-barcode rear view. It distinguishes visible 2023 vintages from later bottling
+dates. Whole-image resizing is recorded as a synthetic preprocessing step, with
+source and derivative hashes. No camera, non-vintage or out-of-catalog evidence
+has been added; one decoder miss and three provider misses remain in the reports.
+
 Before R02/R03 coverage claims, extend the same evaluation set with independently checked physical-bottle or traceable label/barcode assets. Obtain a bounded collection rather than searching indefinitely for a universal free catalog. Keep these requirements open:
 
 1. Record a sample ID, linked expected fixture(s), observed package market (or explicit unknown), bottle size if known, capture/source date, asset path and SHA-256. A package code may identify several vintages; record candidate sets rather than forcing one release.

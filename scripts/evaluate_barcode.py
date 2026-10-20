@@ -28,7 +28,7 @@ class Observation(BaseModel):
     bottle_ml: int = Field(gt=0, le=30000, strict=True)
     source_url: HttpUrl
     retrieved_on: date
-    evidence_status: Literal["WEB_TEXT"]
+    evidence_status: Literal["WEB_TEXT", "PRODUCER_WEB_IMAGE"]
     market: Literal["UNVERIFIED"]
 
 

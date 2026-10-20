@@ -49,6 +49,12 @@ no false positives and fixture hashes. This establishes a decoder candidate and
 an orientation requirement; it does not complete broader coverage or physical
 iPhone testing, and the images cannot independently resolve a vintage.
 
+The [expanded barcode checkpoint](barcode-coverage-checkpoint.md) now totals seven
+images across five offerings/two producers. It records one decoder miss and three
+additional provider misses. Open Food Facts is not a viable primary source for
+this tested scope. Next design curated barcode associations with explicit vintage
+ambiguity; broader samples and physical iPhone evidence still gate scanning.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.
