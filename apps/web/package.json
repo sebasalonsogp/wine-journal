@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/unit/*.test.ts",
     "test:e2e": "playwright test",
+    "evaluate:barcode": "node scripts/evaluate-barcode.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate:api": "openapi-typescript ../../contracts/openapi.json -o src/lib/api/schema.d.ts"
@@ -31,6 +32,9 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@zxing/browser": "0.2.1",
+    "@zxing/library": "0.23.0",
+    "esbuild": "0.28.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.8",
     "openapi-typescript": "^7.13.0",

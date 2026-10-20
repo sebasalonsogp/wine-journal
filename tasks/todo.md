@@ -66,6 +66,13 @@ associated with two vintages. The recorded provider result is unverified product
 data, not a resolved wine. R02b still needs R01b assets, measured coverage and a
 physical iPhone decoder check; R02 and C04 remain unchecked.
 
+**First R02b image checkpoint (October 20):** Three hashed producer images now
+cover one UPC-bearing offering and a no-barcode front view. Offline Chromium
+decodes both back views after a quarter turn; neither decodes as supplied.
+The [checkpoint and report](provider-evaluation.md#r02b-first-image-checkpoint--october-20)
+retain missing-vintage ambiguity, a repeatable CI check and zero physical-device
+claims. Wider R01b coverage and physical iPhone testing remain open.
+
 <a id="r03"></a>
 ### R03: Prove the label-photo route
 

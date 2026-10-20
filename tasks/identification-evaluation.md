@@ -49,7 +49,10 @@ These are **authored text scenarios**, not captured OCR output, provider results
 October 20 update: [two web-text barcode observations](../assets/evaluation/barcode-observations.json)
 now establish one normalized package code associated with the existing 2022/2023
 Seven Oaks references. They remain WEB_TEXT with unverified package market;
-there are still zero barcode/label images or camera observations. The separate
+the subsequent [image checkpoint](provider-evaluation.md#r02b-first-image-checkpoint--october-20)
+adds three hashed producer assets for that one offering, with no visible vintage.
+Two back views expose the same UPC; the front view has no barcode. There are
+still zero physical-bottle/camera observations. The separate
 [provider checkpoint](provider-evaluation.md) records one unverified product
 result and the repeatable R02a probe. This does not complete R01b or R02.
 
@@ -61,7 +64,7 @@ Before R02/R03 coverage claims, extend the same evaluation set with independentl
 4. Include unknown-year observations and known non-vintage examples. Do not change ground truth to match a provider. Account for multiple photos of one bottle when reporting denominators.
 5. Use bottle-only, non-personal fixtures and remove location metadata before committing. Private journal photos are not evaluation data. Do not commit credentials or signed media URLs.
 
-R02 additionally needs a physical iPhone camera test; R03 needs measured provider/OCR output, latency, limits and recovery. None of these checks has run. No new provider dependency, paid account, image download or runtime configuration was introduced here.
+R02 additionally needs a physical iPhone camera test; R03 needs measured provider/OCR output, latency, limits and recovery. None of those checks has run. The image checkpoint adds offline browser decoding and development-only dependencies; it introduces no paid account or production runtime configuration.
 
 ## C01 handoff and verification
 

@@ -108,6 +108,77 @@ so the previous 35 unit/34 browser journey evidence was retained rather than
 rerunning it. No dependency, secret, environment variable, database migration
 or web route is introduced.
 
+## R02b first image checkpoint — October 20
+
+The [image manifest](../assets/evaluation/barcode-images.json) freezes three
+producer-hosted assets with source URLs, byte hashes, dimensions and independently
+read expected digits. These are two labels and one bottle rendering for **one
+offering / one code**, not three bottles. Original downloaded bytes total about
+482 KiB; reviewed metadata contains color profiles but no EXIF/XMP location data.
+They are evaluation fixtures, not published catalog artwork or private photos.
+
+The producer page identifies 2023 (W016), but none of these images visibly shows
+a vintage. Image-only vintage remains UNKNOWN; the code's existing baseline
+candidates remain W015/W016, without claiming those are the only possible years.
+The front image is a genuine no-barcode input, not an out-of-catalog wine.
+Package size is 750 ml; sales market remains UNVERIFIED.
+
+The [offline Chromium report](../assets/evaluation/barcode-decoder-results.json)
+tests `@zxing/browser` 0.2.1 with `@zxing/library` 0.23.0. These are pinned dev
+dependencies, bundled from the lockfile with the existing esbuild version now
+declared explicitly. The [upstream browser API](https://github.com/zxing-js/browser)
+supports canvas decoding and camera controls; this experiment exercises only
+canvas decoding. Production bundles do not import the evaluation modules.
+
+| Input | Original orientation | Quarter turn | Expected result |
+| --- | --- | --- | --- |
+| I001 flat back label | No result | UPC-A `089121288122` | Printed digits agree |
+| I002 full bottle back | No result | UPC-A `089121288122` | Printed digits agree |
+| I003 front label | No result | No result | No barcode present |
+
+The allowlist is UPC-A/EAN-13/EAN-8, excluding adjacent QR codes and unsupported
+UPC-E/case formats. EAN support is configured, **not demonstrated by this UPC-only
+set**. Each image is tested at 0° and 90° in memory, with a white background for
+transparency. Rotation is a deterministic test transform, not a new camera sample.
+Both positive inputs required rotation despite TRY_HARDER. Recommendation: keep
+ZXing as a candidate and carry orientation recovery into the next experiment;
+do not infer that arbitrary skew, blur or glare is solved.
+
+In this desktop run the two attempts totalled about 73–74 ms per positive image;
+these are single-run decode timings, excluding loading/drawing, not mobile or
+end-to-end latency guarantees. There were zero network requests and zero resolved
+wine releases. No provider calls, camera permissions or journal saves occur.
+
+Reproduce from `apps/web` after `npm ci` and `npx playwright install chromium`:
+
+```text
+npm run evaluate:barcode
+```
+
+The fixed local manifest allows at most ten assets, 4 MiB and four million pixels
+per asset; filenames, hashes and decoded dimensions are checked. A fresh offline
+browser context blocks requests and service workers, with a 20-second browser
+deadline. No account state is loaded. The script prints JSON and exits nonzero
+for an unexpected code, missed positive, false positive, changed bytes or browser
+failure. CI runs it after Chromium installation. It does not overwrite the frozen
+report. To record a deliberately reviewed new measurement, run the Node script
+directly and capture stdout without npm's banner.
+
+Negative verification: altering a fixture hash, supplying a different expected
+GTIN, and removing the quarter-turn pass each failed as expected. Sources were
+restored byte-for-byte. Broader independent bottles, non-vintage inputs, actual
+glare/skew/blur and a physical iPhone permission/cancel/retry test remain required.
+R01b, R02, C04 and C05 remain open; parent progress stays **31/59**.
+
+Verification for this slice: the restored offline decoder run, all 35 frontend
+unit tests and all 34 browser journeys passed. Formatting, lint, types and the
+production build pass. The built browser scripts contain no evaluation-module
+markers; the private-value scan checked 20 scripts successfully. Production npm
+audit reports zero vulnerabilities, and staged Gitleaks reports no secrets.
+The backend is unchanged, retaining the previous 462-test evidence. Full web
+audit still reports the existing development-only blocker below; no gate was
+removed or relaxed.
+
 ## Dependency audit recheck
 
 The October 20 recheck still reports five affected dependency nodes through

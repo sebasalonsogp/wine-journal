@@ -42,6 +42,13 @@ one package code across two vintages; the first provider response lacks the
 offering designation and year. R02b's image/physical-device and wider coverage
 evidence remains open. The parent count stays 31/59; scanning is not exposed yet.
 
+R02b now has an [offline browser image checkpoint](provider-evaluation.md#r02b-first-image-checkpoint--october-20):
+three traceable assets, one UPC, and a no-barcode front label. Both positive
+images decode only after an explicit quarter turn. CI checks expected codes,
+no false positives and fixture hashes. This establishes a decoder candidate and
+an orientation requirement; it does not complete broader coverage or physical
+iPhone testing, and the images cannot independently resolve a vintage.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.

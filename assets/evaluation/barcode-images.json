@@ -1,0 +1,62 @@
+{
+  "source_page": "https://sites.salsify.com/ac717bbc-c69e-474f-ba68-2f08ae725959/cfdbf0ab-2c72-459e-b846-5473ab4b1d68/product/CSES2375/J--Lohr-Estates-Seven-Oaks-Cabernet-Sauvignon/",
+  "retrieved_on": "2026-10-20",
+  "evidence_status": "PRODUCER_WEB_ASSET",
+  "market": "UNVERIFIED",
+  "bottle_ml": 750,
+  "offering": "J. Lohr Estates Seven Oaks Cabernet Sauvignon",
+  "source_page_fixture_id": "W016",
+  "barcode_candidate_fixture_ids": ["W015", "W016"],
+  "observed_vintage_status": "UNKNOWN",
+  "physical_bottles": 0,
+  "notes": "Three producer assets for one offering, not three bottles. No vintage is visible in these images. Page metadata says 2023; that does not make image-only vintage recognition possible. Back label digits independently read as 0 89121 28812 2. US warning/deposit text is visible, but distribution market is not verified. Original downloaded bytes retained; JPEG/PNG contain ICC profiles but no EXIF or XMP metadata.",
+  "images": [
+    {
+      "id": "I001",
+      "file": "seven-oaks-label-back.jpg",
+      "mime": "image/jpeg",
+      "sha256": "1b8c516cf32141b2370de3a76aee66f98b9f35245b264dfaed41c7c268ef117b",
+      "source_url": "https://images.salsify.com/image/upload/f_auto%2Cc_limit%2Cw_750%2Cq_auto/mzl38kmyy7cn3n7jmycy.png",
+      "width": 750,
+      "height": 834,
+      "expected_gtin": "00089121288122",
+      "observed_symbology": "UPC_A",
+      "conditions": [
+        "flat back label",
+        "vertical UPC",
+        "adjacent QR",
+        "no visible vintage"
+      ]
+    },
+    {
+      "id": "I002",
+      "file": "seven-oaks-bottle-back.png",
+      "mime": "image/png",
+      "sha256": "52d4285e6955eeca316769a13ac3244202ffe7d0709b2fc17768974cd76b2dbe",
+      "source_url": "https://images.salsify.com/image/upload/f_auto%2Cc_limit%2Cw_750%2Cq_auto/o0k0wed8zsncibjxopsj.png",
+      "width": 750,
+      "height": 2500,
+      "expected_gtin": "00089121288122",
+      "observed_symbology": "UPC_A",
+      "conditions": [
+        "producer bottle rendering",
+        "small vertical UPC",
+        "adjacent QR",
+        "transparent background",
+        "no visible vintage"
+      ]
+    },
+    {
+      "id": "I003",
+      "file": "seven-oaks-label-front.jpg",
+      "mime": "image/jpeg",
+      "sha256": "615c8ecc1285cde8fd56b0d26d8d600d8e75596e93424695d5536bdcda474a76",
+      "source_url": "https://images.salsify.com/image/upload/f_auto%2Cc_limit%2Cw_750%2Cq_auto/xztbqlrhgmdhzrekyuy0.png",
+      "width": 750,
+      "height": 830,
+      "expected_gtin": null,
+      "observed_symbology": null,
+      "conditions": ["flat front label", "no barcode", "no visible vintage"]
+    }
+  ]
+}

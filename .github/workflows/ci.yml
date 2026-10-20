@@ -116,6 +116,9 @@ jobs:
         run: uv run --project apps/api --locked python scripts/check_browser_secrets.py
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web
+      - name: Verify offline barcode image decoding against reviewed assets
+        run: npm run evaluate:barcode
+        working-directory: apps/web
       - run: npm run test:e2e
         working-directory: apps/web
       - name: Retain only credential-free test summary
