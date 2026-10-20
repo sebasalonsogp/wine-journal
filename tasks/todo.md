@@ -866,6 +866,22 @@ and [catalog capture checkpoint](catalog-capture-checkpoint.md).
 
 **Stories:** WC-04, WC-06, AC-03.
 
+**Execution split (October 20):**
+
+- [x] C03a: Entry retargeting API and least-privilege migration. Add
+  `journal/entry_wines.py`, its route and generated contracts; verify version/source
+  conflicts, new-destination rollback, owner isolation, capture receipt recovery,
+  preserved ratings and entry/occasion photo membership. Tests live in
+  `test_entry_wines.py` and the existing occasion-photo integration suite.
+- [ ] C03b: Connect a deliberate move/review flow to drinking history, with
+  existing/new destination selection, stale-state review and uncertain-response
+  recovery. Verify keyboard/phone behavior and account changes in the browser.
+- [ ] C03c: Correct provisional identity facts with shared-entry impact context
+  and conflict protection. Catalog facts remain separate; no automatic merges.
+
+Keep C03 open until these user-facing paths and their regression checks pass.
+See the [entry correction checkpoint](entry-wine-correction-checkpoint.md).
+
 **Checkpoint after C01, C02, C03:** Run the relevant verification protocol, retain evidence for these acceptance cases, and keep the existing app usable. Resolve regressions before extending this flow; request product feedback when a decision changes the experience.
 
 <a id="c04"></a>

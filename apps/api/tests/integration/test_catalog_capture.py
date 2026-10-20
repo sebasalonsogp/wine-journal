@@ -290,6 +290,10 @@ def test_catalog_links_enforce_uniqueness_snapshot_and_safe_downgrade(
         environment["WINE_JOURNAL_MIGRATION_DATABASE_URL"] = database_urls[
             "migration"
         ].get_secret_value()
+        with migration.connect() as connection:
+            previous_revision = connection.scalar(
+                text("SELECT version_num FROM app.alembic_version")
+            )
         result = subprocess.run(
             [sys.executable, "-m", "alembic", "downgrade", "0022_public_catalog"],
             env=environment,
@@ -299,7 +303,7 @@ def test_catalog_links_enforce_uniqueness_snapshot_and_safe_downgrade(
         with migration.connect() as connection:
             assert (
                 connection.scalar(text("SELECT version_num FROM app.alembic_version"))
-                == "0023_catalog_capture"
+                == previous_revision
             )
             assert (
                 connection.scalar(

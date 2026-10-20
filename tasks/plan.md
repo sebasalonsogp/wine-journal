@@ -26,6 +26,13 @@ through sign-in, repeat saves and draft recovery. All 409 API tests, 35 frontend
 unit tests and 29 browser journeys pass. C02 is complete; C03 private identity
 corrections are next. The existing web audit blocker remains unresolved.
 
+C03a's entry-move transaction/contract is complete with 416 passing API tests.
+C03 is split into that backend slice (C03a), its browser
+move/review controls (C03b), and correction of shared provisional identity facts
+(C03c). The [entry correction checkpoint](entry-wine-correction-checkpoint.md)
+records concurrency, ownership and photo-membership evidence. C03 remains open
+until the user-facing correction paths pass; the task count is unchanged.
+
 ## Original starting point (foundation baseline)
 
 - **Implemented:** Next.js startup screen, FastAPI liveness and authenticated account API, accounts migration, limited database roles, JWT verification, generated contracts/types, 38 API tests and CI. [ADR 0005](../docs/decisions/0005-repository-foundation.md) records the accepted organization.

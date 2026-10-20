@@ -210,6 +210,76 @@ def ready_assets(p: AlbumFixture, *assets: str) -> None:
             )
 
 
+def test_entry_wine_move_preserves_photos_occasion_and_cover(album: AlbumFixture) -> None:
+    p = album
+    entry_url = f"/api/v1/entries/{p.entries[0]}"
+    entry = p.client.get(entry_url).json()
+    source_id = entry["userWineId"]
+    target = p.client.post(
+        "/api/v1/entries",
+        json={"consumedDate": "2026-10-20", "manualWine": {"name": "Correct bottle"}},
+        headers={"Idempotency-Key": str(uuid4())},
+    ).json()
+    target_id = target["userWineId"]
+    memory, general, cover = [owned_asset(p) for _ in range(3)]
+    ready_assets(p, memory, general, cover)
+    assert p.client.put(f"{entry_url}/photos/{memory}", json={}).status_code == 200
+    assert (
+        p.client.patch(
+            f"{entry_url}/photos/{memory}", json={"version": 1, "caption": "Our dinner"}
+        ).status_code
+        == 200
+    )
+    assert (
+        p.client.put(f"/api/v1/occasions/{p.occasions[0]}/photos/{general}", json={}).status_code
+        == 200
+    )
+    cover_url = f"/api/v1/me/wines/{source_id}/cover"
+    assert p.client.put(cover_url, json={"version": 0, "assetId": cover}).status_code == 200
+    photos_before = p.client.get(f"{entry_url}/photos").json()
+    with p.engine.connect() as connection:
+        assets_before = connection.execute(
+            text(
+                "SELECT id, state, reserved_bytes, unsettled_grants, unsettled_writes "
+                "FROM app.upload_assets WHERE owner_id = :owner ORDER BY id"
+            ),
+            {"owner": p.owners[0]},
+        ).all()
+    try:
+        result = p.client.put(
+            f"{entry_url}/wine",
+            json={"version": entry["version"], "previousWineId": source_id, "wineId": target_id},
+        )
+        assert result.status_code == 200
+        assert result.json() == {**entry, "userWineId": target_id, "version": entry["version"] + 1}
+        assert p.client.get(f"{entry_url}/photos").json() == photos_before
+        assert p.client.get(f"/api/v1/me/wines/{source_id}/moments").json()["items"] == []
+        moments = p.client.get(f"/api/v1/me/wines/{target_id}/moments").json()["items"]
+        assert {item["assetId"] for item in moments} == {memory, general}
+        moved_photo = next(item for item in moments if item["assetId"] == memory)
+        assert moved_photo["source"]["parentId"] == entry["id"]
+        assert moved_photo["source"]["userWineId"] == target_id
+        assert moved_photo["source"]["caption"] == "Our dinner"
+        wines = p.client.get(f"/api/v1/occasions/{p.occasions[0]}/wines").json()["items"]
+        assert [wine["id"] for wine in wines] == [target_id]
+        assert p.client.get(f"/api/v1/me/wines/{source_id}").json()["coverAssetId"] == cover
+        assert p.client.get(f"/api/v1/me/wines/{target_id}").json()["coverAssetId"] is None
+        with p.engine.connect() as connection:
+            assert (
+                connection.execute(
+                    text(
+                        "SELECT id, state, reserved_bytes, unsettled_grants, unsettled_writes "
+                        "FROM app.upload_assets WHERE owner_id = :owner ORDER BY id"
+                    ),
+                    {"owner": p.owners[0]},
+                ).all()
+                == assets_before
+            )
+    finally:
+        # Release the fixture's cover reference before its asset cleanup.
+        assert p.client.put(cover_url, json={"version": 1, "assetId": None}).status_code == 200
+
+
 def age_asset(p: AlbumFixture, asset: str) -> None:
     with p.admin.begin() as connection:
         connection.execute(

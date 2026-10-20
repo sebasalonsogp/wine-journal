@@ -11,6 +11,7 @@ from wine_journal.core.errors import ErrorResponse
 from wine_journal.journal import queries
 from wine_journal.journal.deletion import delete_entry
 from wine_journal.journal.edits import edit_entry, read_entry
+from wine_journal.journal.entry_wines import MoveEntryWine, move_entry_wine
 from wine_journal.journal.schemas import (
     DeletedEntry,
     EditEntry,
@@ -76,6 +77,18 @@ def create_entry(
 ) -> EntryResponse:
     response.headers["Cache-Control"] = "no-store"
     return save_entry(session, principal, idempotency_key, body)
+
+
+@router.put("/entries/{entry_id}/wine", response_model=EntryResponse)
+def move_wine(
+    entry_id: UUID,
+    body: MoveEntryWine,
+    principal: Annotated[Principal, Depends(require_principal)],
+    session: Annotated[Session, Depends(database_session)],
+    response: Response,
+) -> EntryResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return move_entry_wine(session, principal, entry_id, body)
 
 
 @router.get("/me/wines", response_model=WinePage)
