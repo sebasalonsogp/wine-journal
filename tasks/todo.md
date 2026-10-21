@@ -976,8 +976,13 @@ experience remain open; parent completion stays 31/59.
 **C05a implemented:** [Barcode-number lookup and vintage confirmation](barcode-ui-checkpoint.md)
 connect the curated API to Browse Wines for guests. Explicit selection, source
 references, stale-match recovery, throttling, name/manual fallback and the existing
-sign-in/save flow are covered by browser tests. Camera decoding and physical-phone
-verification remain open; C05 and the parent task count are unchanged.
+sign-in/save flow are covered by browser tests.
+
+**C05b implemented:** [Camera barcode capture](camera-barcode-checkpoint.md) uses
+on-demand, device-local decoding, bounded scanning and lifecycle cleanup. Synthetic
+video streams verify real decoding and recovery in the browser. Physical-phone
+verification and broader barcode coverage remain open; C05 and the parent task
+count are unchanged.
 
 **Stories:** WI-01, WI-03, WI-04, AC-01.
 

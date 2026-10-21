@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type { components } from "@/lib/api/schema";
 import { barcodeApi, BarcodeFailure } from "./api";
 import { BarcodeCandidates } from "./barcode-candidates";
+import { BarcodeCamera } from "./barcode-camera";
 
 export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
   const router = useRouter();
@@ -16,6 +17,8 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
   const [busy, setBusy] = useState(false);
   const [retryUntil, setRetryUntil] = useState(0);
   const [remaining, setRemaining] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [cameraKey, setCameraKey] = useState(0);
   const request = useRef<AbortController | null>(null);
   const feedback = useRef<HTMLDivElement>(null);
   useEffect(() => () => request.current?.abort(), []);
@@ -32,7 +35,7 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
     return () => clearInterval(timer);
   }, [retryUntil]);
 
-  async function submit(confirm: boolean) {
+  async function submit(confirm: boolean, scannedCode?: string) {
     if (request.current || !apiOrigin || Date.now() < retryUntil) return;
     const wine = result?.candidates
       .flatMap((candidate) => candidate.releases)
@@ -61,7 +64,7 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
         );
         if (!controller.signal.aborted) router.push(`/browse/${encodeURIComponent(details.id)}`);
       } else {
-        const lookup = await api.lookup(gtin.trim(), controller.signal);
+        const lookup = await api.lookup(scannedCode ?? gtin.trim(), controller.signal);
         if (!controller.signal.aborted) setResult(lookup);
       }
     } catch (failure) {
@@ -86,6 +89,8 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
     <details
       className="barcode-lookup"
       onToggle={(event) => {
+        if (event.target !== event.currentTarget) return;
+        setOpen(event.currentTarget.open);
         if (!event.currentTarget.open) {
           request.current?.abort();
           request.current = null;
@@ -95,7 +100,7 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
     >
       <summary>Look up a barcode</summary>
       <p className="catalog-caption">
-        Enter the numbers beneath the bottle’s barcode. Our barcode library is small and still
+        Scan the bottle’s barcode or enter its number. Our barcode library is small and still
         growing.
       </p>
       {!apiOrigin ? (
@@ -104,6 +109,20 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
         </p>
       ) : (
         <>
+          {open && !busy && remaining === 0 && (
+            <BarcodeCamera
+              key={cameraKey}
+              onStart={() => {
+                setResult(null);
+                setSelected("");
+                setError("");
+              }}
+              onDetected={(code) => {
+                setGtin(code);
+                void submit(false, code);
+              }}
+            />
+          )}
           <form
             className="catalog-search"
             onSubmit={(event) => {
@@ -122,6 +141,7 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
                 maxLength={14}
                 pattern="(?:[0-9]{8}|[0-9]{12,14})"
                 aria-describedby="barcode-help"
+                onFocus={() => setCameraKey((key) => key + 1)}
                 value={gtin}
                 disabled={busy}
                 onChange={(event) => {
@@ -189,7 +209,10 @@ export function BarcodeLookup({ apiOrigin }: { apiOrigin: string | null }) {
         <a
           className="text-link"
           href="#catalog-query"
-          onClick={() => document.getElementById("catalog-query")?.focus()}
+          onClick={() => {
+            setCameraKey((key) => key + 1);
+            document.getElementById("catalog-query")?.focus();
+          }}
         >
           Search by name
         </a>
