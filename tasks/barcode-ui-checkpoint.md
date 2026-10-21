@@ -42,8 +42,8 @@ overflow, aborted requests, network failure and manual draft preservation.
 
 Fault responses and the single-release case use deterministic browser fixtures;
 they do not establish provider coverage. The happy path uses the actual local API
-and reviewed Seven Oaks evidence. CI seeds the same two reviewed barcode
-observations after catalog identities. Accessibility and width checks cover the
+and reviewed Seven Oaks evidence. CI seeds the five reviewed barcode observations
+from `assets/catalog/barcode-evidence.json` after catalog identities. Accessibility and width checks cover the
 expanded panel, with screenshot inspection at desktop and mobile sizes.
 
 Local closeout: all 39 frontend unit tests and all 38 browser journeys pass;
@@ -52,6 +52,10 @@ zero vulnerabilities; staged Gitleaks and generated-browser-credential scans pas
 The first broad browser run found four photo publication timeouts. Restarting the
 long-running local worker restored processing; the complete rerun passed without
 photo code changes or weakened assertions. Remote CI remains the integration gate.
+
+The first remote run rejected the CI seed input: it pointed at evaluation
+observations rather than the curator import manifest. The workflow now uses the
+existing validated catalog evidence file; the application contract is unchanged.
 
 Shared ingress quotas, broader catalog evidence, physical-device scanning and
 label recognition retain their existing roadmap gates. This change does not
