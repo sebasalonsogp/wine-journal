@@ -43,6 +43,20 @@
 .barcode-feedback {
   margin-block: 1rem;
 }
+.barcode-camera {
+  margin-block: 1.25rem;
+  max-width: 32rem;
+}
+.barcode-camera video {
+  width: 100%;
+  max-height: 24rem;
+  object-fit: contain;
+  background: var(--color-foreground);
+  margin-block: 1rem;
+}
+.barcode-camera [role="status"] {
+  margin-block: 0.75rem;
+}
 .barcode-feedback h2 {
   margin-bottom: 0.75rem;
 }
