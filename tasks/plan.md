@@ -1,5 +1,10 @@
 # Wine Journal phased implementation plan
 
+Integration priority (October 20): resolve dependency audits and merge the verified
+foundation before further feature work. See [integration closeout](integration-closeout.md)
+and the [small-PR workflow](../CONTRIBUTING.md). Earlier audit failures below are
+historical checkpoint results; product scope and completion counts are unchanged.
+
 Status: implementation underway, October 19, 2026. F01–F07, J01–J10 and O01–O05 deliver authentication and the private wine/occasion journal. M01, R04 and M02–M04 deliver durable jobs, private uploads, isolated photo processing and owner-only entry galleries. Capture and saved entries now support photos, captions and retry/removal without repeating a text save. Local media is enabled with the registered worker. M05 adds independent personal bottle covers, with failed replacements preserving the current image. M06a occasion attachment/album APIs and M06b scrapbook controls are implemented and functionally verified. M07 adds wine photo highlights and a paginated gallery with exact source links. M06/M07 closeout awaits the development dependency audit fix; M08a retirement fencing and M08b write tracking, physical cleanup and logical quota recovery are implemented; M08c1 adds recurring execution and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). See the [occasion album checkpoint](occasion-album-checkpoint.md) and [wine moments checkpoint](wine-moments-checkpoint.md).
 
 Use this document for sequence and scope, [todo.md](todo.md) for executable task checkboxes, and [story-coverage.md](story-coverage.md) for traceability across all 65 stories. As of October 20, the plan has **59 bounded tasks: 31 complete and 28 remaining**, seven implementation phases after the completed foundation, and a separate early feasibility lane. Later product branches are deliberately less detailed until their requirements are selected.
