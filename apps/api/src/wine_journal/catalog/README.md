@@ -107,7 +107,8 @@ size/kind/hash under that key aborts the entire batch; it never overwrites store
 facts. Separate sources can disagree and remain separate evidence for future
 candidate review. Duplicate normalized evidence within a batch is rejected.
 Imports serialize with catalog changes using bounded locks and commit atomically.
-Runtime has SELECT only; no public endpoint or scanner consumes this table yet.
+Runtime has SELECT only; the [identification API](../identification/README.md)
+consumes these reviewed rows. Camera UI remains separate work.
 Populated evidence prevents downgrade. Roll back application code while retaining
 the additive schema.
 

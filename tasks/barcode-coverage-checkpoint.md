@@ -129,3 +129,42 @@ C04a completes only the import foundation. C04b still needs the bounded lookup
 contract, source revalidation, explicit correction/retraction and release
 confirmation. C05 still requires physical-camera evidence and UI. Parent task
 completion remains 31/59; the existing frontend development audit blocker remains.
+
+## C04b lookup and confirmation — October 20
+
+The [implemented contract](../apps/api/src/wine_journal/identification/README.md)
+adds guest POST lookup and confirmation routes over the reviewed seed. Results
+retain offering/source/size ambiguity and ask for explicit vintage/edition choice,
+including single-release offerings. Confirmation re-reads current evidence in a
+read-only snapshot and rejects stale, unrelated or mismatched choices. It returns
+catalog details; the existing authenticated save/retry flow owns journal writes.
+
+Requests are capped before JSON parsing (4 KiB, five-second receive deadline) and
+share rolling per-peer/process budgets with Retry-After. Queries/results are
+bounded, invalid stored evidence is excluded, and database failures return safe
+503 responses. No external provider calls, credentials, dependencies or migration
+changes are added. Operator `--retract` previews/removes only exact evidence matches
+and preserves other sources and private snapshots. Operational manifests must
+also remove withdrawn rows to prevent later re-import; see the curator runbook.
+
+Verification: **511 API tests passed** with disposable Postgres, real local
+Storage and Docker photo decoding. New cases cover exact vintage/edition matching,
+single and ambiguous offerings, non/multi-vintage releases, unknown/unrelated
+selections, invalid stored sources, stale confirmation after retraction, safe
+database failure, bounded candidate sets, pre-parse request limits and concurrent
+budgets. Confirmed releases save through the existing authenticated/idempotent
+journal path. Extended standalone CLI preview/apply/repeat retraction assertions
+also passed after the full run. Ruff, formatting, mypy, backend package build,
+generated OpenAPI/client types and frontend type/format checks pass.
+Inverting the vintage/edition comparison makes a valid confirmation fail with
+409; restoring the source byte-for-byte makes that regression test pass again.
+
+The local API returned Seven Oaks 2022/2023, accepted the selected vintage, rejected
+the wrong year and returned NOT_FOUND for an unknown code. Journal/media/evidence
+counts and unsettled holds stayed unchanged; Browse remains HTTP 200 and the photo
+worker is running. Browser production code and screenshots are unchanged.
+
+C04b is implemented for the curated source. Parent R02/C04 coverage gates and C05
+camera/input UI remain open. Process-local budgets require shared ingress limits
+and deliberate proxy trust before public deployment; they are not distributed or
+account-specific quotas. The known development dependency audit blocker remains.

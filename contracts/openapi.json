@@ -213,6 +213,158 @@
         "title": "AttachPhoto",
         "type": "object"
       },
+      "BarcodeCandidate": {
+        "properties": {
+          "bottleSizesMl": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Bottlesizesml",
+            "type": "array"
+          },
+          "definitionId": {
+            "format": "uuid",
+            "title": "Definitionid",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "producer": {
+            "title": "Producer",
+            "type": "string"
+          },
+          "releases": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogWine"
+            },
+            "title": "Releases",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogReference"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "definitionId",
+          "name",
+          "producer",
+          "bottleSizesMl",
+          "sources",
+          "releases"
+        ],
+        "title": "BarcodeCandidate",
+        "type": "object"
+      },
+      "BarcodeConfirmation": {
+        "additionalProperties": false,
+        "properties": {
+          "catalogReleaseId": {
+            "format": "uuid",
+            "title": "Catalogreleaseid",
+            "type": "string"
+          },
+          "edition": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edition"
+          },
+          "gtin": {
+            "maxLength": 14,
+            "title": "Gtin",
+            "type": "string"
+          },
+          "vintageStatus": {
+            "enum": [
+              "YEAR",
+              "NON_VINTAGE",
+              "MULTI_VINTAGE"
+            ],
+            "title": "Vintagestatus",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1000.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "gtin",
+          "catalogReleaseId",
+          "vintageStatus",
+          "year",
+          "edition"
+        ],
+        "title": "BarcodeConfirmation",
+        "type": "object"
+      },
+      "BarcodeLookup": {
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/BarcodeCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "gtin": {
+            "title": "Gtin",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "NEEDS_CONFIRMATION",
+              "NOT_FOUND",
+              "TOO_MANY_MATCHES"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gtin",
+          "status",
+          "candidates"
+        ],
+        "title": "BarcodeLookup",
+        "type": "object"
+      },
+      "BarcodeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "gtin": {
+            "maxLength": 14,
+            "title": "Gtin",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gtin"
+        ],
+        "title": "BarcodeRequest",
+        "type": "object"
+      },
       "BootstrapAccount": {
         "additionalProperties": false,
         "properties": {},
@@ -3553,6 +3705,208 @@
         "summary": "Get Liveness",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/v1/identification/barcode-confirmations": {
+      "post": {
+        "operationId": "confirm_barcode_api_v1_identification_barcode_confirmations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BarcodeConfirmation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogDetails"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "408": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Timeout"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Confirm Barcode",
+        "tags": [
+          "identification"
+        ]
+      }
+    },
+    "/api/v1/identification/barcode-lookups": {
+      "post": {
+        "operationId": "lookup_barcode_api_v1_identification_barcode_lookups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BarcodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookup"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "408": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Timeout"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Lookup Barcode",
+        "tags": [
+          "identification"
         ]
       }
     },

@@ -2,6 +2,22 @@
 
 Status: liveness, accounts, manual entry capture, My Wines/detail/history, entry editing/deletion, ratings/history/erasure, occasion creation/editing/deletion, grouped wine capture, entry link/unlink commands, private photo uploads/status/viewing, entry and occasion photo associations, album/source reads and personal wine covers are implemented under `/api/v1`. Remaining product routes below are planned. Use the generated OpenAPI snapshot for currently working endpoints. [Architecture](architecture.md) and [data model](data-model.md) define access and ownership.
 
+### Implemented barcode lookup and vintage confirmation (C04b)
+
+Guest `POST /identification/barcode-lookups` takes `{gtin}` and returns normalized
+code, status (`NEEDS_CONFIRMATION`, `NOT_FOUND`, `TOO_MANY_MATCHES`) and bounded
+public offering candidates with source dates, sizes and catalog release options.
+`POST /identification/barcode-confirmations` takes `{gtin, catalogReleaseId,
+vintageStatus, year, edition}` and revalidates the exact choice against current
+evidence. Even one listed release needs confirmation. Success returns public
+catalog details; stale/unrelated choices return 409. Neither operation saves an
+entry. The existing authenticated catalog capture remains the save boundary.
+
+Both endpoints use no-store responses, strict input/output allowlists, bounded
+read-only queries and pre-parse size/time/rate guards. [Identification](../apps/api/src/wine_journal/identification/README.md)
+documents complete fields, error codes, curated coverage and deployment limits.
+No provider or camera is enabled by this contract.
+
 ### Retired upload behavior (M08a)
 
 The internal cleanup command can retire an unused upload after eligibility checks;

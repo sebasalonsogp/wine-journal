@@ -12,6 +12,8 @@ from wine_journal.core.config import Settings
 from wine_journal.core.database import database_engine
 from wine_journal.core.errors import RequestContextMiddleware, install_error_handlers
 from wine_journal.core.health import router as health_router
+from wine_journal.identification.budget import BarcodeBudget, BarcodeRequestGuard
+from wine_journal.identification.routes import router as identification_router
 from wine_journal.integrations.storage import Storage, StorageSettings
 from wine_journal.journal.occasion_routes import router as occasion_router
 from wine_journal.journal.rating_routes import router as rating_router
@@ -49,6 +51,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         TokenVerifier(settings.auth_issuer) if settings.auth_issuer else None
     )
     application.state.storage = storage
+    application.state.barcode_budget = BarcodeBudget()
+    application.add_middleware(BarcodeRequestGuard)
     application.add_middleware(RequestContextMiddleware)
     application.add_middleware(
         CORSMiddleware,
@@ -61,6 +65,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(health_router, prefix="/api/v1")
     application.include_router(accounts_router, prefix="/api/v1")
     application.include_router(catalog_router, prefix="/api/v1")
+    application.include_router(identification_router, prefix="/api/v1")
     application.include_router(journal_router, prefix="/api/v1")
     application.include_router(rating_router, prefix="/api/v1")
     application.include_router(occasion_router, prefix="/api/v1")

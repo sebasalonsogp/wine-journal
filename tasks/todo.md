@@ -942,6 +942,19 @@ Inverting the apply guard makes the preview-write test fail; restoring it passes
 Ruff, formatting, mypy, package build and unchanged OpenAPI checks pass. See the
 [implementation evidence](barcode-coverage-checkpoint.md#c04a-import-foundation--october-20).
 
+**C04b implemented:** Guest barcode lookup returns bounded, sourced offering
+candidates and release options. Confirmation rechecks the exact release, vintage
+status, year and edition against current evidence; it never logs a drink. No match
+or oversized candidate sets require text/manual continuation. Invalid, chunked,
+oversized and slow requests are bounded before parsing; guests and signed-in
+callers share per-peer/process budgets with Retry-After. Stored sources are
+revalidated and an exact-match preview/apply retraction CLI is available.
+Generated OpenAPI/client types include both operations. The local 2022/2023
+Seven Oaks lookup/confirmation and unknown/wrong-year cases pass without changing
+journal/media/evidence counts or holds. [Contract and operating limits](../apps/api/src/wine_journal/identification/README.md).
+The broader R02 coverage gate, shared deployment quotas and C05 browser/device
+experience remain open; parent completion stays 31/59.
+
 **Stories:** WI-01, WI-03, WI-04.
 
 <a id="c05"></a>

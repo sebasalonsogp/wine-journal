@@ -33,3 +33,11 @@ Scope split: C04a can prepare reviewed storage independently of the unfinished
 physical-device gate. C04b still needs bounded guest/user lookup, response contracts,
 source revalidation and server-side release selection. C05 requires actual camera
 evidence. R01/R02/C04/C05 remain incomplete; this decision does not waive those gates.
+
+October 20 follow-up: C04b now exposes curated lookup and explicit release
+confirmation through the [identification contract](../../apps/api/src/wine_journal/identification/README.md).
+It revalidates current evidence, preserves ambiguity, bounds requests/results and
+never calls a provider or saves an entry. A preview-first exact-match `--retract`
+operator workflow now fulfills the correction/retraction prerequisite above.
+No schema, credentials or permissions change is required. Shared production
+ingress quotas and camera/coverage validation remain deployment/product gates.

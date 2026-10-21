@@ -147,6 +147,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/identification/barcode-confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Barcode */
+        post: operations["confirm_barcode_api_v1_identification_barcode_confirmations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/identification/barcode-lookups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lookup Barcode */
+        post: operations["lookup_barcode_api_v1_identification_barcode_lookups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -592,6 +626,60 @@ export interface components {
         };
         /** AttachPhoto */
         AttachPhoto: Record<string, never>;
+        /** BarcodeCandidate */
+        BarcodeCandidate: {
+            /** Bottlesizesml */
+            bottleSizesMl: number[];
+            /**
+             * Definitionid
+             * Format: uuid
+             */
+            definitionId: string;
+            /** Name */
+            name: string;
+            /** Producer */
+            producer: string;
+            /** Releases */
+            releases: components["schemas"]["CatalogWine"][];
+            /** Sources */
+            sources: components["schemas"]["CatalogReference"][];
+        };
+        /** BarcodeConfirmation */
+        BarcodeConfirmation: {
+            /**
+             * Catalogreleaseid
+             * Format: uuid
+             */
+            catalogReleaseId: string;
+            /** Edition */
+            edition: string | null;
+            /** Gtin */
+            gtin: string;
+            /**
+             * Vintagestatus
+             * @enum {string}
+             */
+            vintageStatus: "YEAR" | "NON_VINTAGE" | "MULTI_VINTAGE";
+            /** Year */
+            year: number | null;
+        };
+        /** BarcodeLookup */
+        BarcodeLookup: {
+            /** Candidates */
+            candidates: components["schemas"]["BarcodeCandidate"][];
+            /** Gtin */
+            gtin: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "NEEDS_CONFIRMATION" | "NOT_FOUND" | "TOO_MANY_MATCHES";
+        };
+        /** BarcodeRequest */
+        BarcodeRequest: {
+            /** Gtin */
+            gtin: string;
+        };
         /** BootstrapAccount */
         BootstrapAccount: Record<string, never>;
         /** CatalogDetails */
@@ -2195,6 +2283,180 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LivenessResponse"];
+                };
+            };
+        };
+    };
+    confirm_barcode_api_v1_identification_barcode_confirmations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BarcodeConfirmation"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogDetails"];
+                };
+            };
+            /** @description Request Timeout */
+            408: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request Entity Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    lookup_barcode_api_v1_identification_barcode_lookups_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BarcodeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BarcodeLookup"];
+                };
+            };
+            /** @description Request Timeout */
+            408: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request Entity Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

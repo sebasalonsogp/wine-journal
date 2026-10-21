@@ -57,8 +57,12 @@ vintage ambiguity through a preview-first curator import. Migration 0026 and the
 five-observation/four-code seed are applied locally; repeat import adds zero and
 journal/media counts and holds are unchanged. All 485 API tests pass, including
 atomic import, concurrency and read-only runtime access. [ADR 0008](../docs/decisions/0008-curated-barcode-evidence.md)
-records the boundary. C04b's lookup contract and C05's camera flow remain open;
-broader samples and physical iPhone evidence still gate scanning.
+records the boundary. C04b now implements guest curated lookup and explicit
+vintage/edition confirmation with bounded requests, source revalidation and a
+preview-first evidence retraction workflow. [The API contract](../apps/api/src/wine_journal/identification/README.md)
+keeps confirmation separate from authenticated journal capture. C05's input/camera
+flow, broader samples and physical iPhone evidence still gate scanning. Shared
+ingress quotas remain a deployment requirement; there is no provider integration.
 
 ## Original starting point (foundation baseline)
 
