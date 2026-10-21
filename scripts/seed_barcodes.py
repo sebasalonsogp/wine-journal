@@ -15,12 +15,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--apply", action="store_true", help="Commit; the default only previews.")
+    parser.add_argument(
+        "--retract", action="store_true", help="Remove only exact reviewed evidence matches."
+    )
     args = parser.parse_args()
     try:
         settings = MigrationSettings.model_validate({})
         engine = database_engine(settings.migration_database_url, role="wine_migrator")
         try:
-            result = import_barcodes(engine, args.manifest, apply=args.apply)
+            result = import_barcodes(engine, args.manifest, apply=args.apply, retract=args.retract)
         finally:
             engine.dispose()
         print(json.dumps(asdict(result), sort_keys=True))

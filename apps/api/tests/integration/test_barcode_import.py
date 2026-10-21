@@ -257,3 +257,14 @@ def test_cli_redaction_and_populated_downgrade_guard(
     )
     assert downgrade.returncode != 0
     assert count(barcode_db) == 5
+    for flags, expected, remaining in [
+        (["--retract"], {"applied": False, "observations": 5, "package_codes": 4}, 5),
+        (["--retract", "--apply"], {"applied": True, "observations": 5, "package_codes": 4}, 0),
+        (["--retract", "--apply"], {"applied": True, "observations": 0, "package_codes": 0}, 0),
+    ]:
+        result = subprocess.run(
+            [*command, *flags], env=environment, capture_output=True, text=True, timeout=30
+        )
+        assert result.returncode == 0, "Barcode retraction CLI failed"
+        assert json.loads(result.stdout) == expected
+        assert count(barcode_db) == remaining

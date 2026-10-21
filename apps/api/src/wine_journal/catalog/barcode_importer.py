@@ -78,7 +78,9 @@ class BarcodeImportResult:
     applied: bool
 
 
-def import_barcodes(engine: Engine, path: Path, *, apply: bool = False) -> BarcodeImportResult:
+def import_barcodes(
+    engine: Engine, path: Path, *, apply: bool = False, retract: bool = False
+) -> BarcodeImportResult:
     rows = load_barcode_manifest(path)
     with Session(engine) as session, session.begin():
         session.execute(text("SET LOCAL lock_timeout = '5s'"))
@@ -121,6 +123,10 @@ def import_barcodes(engine: Engine, path: Path, *, apply: bool = False) -> Barco
                     row.source_sha256,
                 ):
                     raise ValueError("Stored evidence conflicts; explicit curator review required.")
+                if retract:
+                    new.append(previous)
+                continue
+            if retract:
                 continue
             new.append(
                 CatalogBarcodeObservation(
@@ -136,8 +142,17 @@ def import_barcodes(engine: Engine, path: Path, *, apply: bool = False) -> Barco
             )
         if apply:
             # Nothing is inserted until every definition and prior source has been checked.
-            session.add_all(new)
+            if retract:
+                for observation in new:
+                    session.delete(observation)
+            else:
+                session.add_all(new)
             session.flush()
+        remaining_codes = (
+            {row.gtin for row in existing.values() if row not in new}
+            if retract
+            else {key[0] for key in existing}
+        )
         return BarcodeImportResult(
-            len(new), len({row.gtin for row in new} - {key[0] for key in existing}), apply
+            len(new), len({row.gtin for row in new} - remaining_codes), apply
         )

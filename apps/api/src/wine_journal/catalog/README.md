@@ -109,4 +109,25 @@ candidate review. Duplicate normalized evidence within a batch is rejected.
 Imports serialize with catalog changes using bounded locks and commit atomically.
 Runtime has SELECT only; no public endpoint or scanner consumes this table yet.
 Populated evidence prevents downgrade. Roll back application code while retaining
-the additive schema; retraction/correction needs an explicit curator workflow.
+the additive schema.
+
+### Retracting reviewed evidence
+
+Use the same exact manifest fields with `--retract` to preview removal, then add
+`--apply` to commit. This requires migration credentials and is never an API action:
+
+```text
+uv run --locked python ../../scripts/seed_barcodes.py reviewed-retraction.json --retract
+uv run --locked python ../../scripts/seed_barcodes.py reviewed-retraction.json --retract --apply
+```
+
+Only existing exact evidence keys with matching size/kind/hash can be removed.
+Conflicting rows abort the entire batch; absent rows are idempotent no-ops. In
+retraction mode `observations` counts removed sources and `package_codes` counts
+codes losing their last source. Other sources, releases and private snapshots stay
+intact. Preserve the reviewed retraction manifest/reason in version control and
+remove withdrawn evidence from the operational seed so a later seed run cannot
+restore it. Corrections require an explicit reviewed retraction followed by import;
+the importer never silently overwrites evidence. Lookup immediately excludes
+committed retractions on subsequent requests. No retraction was applied to the
+local reviewed seed as part of implementing this workflow.
