@@ -16,6 +16,66 @@
   --font-serif: Georgia, "Times New Roman", serif;
 }
 
+.barcode-lookup {
+  margin-block: 1.5rem;
+  padding-block: 1rem;
+  border-block: 1px solid var(--color-border);
+}
+.barcode-lookup > summary,
+.barcode-sources > summary {
+  color: var(--color-primary);
+  cursor: pointer;
+  min-height: 2.75rem;
+  align-content: center;
+}
+.barcode-lookup p {
+  max-width: 68ch;
+}
+.barcode-lookup .catalog-search {
+  margin: 1.5rem 0 0;
+}
+@media (max-width: 600px) {
+  .barcode-lookup .catalog-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.barcode-feedback {
+  margin-block: 1rem;
+}
+.barcode-feedback h2 {
+  margin-bottom: 0.75rem;
+}
+.barcode-options {
+  margin-block: 1.5rem;
+}
+.barcode-options legend {
+  font-weight: 600;
+}
+.barcode-candidate {
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.barcode-candidate h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.barcode-option {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+.barcode-option input {
+  accent-color: var(--color-primary);
+}
+.barcode-sources {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
 body {
   background: var(--color-background);
   color: var(--color-foreground);

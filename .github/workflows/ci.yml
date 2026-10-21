@@ -103,6 +103,9 @@ jobs:
       - name: Seed reviewed public wine identities for guest browser checks
         working-directory: apps/api
         run: uv run --locked python ../../scripts/seed_catalog.py ../../assets/evaluation/manifest.csv --apply
+      - name: Seed reviewed barcode associations for guest confirmation checks
+        working-directory: apps/api
+        run: uv run --locked python ../../scripts/seed_barcodes.py ../../assets/evaluation/barcode-observations.json --apply
       - name: Verify real private Storage capabilities and upload limits
         run: uv run --project apps/api --locked python scripts/smoke_local_storage.py
       - name: Build isolated decoder for real Storage publication

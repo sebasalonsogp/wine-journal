@@ -2,7 +2,7 @@ import "server-only";
 import createClient from "openapi-fetch";
 import type { paths } from "@/lib/api/schema";
 
-function publicApi() {
+export function publicApiOrigin() {
   const url = new URL(process.env.WINE_JOURNAL_API_URL ?? "");
   const local = ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
   if (
@@ -14,9 +14,13 @@ function publicApi() {
     (url.protocol !== "https:" && !(local && url.protocol === "http:"))
   )
     throw new Error("Invalid API origin configuration.");
+  return url.origin;
+}
+
+function publicApi() {
   // Guest reads never forward session cookies, authorization, or private API state.
   return createClient<paths>({
-    baseUrl: url.origin,
+    baseUrl: publicApiOrigin(),
     cache: "no-store",
     credentials: "omit",
     redirect: "error",

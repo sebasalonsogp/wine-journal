@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { browseCatalog } from "@/features/catalog/api";
+import { browseCatalog, publicApiOrigin } from "@/features/catalog/api";
+import { BarcodeLookup } from "@/features/identification/barcode-lookup";
 import { CatalogUnavailable, vintageLabel } from "@/features/catalog/catalog-display";
 import { browseHref, catalogSearch } from "@/features/catalog/navigation";
 
@@ -11,6 +12,12 @@ export default async function BrowsePage({
   const search = catalogSearch(await searchParams);
   const page = search ? await browseCatalog(search.q, search.offset) : null;
   const href = search ? browseHref(search.q, search.offset) : "/browse";
+  let apiOrigin: string | null = null;
+  try {
+    apiOrigin = publicApiOrigin();
+  } catch {
+    /* Text/manual fallback stays available. */
+  }
   return (
     <main id="main" className="page-content">
       <div className="journal-page-head">
@@ -22,6 +29,7 @@ export default async function BrowsePage({
           Add wine manually
         </Link>
       </div>
+      <BarcodeLookup apiOrigin={apiOrigin} />
       <form action="/browse" className="catalog-search" role="search">
         <div>
           <label htmlFor="catalog-query">Search the wine library</label>

@@ -80,5 +80,8 @@ URLs and dates, before use. Invalid observations are omitted; no source URLs are
 fetched or claimed freshly checked. Source dates remain visible. The exact-match
 curator retraction workflow is documented in [catalog](../catalog/README.md).
 
-This slice provides the API and generated client types. Barcode input, camera UI,
-physical-device verification and recognition outside the curated seed remain separate.
+Browse Wines now uses these operations for guest barcode-number input and explicit
+release confirmation. The browser calls the public API directly without session
+credentials, respects Retry-After, and continues through existing catalog details
+and deliberate journal capture. Camera UI, physical-device verification and
+recognition outside the curated seed remain separate.
