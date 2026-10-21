@@ -973,6 +973,12 @@ experience remain open; parent completion stays 31/59.
 
 **Primary change areas:** apps/web/src/features/capture scanner and candidate screen; browser fixtures/journey; device test notes.
 
+**C05a implemented:** [Barcode-number lookup and vintage confirmation](barcode-ui-checkpoint.md)
+connect the curated API to Browse Wines for guests. Explicit selection, source
+references, stale-match recovery, throttling, name/manual fallback and the existing
+sign-in/save flow are covered by browser tests. Camera decoding and physical-phone
+verification remain open; C05 and the parent task count are unchanged.
+
 **Stories:** WI-01, WI-03, WI-04, AC-01.
 
 <a id="c06"></a>
