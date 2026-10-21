@@ -1,0 +1,62 @@
+[
+  {
+    "gtin": "089121288122",
+    "bottle_ml": 750,
+    "source_url": "https://sites.salsify.com/ac717bbc-c69e-474f-ba68-2f08ae725959/cfdbf0ab-2c72-459e-b846-5473ab4b1d68/product/CSES2375/J--Lohr-Estates-Seven-Oaks-Cabernet-Sauvignon/",
+    "retrieved_on": "2026-10-20",
+    "market": "UNVERIFIED",
+    "evidence_status": "WEB_TEXT",
+    "definition_key": "jlohr-estates-seven-oaks-cabernet-sauvignon",
+    "producer": "J. Lohr",
+    "wine_name": "Estates Seven Oaks Cabernet Sauvignon",
+    "source_sha256": null
+  },
+  {
+    "gtin": "00089121288122",
+    "bottle_ml": 750,
+    "source_url": "https://www.thefreshgrocer.com/sm/pickup/rsid/486/product/j-lohr-2022-seven-oaks-paso-robles-cabernet-sauvignon-750-ml-id-00089121288122",
+    "retrieved_on": "2026-10-20",
+    "market": "UNVERIFIED",
+    "evidence_status": "WEB_TEXT",
+    "definition_key": "jlohr-estates-seven-oaks-cabernet-sauvignon",
+    "producer": "J. Lohr",
+    "wine_name": "Estates Seven Oaks Cabernet Sauvignon",
+    "source_sha256": null
+  },
+  {
+    "gtin": "744442301003",
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23ZGY-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "market": "UNVERIFIED",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "definition_key": "ridge-geyserville",
+    "producer": "Ridge Vineyards",
+    "wine_name": "Geyserville",
+    "source_sha256": "d870d4799ed321a8aebae15319c50eb0b31fffd6cadc11d9a45bb17be55f1d10"
+  },
+  {
+    "gtin": "744442081004",
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23XTV-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "market": "UNVERIFIED",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "definition_key": "ridge-three-valleys",
+    "producer": "Ridge Vineyards",
+    "wine_name": "Three Valleys",
+    "source_sha256": "24523e91da6c033e66481ef0a7a181f4af38ac404a54a662c8a2ef0df6fb9be0"
+  },
+  {
+    "gtin": "744442479009",
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23HRE-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "market": "UNVERIFIED",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "definition_key": "ridge-estate-chardonnay",
+    "producer": "Ridge Vineyards",
+    "wine_name": "Estate Chardonnay",
+    "source_sha256": "97c0223d7333a302462910ede3421968bbd6fe6d2a6c3b6dd4b842d8e750f9fe"
+  }
+]

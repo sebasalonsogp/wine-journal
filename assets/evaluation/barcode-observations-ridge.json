@@ -1,0 +1,32 @@
+[
+  {
+    "sample_id": "B003",
+    "gtin": "744442301003",
+    "expected_fixture_ids": ["W008"],
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23ZGY-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "market": "UNVERIFIED"
+  },
+  {
+    "sample_id": "B004",
+    "gtin": "744442081004",
+    "expected_fixture_ids": ["W014"],
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23XTV-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "market": "UNVERIFIED"
+  },
+  {
+    "sample_id": "B005",
+    "gtin": "744442479009",
+    "expected_fixture_ids": ["W006"],
+    "bottle_ml": 750,
+    "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23HRE-Rear.jpg",
+    "retrieved_on": "2026-10-20",
+    "evidence_status": "PRODUCER_WEB_IMAGE",
+    "market": "UNVERIFIED"
+  }
+]

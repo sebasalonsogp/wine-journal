@@ -1,0 +1,111 @@
+{
+  "retrieved_on": "2026-10-20",
+  "evidence_status": "DERIVED_PRODUCER_WEB_ASSET",
+  "market": "UNVERIFIED",
+  "physical_bottles": 0,
+  "preprocessing": {
+    "library": "Pillow 12.3.0",
+    "operation": "thumbnail",
+    "bounding_box": [2500, 2500],
+    "resampling": "LANCZOS",
+    "output": "JPEG",
+    "quality": 90,
+    "subsampling": 0,
+    "metadata": "none copied"
+  },
+  "notes": "Four distinct producer offering images, not physical-camera observations. Whole images resized to fit existing four-million-pixel decoding limit. Source and derived hashes are separate; no crop, rotation or barcode generation in committed fixtures. Printed digits reviewed before running a decoder/provider. Bottling dates must not replace the visible 2023 vintage. Monte Bello has no barcode in this rear image; this does not establish whether other packaging has a code.",
+  "images": [
+    {
+      "id": "I004",
+      "file": "ridge-geyserville-2023-2500.jpg",
+      "mime": "image/jpeg",
+      "sha256": "564b9a81f7e903f8aea8dea7650280f89b98a01eddac1a910d5e5e487f6c51f2",
+      "width": 649,
+      "height": 2500,
+      "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23ZGY-Rear.jpg",
+      "source_page": "https://www.ridgewine.com/wines/2023-geyserville/?trade=1",
+      "source_sha256": "d870d4799ed321a8aebae15319c50eb0b31fffd6cadc11d9a45bb17be55f1d10",
+      "source_dimensions": [2169, 8354],
+      "expected_gtin": "00744442301003",
+      "expected_fixture_ids": ["W008"],
+      "observed_symbology": "UPC_A",
+      "observed_vintage_status": "YEAR",
+      "observed_year": 2023,
+      "bottle_ml": 750,
+      "conditions": [
+        "producer rear-bottle image",
+        "vintage and bottling year both visible",
+        "small tilted UPC on curved edge"
+      ]
+    },
+    {
+      "id": "I005",
+      "file": "ridge-three-valleys-2023-2500.jpg",
+      "mime": "image/jpeg",
+      "sha256": "0e33c20d6ccfd31457888e711616912120f42d11fa1dffaf6dc14ed70457fa84",
+      "width": 629,
+      "height": 2500,
+      "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23XTV-Rear.jpg",
+      "source_page": "https://www.ridgewine.com/wines/2023-three-valleys/?trade=1",
+      "source_sha256": "24523e91da6c033e66481ef0a7a181f4af38ac404a54a662c8a2ef0df6fb9be0",
+      "source_dimensions": [2026, 8058],
+      "expected_gtin": "00744442081004",
+      "expected_fixture_ids": ["W014"],
+      "observed_symbology": "UPC_A",
+      "observed_vintage_status": "YEAR",
+      "observed_year": 2023,
+      "bottle_ml": 750,
+      "conditions": [
+        "producer rear-bottle image",
+        "vintage and bottling year both visible",
+        "small tilted UPC on curved edge"
+      ]
+    },
+    {
+      "id": "I006",
+      "file": "ridge-estate-chardonnay-2023-2500.jpg",
+      "mime": "image/jpeg",
+      "sha256": "4fd44ca7190e65d3ceeffe6b7e091f037a68d6d1b9c4e0e50e29937111e4ff2f",
+      "width": 715,
+      "height": 2500,
+      "source_url": "https://www.ridgewine.com/wp-content/uploads/2025/03/23HRE-Rear.jpg",
+      "source_page": "https://www.ridgewine.com/wines/2023-estate-chardonnay/?trade=1",
+      "source_sha256": "97c0223d7333a302462910ede3421968bbd6fe6d2a6c3b6dd4b842d8e750f9fe",
+      "source_dimensions": [2249, 7864],
+      "expected_gtin": "00744442479009",
+      "expected_fixture_ids": ["W006"],
+      "observed_symbology": "UPC_A",
+      "observed_vintage_status": "YEAR",
+      "observed_year": 2023,
+      "bottle_ml": 750,
+      "conditions": [
+        "producer rear-bottle image",
+        "vintage and bottling year both visible",
+        "small tilted UPC on curved edge"
+      ]
+    },
+    {
+      "id": "I007",
+      "file": "ridge-monte-bello-2023-2500.jpg",
+      "mime": "image/jpeg",
+      "sha256": "5ecd595e7fe257447228cbcc975f749eb2bffafd393501233267e91ee0db7f8c",
+      "width": 742,
+      "height": 2500,
+      "source_url": "https://www.ridgewine.com/wp-content/uploads/2026/07/23CMB-Rear.jpg",
+      "source_page": "https://www.ridgewine.com/wines/2023-monte-bello/?trade=1",
+      "source_sha256": "1e2ac4a56903fc89e3734fb5973dfe22f00fc179d53340997011458246a77705",
+      "source_dimensions": [2418, 8145],
+      "expected_gtin": null,
+      "expected_fixture_ids": ["W002"],
+      "observed_symbology": null,
+      "observed_vintage_status": "YEAR",
+      "observed_year": 2023,
+      "bottle_ml": 750,
+      "conditions": [
+        "producer rear-bottle image",
+        "vintage and bottling year both visible",
+        "no visible barcode"
+      ]
+    }
+  ]
+}

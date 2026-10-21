@@ -1,0 +1,31 @@
+fixture_id,definition_key,producer,wine_name,vintage_status,year,edition,source_url,retrieved_on,market,evidence_status
+W001,ridge-monte-bello,Ridge Vineyards,Monte Bello,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W002,ridge-monte-bello,Ridge Vineyards,Monte Bello,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W003,ridge-estate-cabernet-sauvignon,Ridge Vineyards,Estate Cabernet Sauvignon,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W004,ridge-estate-cabernet-sauvignon,Ridge Vineyards,Estate Cabernet Sauvignon,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W005,ridge-estate-chardonnay,Ridge Vineyards,Estate Chardonnay,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W006,ridge-estate-chardonnay,Ridge Vineyards,Estate Chardonnay,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W007,ridge-geyserville,Ridge Vineyards,Geyserville,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W008,ridge-geyserville,Ridge Vineyards,Geyserville,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W009,ridge-lytton-springs,Ridge Vineyards,Lytton Springs,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W010,ridge-lytton-springs,Ridge Vineyards,Lytton Springs,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W011,ridge-pagani-ranch-zinfandel,Ridge Vineyards,Pagani Ranch Zinfandel,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W012,ridge-pagani-ranch-zinfandel,Ridge Vineyards,Pagani Ranch Zinfandel,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W013,ridge-three-valleys,Ridge Vineyards,Three Valleys,YEAR,2022,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W014,ridge-three-valleys,Ridge Vineyards,Three Valleys,YEAR,2023,,https://www.ridgewine.com/trade/export-releases/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W015,jlohr-estates-seven-oaks-cabernet-sauvignon,J. Lohr,Estates Seven Oaks Cabernet Sauvignon,YEAR,2022,,https://www.jlohr.com/wines/2022-seven-oaks-cabernet-sauvignon,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W016,jlohr-estates-seven-oaks-cabernet-sauvignon,J. Lohr,Estates Seven Oaks Cabernet Sauvignon,YEAR,2023,,https://www.jlohr.com/wines/2023-seven-oaks-cabernet-sauvignon,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W017,jlohr-estates-riverstone-chardonnay,J. Lohr,Estates Riverstone Chardonnay,YEAR,2022,,https://www.jlohr.com/wines/2022-riverstone-chardonnay,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W018,jlohr-estates-riverstone-chardonnay,J. Lohr,Estates Riverstone Chardonnay,YEAR,2023,,https://www.jlohr.com/wines/2023-riverstone-chardonnay,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W019,jlohr-estates-los-osos-merlot,J. Lohr,Estates Los Osos Merlot,YEAR,2022,,https://www.jlohr.com/wines/2022-los-osos-merlot,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W020,jlohr-estates-los-osos-merlot,J. Lohr,Estates Los Osos Merlot,YEAR,2023,,https://www.jlohr.com/wines/2023-los-osos-merlot,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W021,catena-malbec,Catena Zapata,Catena Malbec,YEAR,2022,,https://catenazapata.com/catena-malbec-2022/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W022,catena-malbec,Catena Zapata,Catena Malbec,YEAR,2023,,https://catenazapata.com/catena-malbec-2023/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W023,catena-alta-malbec,Catena Zapata,Catena Alta Malbec,YEAR,2022,,https://catenazapata.com/catena-alta-malbec-2022/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W024,catena-alta-malbec,Catena Zapata,Catena Alta Malbec,YEAR,2023,,https://catenazapata.com/catena-alta-malbec-2023/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W025,catena-appellation-paraje-altamira-malbec,Catena Zapata,Catena Appellation Paraje Altamira Malbec,YEAR,2022,,https://catenazapata.com/appellation-paraje-altamira-2022/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W026,catena-appellation-paraje-altamira-malbec,Catena Zapata,Catena Appellation Paraje Altamira Malbec,YEAR,2023,,https://catenazapata.com/appellation-paraje-altamira-2023/,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W027,krug-grande-cuvee,Krug,Grande Cuvée,MULTI_VINTAGE,,171ème Édition,https://www.krug.com/en-int/champagne/krug-grande-cuvee-171eme-edition,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W028,krug-grande-cuvee,Krug,Grande Cuvée,MULTI_VINTAGE,,172ème Édition,https://www.krug.com/en-int/champagne/krug-grande-cuvee-172eme-edition,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W029,grahams-10-year-old-tawny,Graham's,10 Year Old Tawny Port,NON_VINTAGE,,,https://www.grahams-port.com/wine/10-years-old/10,2026-10-19,UNVERIFIED,SOURCE_ONLY
+W030,grahams-20-year-old-tawny,Graham's,20 Year Old Tawny Port,NON_VINTAGE,,,https://www.grahams-port.com/wine/20-years-old/11,2026-10-19,UNVERIFIED,SOURCE_ONLY

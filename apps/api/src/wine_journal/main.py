@@ -1,21 +1,81 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import sessionmaker
 
+from wine_journal.accounts.routes import router as accounts_router
+from wine_journal.catalog.routes import router as catalog_router
+from wine_journal.core.auth import TokenVerifier
 from wine_journal.core.config import Settings
+from wine_journal.core.database import database_engine
+from wine_journal.core.errors import RequestContextMiddleware, install_error_handlers
 from wine_journal.core.health import router as health_router
+from wine_journal.identification.budget import BarcodeBudget, BarcodeRequestGuard
+from wine_journal.identification.routes import router as identification_router
+from wine_journal.integrations.storage import Storage, StorageSettings
+from wine_journal.journal.occasion_routes import router as occasion_router
+from wine_journal.journal.rating_routes import router as rating_router
+from wine_journal.journal.routes import router as journal_router
+from wine_journal.media.album_routes import router as album_router
+from wine_journal.media.attachment_routes import router as attachment_router
+from wine_journal.media.cover_routes import router as cover_router
+from wine_journal.media.occasion_photo_routes import router as occasion_photo_router
+from wine_journal.media.routes import router as media_router
+from wine_journal.media.wine_moment_routes import router as wine_moment_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings if settings is not None else Settings()
-    application = FastAPI(title="Wine Journal API", version="0.1.0")
+    engine = database_engine(settings.database_url) if settings.database_url else None
+    storage = (
+        Storage(StorageSettings.model_validate({})) if settings.media_uploads_enabled else None
+    )
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        try:
+            yield
+        finally:
+            if storage is not None:
+                storage.close()
+            if engine is not None:
+                engine.dispose()
+
+    application = FastAPI(title="Wine Journal API", version="0.1.0", lifespan=lifespan)
+    application.state.session_factory = (
+        sessionmaker(engine, expire_on_commit=False) if engine is not None else None
+    )
+    application.state.token_verifier = (
+        TokenVerifier(settings.auth_issuer) if settings.auth_issuer else None
+    )
+    application.state.storage = storage
+    application.state.barcode_budget = BarcodeBudget()
+    application.add_middleware(BarcodeRequestGuard)
+    application.add_middleware(RequestContextMiddleware)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=False,
-        allow_methods=["GET", "POST", "PATCH", "DELETE"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
         allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
+        expose_headers=["X-Request-ID", "Retry-After"],
     )
     application.include_router(health_router, prefix="/api/v1")
+    application.include_router(accounts_router, prefix="/api/v1")
+    application.include_router(catalog_router, prefix="/api/v1")
+    application.include_router(identification_router, prefix="/api/v1")
+    application.include_router(journal_router, prefix="/api/v1")
+    application.include_router(rating_router, prefix="/api/v1")
+    application.include_router(occasion_router, prefix="/api/v1")
+    application.include_router(media_router, prefix="/api/v1")
+    application.include_router(attachment_router, prefix="/api/v1")
+    application.include_router(cover_router, prefix="/api/v1")
+    application.include_router(occasion_photo_router, prefix="/api/v1")
+    application.include_router(album_router, prefix="/api/v1")
+    application.include_router(wine_moment_router, prefix="/api/v1")
+    install_error_handlers(application)
     return application
 
 

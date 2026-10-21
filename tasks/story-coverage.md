@@ -1,6 +1,6 @@
 # Story-to-implementation coverage
 
-This matrix accounts for all **65 stories** in [story-map.md](story-map.md). Scope labels come from that inventory; task assignment is a proposed execution plan, not evidence of implementation. All feature tasks remain pending. [Plan](plan.md) explains milestones and [todo.md](todo.md) owns completion checkboxes.
+This matrix accounts for all **65 stories** in [story-map.md](story-map.md). Scope labels come from that inventory; task assignment describes execution scope, not proof that a whole story is complete. F01–F07 are implemented and verified in fresh CI. The journal and live social-provider activation remain pending. [Plan](plan.md) explains milestones and [todo.md](todo.md) owns completion checkboxes.
 
 MVP supporting proposals are visible alongside targets. TP-02 remains optional; future and exploratory stories remain outside the private release until activated. Engineering enablers and regression checks may support many stories without appearing as separate product promises.
 
