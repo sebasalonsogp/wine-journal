@@ -98,6 +98,14 @@ explicit vintage confirmation. R01b/R02/C04/C05 remain unchecked.
 
 **Stories:** WI-02, WI-03, WI-04.
 
+**R03a evidence (October 21):** [Local OCR baseline](label-recognition-checkpoint.md)
+compares two Tesseract layout modes on seven reviewed producer images. Each finds
+the expected offering in only 2/7 images; visible years can belong to bottling or
+historical narrative. The isolated repeatable harness, real blank/malformed controls
+and cleanup tests are implemented. Cloud alternatives are documentation-only;
+broader samples, improved recall and physical-device evidence remain open. R03 and
+C06/C07 stay unchecked; application photo recognition is not enabled.
+
 **Evidence checkpoint (R01–R02–R03):** Retain reproducible inputs, observed outcomes, limits and a recommendation. A failed spike is useful evidence; its dependent feature remains blocked until a viable path or explicit scope decision exists.
 
 <a id="r04"></a>

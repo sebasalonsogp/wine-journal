@@ -1,0 +1,156 @@
+{
+  "evaluated_at": "2026-10-22T00:25:54.154582+00:00",
+  "engine": "Tesseract 5.3.0",
+  "english_model_package": "1:4.1.0-2",
+  "psm": 11,
+  "image_id": "sha256:b5e6adc2bb0aa84647ce3f6751bcd5c0bdc6adbb17843ed7e5210ff0664725dc",
+  "manifest_sha256": {
+    "barcode-images.json": "48b7dc16f94df3f22f02e6ca689ee9b12f50a27aa97438ebdcbac80a9e533e34",
+    "barcode-images-ridge.json": "4296070f54fe5d315bd745faefac438a84be0913321135cf5857a70d0c74cba2"
+  },
+  "catalog_sha256": "77d8207c0fca89a03ebce241c629f14dc47a670c0296b7b0a888c8c498a9b576",
+  "source_images": 7,
+  "physical_bottles": 0,
+  "network_enabled": false,
+  "confirmed_releases": 0,
+  "results": [
+    {
+      "status": "READ",
+      "text": "SEVEN OAKS CABERNET SAUVIGNON Crafted by the Lohr family, our Paso Robles Cabernet is layered with blackberry, cherry, dark chocolate, and a smooth finish. Sustainably farmed and oak barrel-aged, this wine expresses a sense of place and our commitment to the land. he PRODUCED AT PASO ROBLES, CA AND BOTTLED AT SAN JOSE, CA BY J. LOHR WINERY 750 ml WARNING: (1) ACCORDING TO THE SURGEON GENERAL, WOMEN SHOULD NOT DRINK ALCOHOLIC BEVERAGES DURING PREGNANCY BECAUSE OF THE RISK OF BIRTH DEFECTS. (2) CONSUMPTION OF ALCOHOLIC BEVERAGES IMPAIRS YOUR ABILITY TO DRIVE A CAR OR OPERATE MACHINERY, AND MAY CAUSE HEALTH PROBLEMS. JLOHR.COM CONTAINS SULFITES CACRV",
+      "mean_word_confidence": 87.63,
+      "elapsed_ms_including_container": 1156,
+      "sample_id": "I001",
+      "sha256": "1b8c516cf32141b2370de3a76aee66f98b9f35245b264dfaed41c7c268ef117b",
+      "candidate_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": true,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "SEVEN OAKS ABERNET SAUVIGNON Crafted by the Lohr family, our Paso Robles Cabernet is layered with blackberry, cherry, dark chocolate, and a smooth finish. Sustainably farmed and oak barrel-aged, this wine expresses a sense of place and our commitment to the land. PRODUCED AT PASO ROBLES, CA AND BOTTLED CA BY OHR WINERY 50 ml |ACCORDING TO THE GENERAL, SHOULD NOT DRINK At COHC DURING PREGNANCY S| OF THE BATH DEFECTS. (2) CONSU ON OF ALC OLIC IMPAIRS YOUR To ORI RO R 0 AND MAY CAUSE HEALTH ITAINS SULFITES CA CRV",
+      "mean_word_confidence": 72.57,
+      "elapsed_ms_including_container": 875,
+      "sample_id": "I002",
+      "sha256": "52d4285e6955eeca316769a13ac3244202ffe7d0709b2fc17768974cd76b2dbe",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "CABERNET SAUVIGNON PASO ROBLES SUSTAINABLY GROWN",
+      "mean_word_confidence": 81.79,
+      "elapsed_ms_including_container": 531,
+      "sample_id": "I003",
+      "sha256": "615c8ecc1285cde8fd56b0d26d8d600d8e75596e93424695d5536bdcda474a76",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "023 Geyserville, bottled February 2025 I / winter rains replenished temperatures during the grown) season were followed by cooler \\ugust and September that pushed late into October. The extended veriod resulted in a wine with dark annins balanced by beautiful Enjoyable now, this classic field blend continue to evolve over the next ten ng Hand-harvested grapes; nous yeast; naturally occurring bacteria; oak from barrel aging; | effective 750 ml",
+      "mean_word_confidence": 78.14,
+      "elapsed_ms_including_container": 656,
+      "sample_id": "I004",
+      "sha256": "564b9a81f7e903f8aea8dea7650280f89b98a01eddac1a910d5e5e487f6c51f2",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W008"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2025
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "2023 Three Valleys, bottled August Since its inception, Ridge has focused on single vineyard wines. Three careful combining of parcels from plementary vineyards, is the exception Moderate summer temperatures allowed the fruit to mature slowly and develop deep flavors for which Sonoma known. Enjoyable now, this wine wil continue to develop over the next five years, SR (6/24) Ingredients: Hand-harvested grapes; digenous yeast; naturally malolactic bacteria; 1% water tartaric acid; oak from barrel aging effective SO,,. www.ridgewine.com",
+      "mean_word_confidence": 84.1,
+      "elapsed_ms_including_container": 641,
+      "sample_id": "I005",
+      "sha256": "0e33c20d6ccfd31457888e711616912120f42d11fa1dffaf6dc14ed70457fa84",
+      "candidate_fixture_ids": [
+        "W013",
+        "W014"
+      ],
+      "expected_fixture_ids": [
+        "W014"
+      ],
+      "expected_in_candidates": true,
+      "observed_year_tokens": [
+        2023
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "2023 Estate This year sta and coolest gr years. A wine that pr while accents typica arrel fermen urther Enjoyable no = eight years. = => ngredients: estate grown naturally [108.867 rom barrel agi 3233",
+      "mean_word_confidence": 69.49,
+      "elapsed_ms_including_container": 547,
+      "sample_id": "I006",
+      "sha256": "4fd44ca7190e65d3ceeffe6b7e091f037a68d6d1b9c4e0e50e29937111e4ff2f",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W006"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2023
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    },
+    {
+      "status": "READ",
+      "text": "a Vineyard Production Yields, Monte Bello Parcels: 72.8 tons from 57 acres 2023 Monte Bello, bottled June 2025 After the condensed growing season of 2022 Wi above average temperatures, 2023 was a contrast. A long, cool spring followed by summer weather pushed veraison into mid-Augu Harvest began in October and lasted well in November, making 2023 one of the latest Mott Bello harvests ever. The long maturation petiod resulted in a wine with supple tannins, ample acidity, and well-defined fruit. This vintage will develop over the next years. Ingredients: Hand-harvested, organic, grapes; indigenous yeast; naturally occurring malolactic bacteria; oak from barrel effective 233, 750mL |",
+      "mean_word_confidence": 83.16,
+      "elapsed_ms_including_container": 797,
+      "sample_id": "I007",
+      "sha256": "5ecd595e7fe257447228cbcc975f749eb2bffafd393501233267e91ee0db7f8c",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W002"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2022,
+        2023,
+        2025
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true
+    }
+  ]
+}
