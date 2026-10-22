@@ -1,4 +1,4 @@
-"""R03a: evaluate only reviewed public fixtures; no API integration or cloud upload."""
+"""R03: evaluate only reviewed public fixtures; no API integration or cloud upload."""
 
 import argparse
 import csv
@@ -104,7 +104,17 @@ def recognize(content: bytes, image: str, psm: int) -> dict[str, object]:
     return result
 
 
-def evaluate(image: str, psm: int) -> dict[str, object]:
+def without_expected_offerings(
+    catalog: list[dict[str, str]], expected: list[str]
+) -> list[dict[str, str]]:
+    known = {wine["fixture_id"]: wine["definition_key"] for wine in catalog}
+    if not expected or not set(expected) <= known.keys():
+        raise ValueError("Missing independent ground truth")
+    excluded = {known[identifier] for identifier in expected}
+    return [wine for wine in catalog if wine["definition_key"] not in excluded]
+
+
+def evaluate(image: str, psm: int, preprocess: bool = False) -> dict[str, object]:
     with (ASSETS / "manifest.csv").open(encoding="utf-8", newline="") as source:
         catalog = list(csv.DictReader(source))
     results: list[dict[str, object]] = []
@@ -117,14 +127,21 @@ def evaluate(image: str, psm: int) -> dict[str, object]:
             content = checked_bytes(ASSETS / "barcode" / item["file"], item["sha256"])
             if item["width"] * item["height"] > 4_000_000:
                 raise ValueError("Fixture exceeds pixel limit")
-            result = recognize(content, image, psm)
-            text = str(result["text"])
-            proposed = candidates(text, catalog)
             expected = item.get(
                 "expected_fixture_ids", manifest.get("barcode_candidate_fixture_ids")
             )
-            if not expected or not set(expected) <= {row["fixture_id"] for row in catalog}:
-                raise ValueError("Missing independent ground truth")
+            withheld = without_expected_offerings(catalog, expected)
+            preparation: dict[str, object] = {"recipe": "none"}
+            if preprocess:
+                from label_preprocessing import prepare
+
+                started = time.monotonic()
+                content, preparation = prepare(content)
+                preparation["elapsed_ms"] = round((time.monotonic() - started) * 1000)
+            result = recognize(content, image, psm)
+            text = str(result["text"])
+            proposed = candidates(text, catalog)
+            withheld_candidates = candidates(text, withheld)
             result.update(
                 sample_id=item["id"],
                 sha256=item["sha256"],
@@ -135,6 +152,9 @@ def evaluate(image: str, psm: int) -> dict[str, object]:
                 expected_visible_year=item.get("observed_year"),
                 vintage_resolved=False,
                 requires_confirmation=True,
+                preprocessing=preparation,
+                withheld_candidate_fixture_ids=withheld_candidates,
+                withheld_false_positive=bool(withheld_candidates),
             )
             results.append(result)
     return {
@@ -142,6 +162,7 @@ def evaluate(image: str, psm: int) -> dict[str, object]:
         "engine": "Tesseract 5.3.0",
         "english_model_package": "1:4.1.0-2",
         "psm": psm,
+        "preprocessing": "portrait-crop-contrast-v1" if preprocess else "none",
         "image_id": image,
         "manifest_sha256": manifests,
         "catalog_sha256": hashlib.sha256((ASSETS / "manifest.csv").read_bytes()).hexdigest(),
@@ -156,6 +177,11 @@ def evaluate(image: str, psm: int) -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--psm", type=int, choices=[3, 11], default=11)
+    parser.add_argument(
+        "--preprocess",
+        action="store_true",
+        help="Apply the fixed R03b recipe to reviewed fixture bytes",
+    )
     parser.add_argument("--output", type=Path, help="Save only public-fixture results to this file")
     args = parser.parse_args()
     try:
@@ -171,7 +197,7 @@ def main() -> int:
         )
         if not re.fullmatch(r"sha256:[0-9a-f]{64}", image):
             raise ValueError("Unexpected evaluation image")
-        report = json.dumps(evaluate(image, args.psm), indent=2) + "\n"
+        report = json.dumps(evaluate(image, args.psm, args.preprocess), indent=2) + "\n"
         if args.output:
             args.output.write_text(report, encoding="utf-8")
         else:
