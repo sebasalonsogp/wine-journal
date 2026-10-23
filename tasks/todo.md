@@ -1,7 +1,7 @@
 # Wine Journal implementation tasks
 
-October 23 update: **32 of 59 tasks complete; 27 remain.** L01's optional tasting
-guidance is implemented; see its checkpoint below. The October 20 status paragraph
+October 23 update: **33 of 59 tasks complete; 26 remain.** L01's optional tasting
+guidance and L02's public beginner guides are implemented; see their checkpoints below. The October 20 status paragraph
 and dated counts later in this file describe earlier checkpoints.
 
 Status: implementation underway, October 20, 2026. **Thirty-one of 59 tasks are complete; 28 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. M08c1 adds the preview-first recurring runner and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
@@ -1131,7 +1131,7 @@ checks are verified; a real screen-reader/device walkthrough remains part of E07
 <a id="l02"></a>
 ### L02: Publish a small Guides section
 
-- [ ] **Outcome:** Deliver useful learning content without a CMS project.
+- [x] **Outcome:** Deliver useful learning content without a CMS project.
 
 **Acceptance:**
 
@@ -1145,6 +1145,11 @@ checks are verified; a real screen-reader/device walkthrough remains part of E07
 **Primary change areas:** apps/web/src/content/guides; features/guides; public routes; content/link verification.
 
 **Stories:** WG-01.
+
+**October 23 checkpoint:** Four public, sourced guides cover tasting, styles/grapes,
+food pairings and region/label basics, with review dates and catalog search links.
+Guest, keyboard, responsive, accessibility, empty-search and 404 checks pass.
+See the [Wine Guides checkpoint](wine-guides-checkpoint.md) for verification and limits.
 
 <a id="l03"></a>
 ### L03: Summarize the private taste profile
