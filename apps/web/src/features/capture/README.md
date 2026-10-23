@@ -2,6 +2,11 @@
 
 The shared wine-first and occasion-first draft workflow: identify or manually enter a wine, save its consumed date, and optionally enrich it. Preserve staged wines and inline occasion drafts until save.
 
+`tasting-help.tsx` adds optional, collapsed writing prompts and terminology beside
+wine notes in capture, saved-entry editing and the occasion wine composer. It is
+static guidance with no access to drafts, ratings or catalog data; nothing is
+inserted into notes automatically. See the [L01 checkpoint](../../../../../tasks/tasting-guidance-checkpoint.md).
+
 Implemented: manual name/date capture, optional producer/vintage/edition, repeat capture from an existing release, and tab-scoped drafts. Guest input survives sign-in; owned drafts are not restored for another identity. An uncertain save freezes its fields and keeps the original key through retry/reload. Validation failures permit correction. Explicit discard warns when an entry may already have committed.
 
 Catalog details now offer “I tried this wine.” The server resolves the public

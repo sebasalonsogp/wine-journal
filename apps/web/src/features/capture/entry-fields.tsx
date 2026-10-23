@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { EditDraft } from "./edit-draft";
+import { TastingHelp } from "./tasting-help";
 
 export function EntryFields({
   draft,
@@ -89,6 +90,7 @@ export function EntryFields({
           placeholder="What stood out? A flavor, a pairing, or a memory…"
           onChange={(event) => change({ ...draft, notes: event.target.value })}
         />
+        <TastingHelp />
       </div>
     </fieldset>
   );

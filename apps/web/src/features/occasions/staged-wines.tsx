@@ -1,6 +1,7 @@
 "use client";
 
 import { CaptureFields } from "@/features/capture/capture-fields";
+import { TastingHelp } from "@/features/capture/tasting-help";
 import { entryCount, newWineDraft, type Composer } from "./occasion-composer";
 
 export function StagedWines({
@@ -45,6 +46,7 @@ export function StagedWines({
                 })
               }
             />
+            <TastingHelp />
           </div>
           {child.extraEntries.map((entry, index) => (
             <div className="staged-repeat" key={index}>

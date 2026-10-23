@@ -20,7 +20,13 @@ test("occasion-first dinner stages three wines and four entries with safe retry 
     await page.getByRole("button", { name: "Add a wine", exact: true }).click();
     await page.getByLabel("Wine name", { exact: true }).fill(name);
     await expect(page.getByLabel("Date tried", { exact: true })).toHaveValue("2026-09-29");
+    await page.getByText("Help me describe it", { exact: true }).click();
+    await expect(page.getByLabel("Wine notes", { exact: false })).toHaveValue("");
     await page.getByLabel("Wine notes", { exact: false }).fill(`${name} first impression`);
+    await page.getByText("Help me describe it", { exact: true }).click();
+    await expect(page.getByLabel("Wine notes", { exact: false })).toHaveValue(
+      `${name} first impression`,
+    );
     if (name === "Cabernet") {
       await page.getByRole("button", { name: "Add another glass of this wine" }).click();
       await page.getByLabel("Date tried — entry 2", { exact: true }).fill("2026-09-28");
