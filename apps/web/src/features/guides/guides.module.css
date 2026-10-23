@@ -1,0 +1,119 @@
+.index {
+  max-width: 65rem;
+}
+.eyebrow {
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.list {
+  list-style: none;
+  margin-block: 2.5rem 1.5rem;
+  padding: 0;
+  border-top: 1px solid var(--color-border);
+}
+.list li {
+  border-bottom: 1px solid var(--color-border);
+}
+.guideLink {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 1.5rem;
+  gap: 1.25rem;
+  padding: 1.75rem 0.75rem;
+  text-decoration: none;
+  color: var(--color-foreground);
+}
+.guideLink:hover {
+  background: var(--color-surface);
+}
+.guideLink h2 {
+  color: var(--color-primary);
+}
+.guideLink:hover h2 {
+  text-decoration: underline;
+}
+.number {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+}
+.arrow {
+  color: var(--color-primary);
+  align-self: center;
+  font-size: 1.5rem;
+}
+.description {
+  margin-top: 0.75rem;
+  max-width: 62ch;
+  line-height: 1.65;
+}
+.note {
+  color: var(--color-muted-foreground);
+}
+.articlePage {
+  max-width: 50rem;
+}
+.article {
+  margin-top: 2rem;
+  max-width: 68ch;
+  line-height: 1.75;
+}
+.section {
+  margin-block: 2rem;
+}
+.section h2,
+.reflection h2 {
+  margin-bottom: 0.75rem;
+}
+.reflection {
+  border-inline-start: 3px solid var(--color-secondary);
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface);
+  margin-block: 2rem;
+}
+.reflection h2 {
+  font-size: 1.25rem;
+}
+.searches {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.75rem;
+}
+.searches a {
+  display: inline-block;
+  padding-block: 0.625rem;
+}
+.sources {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  margin-top: 2.5rem;
+  font-size: 0.875rem;
+}
+.sources h2 {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.sources a {
+  display: inline-block;
+  padding-block: 0.625rem;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .guideLink {
+    grid-template-columns: 1.75rem 1fr;
+    gap: 0.75rem;
+    padding-inline: 0;
+  }
+  .arrow {
+    display: none;
+  }
+  .guideLink h2 {
+    font-size: 1.4rem;
+  }
+  .reflection {
+    padding: 1rem;
+  }
+}
