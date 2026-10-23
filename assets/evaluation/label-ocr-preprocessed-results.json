@@ -1,0 +1,291 @@
+{
+  "evaluated_at": "2026-10-22T01:46:05.992271+00:00",
+  "engine": "Tesseract 5.3.0",
+  "english_model_package": "1:4.1.0-2",
+  "psm": 11,
+  "preprocessing": "portrait-crop-contrast-v1",
+  "image_id": "sha256:b5e6adc2bb0aa84647ce3f6751bcd5c0bdc6adbb17843ed7e5210ff0664725dc",
+  "manifest_sha256": {
+    "barcode-images.json": "48b7dc16f94df3f22f02e6ca689ee9b12f50a27aa97438ebdcbac80a9e533e34",
+    "barcode-images-ridge.json": "4296070f54fe5d315bd745faefac438a84be0913321135cf5857a70d0c74cba2"
+  },
+  "catalog_sha256": "77d8207c0fca89a03ebce241c629f14dc47a670c0296b7b0a888c8c498a9b576",
+  "source_images": 7,
+  "physical_bottles": 0,
+  "network_enabled": false,
+  "confirmed_releases": 0,
+  "results": [
+    {
+      "status": "READ",
+      "text": "J. LOHR SEVEN OAKS CABERNET SAUVIGNON Crafted by the Lohr family, our Paso Robles Cabernet is layered with blackberry, cherry, dark chocolate, and a smooth finish. Sustainably farmed and oak barrel-aged, this wine expresses a sense of place and our commitment to the land. PRODUCED AT PASO ROBLES, CA AND BOTTLED OFF AT SAN JOSE, CA BY J. LOHR WINERY 750 ml GOVERNMENT WARNING: (1) ACCORDING TO THE SURGEON GENERAL, WOMEN SHOULD NOT DRINK ALCOHOLIC BEVERAGES DURING PREGNANCY BECAUSE OF THE RISK OF BIRTH DEFECTS. (2) CONSUMPTION OF ALCOHOLIC BEVERAGES IMPAIRS YOUR ABILITY TO DRIVE A CAR OR OPERATE MACHINERY, AND MAY CAUSE HEALTH PROBLEMS. CONTAINS SULFITES JLOHR.COM CACRV",
+      "mean_word_confidence": 87.81,
+      "elapsed_ms_including_container": 1625,
+      "sample_id": "I001",
+      "sha256": "1b8c516cf32141b2370de3a76aee66f98b9f35245b264dfaed41c7c268ef117b",
+      "candidate_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": true,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          0,
+          0,
+          750,
+          834
+        ],
+        "inverted": true,
+        "output_dimensions": [
+          1524,
+          1692
+        ],
+        "sha256": "d95ffbba452ee060a9948991f878cc5ecce26cbdc1b73b6f2f15e91340c02bf5",
+        "elapsed_ms": 78
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "SEVEN OAKS CABERNET SAUVIGNON Crafted by the Lohr family, our Paso Robles Cabernet is layered with blackberry, cherry, dark chocolate, and a smooth finish. Sustainably farmed and oak barrel-aged, this wine expresses a sense of place and our commitment to the land. PRODUCED AT PASO ROBLES, CA AND BOTTLED ATSAN JOSE, CA BY J. LOHR WINERY 750 ml GOVERNMENT WARNING: (1) ACCORDING TO THE SURGEON GENERAL, WOMEN SHOULD NOT DRINK ALCOHOLIC BEVERAGES DURING PREGNANCY BECAUSE OF THE RISK OF DEFECTS. (2) CONSUMPTION OF ALCOHOLIC BEVERAGES IMPAIRS YOUR ABILITY TO DRIVE A CAR OR AND MAY CAUSE HEALTH PROBLEMS CONTAINS SULEITES CA CRV",
+      "mean_word_confidence": 77.02,
+      "elapsed_ms_including_container": 1156,
+      "sample_id": "I002",
+      "sha256": "52d4285e6955eeca316769a13ac3244202ffe7d0709b2fc17768974cd76b2dbe",
+      "candidate_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": true,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          37,
+          1200,
+          712,
+          2050
+        ],
+        "inverted": true,
+        "output_dimensions": [
+          1374,
+          1724
+        ],
+        "sha256": "d98f48a54154c5a205cbba9474d6f524ac45ead5ef20cb8c061fbeb004d2fd25",
+        "elapsed_ms": 79
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "CABERNET SAUVIGNON PASO ROBLES SUSTAINABLY GROWN",
+      "mean_word_confidence": 80.7,
+      "elapsed_ms_including_container": 812,
+      "sample_id": "I003",
+      "sha256": "615c8ecc1285cde8fd56b0d26d8d600d8e75596e93424695d5536bdcda474a76",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W015",
+        "W016"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [],
+      "expected_visible_year": null,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          0,
+          0,
+          750,
+          830
+        ],
+        "inverted": true,
+        "output_dimensions": [
+          1524,
+          1684
+        ],
+        "sha256": "d1b9d4875776e4f35ce2a4b54ace7bea291baf7b33e655e67365bd2772d39442",
+        "elapsed_ms": 94
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "2023 Geyserville, bottled February 2025 Heavy winter rains replenished Moderate temperatures during the growing season were followed by cooler weather i \\ugust and September that pushed late into October. The extended ripening period resulted in a wine with dark supple tannins balanced by beautiful Enjoyable now, this classic field blend wil continue to evolve over the next ten jo Ingredients: Hand-harvested grapes, nous yeast; naturally occurring bacteria; oak from barrel aging; 750 mL",
+      "mean_word_confidence": 77.71,
+      "elapsed_ms_including_container": 1672,
+      "sample_id": "I004",
+      "sha256": "564b9a81f7e903f8aea8dea7650280f89b98a01eddac1a910d5e5e487f6c51f2",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W008"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2023,
+        2025
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          32,
+          1200,
+          616,
+          2050
+        ],
+        "inverted": false,
+        "output_dimensions": [
+          1192,
+          1724
+        ],
+        "sha256": "bc79c2b02f9dc8af7a3147013c6cd3381ca2507eb282b04cb410f8ddda190cde",
+        "elapsed_ms": 78
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "2023 Three a Since it single vin careful co 72 plement =O Moderat the fruit t At Un TY deep flav known. E O} continue tod a years Zp > = digenous = malolactic tartaric a = minimum e = )8.867.3233",
+      "mean_word_confidence": 58.17,
+      "elapsed_ms_including_container": 1031,
+      "sample_id": "I005",
+      "sha256": "0e33c20d6ccfd31457888e711616912120f42d11fa1dffaf6dc14ed70457fa84",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W014"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2023
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          31,
+          1200,
+          597,
+          2050
+        ],
+        "inverted": false,
+        "output_dimensions": [
+          1156,
+          1724
+        ],
+        "sha256": "9b63b1dc74280546c6da0aa5e0a2aa65cc814cfc090b00ef0721e32d704d5b45",
+        "elapsed_ms": 78
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "7) 2023 Estate Chi This year stand and coolest gr years. A drawn wine that pres while promoti accents barrel fermen @ | further nine al Enjoyable no",
+      "mean_word_confidence": 74.45,
+      "elapsed_ms_including_container": 875,
+      "sample_id": "I006",
+      "sha256": "4fd44ca7190e65d3ceeffe6b7e091f037a68d6d1b9c4e0e50e29937111e4ff2f",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W006"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2023
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          35,
+          1200,
+          679,
+          2050
+        ],
+        "inverted": true,
+        "output_dimensions": [
+          1312,
+          1724
+        ],
+        "sha256": "42758220638640512325d0583c86e5e1fdac3373633568efbf8a45ab390813bb",
+        "elapsed_ms": 94
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    },
+    {
+      "status": "READ",
+      "text": "Vineyard Production Yields, Monte Bello Parcels: < 72.8 tons from 57 acres 2023 Monte Bello, bottled June 2025 the condensed growing season of 2022 wit above average temperatures, 2023 was a sta contrast. A long, cool spring followed by mil summer weather pushed veraison into Harvest began in October and lasted well ino November, making 2023 one of the latest Bello harvests ever. The long maturation resulted in a wine with supple tannins, ampe acidity, and well-defined fruit. This vintage will develop over the next years. Ingredients: Hand-harvested, organic, grapes; indigenous yeast; naturally malolactic bacteria; oak from barrel 2\u00b0 effective SO 750mL www.ridgewinecn",
+      "mean_word_confidence": 86.55,
+      "elapsed_ms_including_container": 1328,
+      "sample_id": "I007",
+      "sha256": "5ecd595e7fe257447228cbcc975f749eb2bffafd393501233267e91ee0db7f8c",
+      "candidate_fixture_ids": [],
+      "expected_fixture_ids": [
+        "W002"
+      ],
+      "expected_in_candidates": false,
+      "observed_year_tokens": [
+        2022,
+        2023,
+        2025
+      ],
+      "expected_visible_year": 2023,
+      "vintage_resolved": false,
+      "requires_confirmation": true,
+      "preprocessing": {
+        "recipe": "portrait-crop-contrast-v1",
+        "pillow": "13.0.0",
+        "crop_box": [
+          37,
+          1200,
+          704,
+          2050
+        ],
+        "inverted": false,
+        "output_dimensions": [
+          1358,
+          1724
+        ],
+        "sha256": "120a1d9237c14fd870fcdd324f72baa5acc2be16591c3973d6f471e9dbc352e4",
+        "elapsed_ms": 94
+      },
+      "withheld_candidate_fixture_ids": [],
+      "withheld_false_positive": false
+    }
+  ]
+}

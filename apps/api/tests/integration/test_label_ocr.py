@@ -14,7 +14,14 @@ pytestmark = pytest.mark.skipif(
 ROOT = Path(__file__).resolve().parents[4]
 
 
-def test_real_ocr_positive_blank_and_malformed_cleanup(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize(
+    ("preprocess", "expected_matches"),
+    [(False, {"I001", "I005"}), (True, {"I001", "I002"})],
+    ids=["baseline", "fixed-preprocessing"],
+)
+def test_real_ocr_positive_blank_and_malformed_cleanup(
+    monkeypatch: pytest.MonkeyPatch, preprocess: bool, expected_matches: set[str]
+) -> None:
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
     from evaluate_label import DOCKER, IMAGE, evaluate, recognize
 
@@ -28,16 +35,17 @@ def test_real_ocr_positive_blank_and_malformed_cleanup(monkeypatch: pytest.Monke
         .stdout.decode()
         .strip()
     )
-    report = evaluate(image, 11)
+    report = evaluate(image, 11, preprocess)
     results = report["results"]
     assert isinstance(results, list)
     assert len(results) == 7
     # Observed successes, not a claim all supplied images resolve.
-    assert {row["sample_id"] for row in results if row["expected_in_candidates"]} == {
-        "I001",
-        "I005",
-    }
+    assert {
+        row["sample_id"] for row in results if row["expected_in_candidates"]
+    } == expected_matches
     assert all(not row["vintage_resolved"] for row in results)
+    assert all(not row["withheld_false_positive"] for row in results)
+    assert report["preprocessing"] == ("portrait-crop-contrast-v1" if preprocess else "none")
     blank = io.BytesIO()
     Image.new("RGB", (400, 400), "white").save(blank, format="PNG")
     assert recognize(blank.getvalue(), image, 11)["status"] == "NO_READABLE_TEXT"

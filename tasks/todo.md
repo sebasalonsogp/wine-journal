@@ -106,6 +106,12 @@ and cleanup tests are implemented. Cloud alternatives are documentation-only;
 broader samples, improved recall and physical-device evidence remain open. R03 and
 C06/C07 stay unchecked; application photo recognition is not enabled.
 
+**R03b evidence (October 21):** [Fixed preprocessing experiment](label-preprocessing-checkpoint.md)
+recovers one image but loses another, retaining 2/7 matches and covering only one
+offering. The recipe is rejected as a default. Withholding each expected offering
+produces no candidates, but does not replace independent unknown-wine samples.
+R03/C06/C07 remain open; stop tuning this small set without new evidence.
+
 **Evidence checkpoint (R01–R02–R03):** Retain reproducible inputs, observed outcomes, limits and a recommendation. A failed spike is useful evidence; its dependent feature remains blocked until a viable path or explicit scope decision exists.
 
 <a id="r04"></a>

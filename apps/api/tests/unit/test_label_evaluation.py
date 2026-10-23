@@ -133,3 +133,23 @@ def test_timeout_cleans_up_and_unconfirmed_cleanup_aborts(monkeypatch: pytest.Mo
         pytest.raises(subprocess.CalledProcessError),
     ):
         recognize(b"fixture", "image", 11)
+
+
+def test_withheld_control_removes_all_releases_of_the_expected_offering(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    from evaluate_label import without_expected_offerings
+    from label_matching import candidates
+
+    with (ROOT / "assets/evaluation/manifest.csv").open(encoding="utf-8", newline="") as source:
+        catalog = list(csv.DictReader(source))
+    reduced = without_expected_offerings(catalog, ["W014"])
+    assert {row["fixture_id"] for row in reduced} == {row["fixture_id"] for row in catalog} - {
+        "W013",
+        "W014",
+    }
+    assert candidates("Ridge Vineyards Three Valleys 2023", reduced) == []
+    assert candidates("Ridge Vineyards Geyserville 2023", reduced) == ["W007", "W008"]
+    with pytest.raises(ValueError):
+        without_expected_offerings(catalog, ["UNKNOWN"])
