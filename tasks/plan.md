@@ -1,5 +1,10 @@
 # Wine Journal phased implementation plan
 
+October 23: [L01 tasting guidance](tasting-guidance-checkpoint.md) adds optional
+writing prompts to wine notes without changing save requirements or ratings.
+Current checkbox count: **32/59 complete, 27 remaining**. Earlier dated counts
+below are historical checkpoints; L02 Guides and L03 taste profile remain open.
+
 Integration completed (October 20): dependency audits were resolved and PR #1
 merged the verified foundation into main. See [integration closeout](integration-closeout.md)
 and the [small-PR workflow](../CONTRIBUTING.md). Earlier audit failures below are

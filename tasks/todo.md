@@ -1,5 +1,9 @@
 # Wine Journal implementation tasks
 
+October 23 update: **32 of 59 tasks complete; 27 remain.** L01's optional tasting
+guidance is implemented; see its checkpoint below. The October 20 status paragraph
+and dated counts later in this file describe earlier checkpoints.
+
 Status: implementation underway, October 20, 2026. **Thirty-one of 59 tasks are complete; 28 remain.** F01–F07 cover access; J01–J10 deliver manual capture, repeats, persisted history, versioned entry enrichment/deletion, wine ratings and searchable/filterable wine lists. O01–O05 add private occasions, both capture directions, entry associations and safe occasion deletion. M01 adds durable jobs; R04 establishes photo conversion evidence. M02–M04 provide private uploads, isolated processing, owner-authorized viewing and entry photo galleries with captions/retry/removal. Local media is enabled with the registered worker; M05 adds independent personal bottle covers; M06a adds occasion attachments and deduplicated album/source APIs; M06b browser controls pass functional acceptance; M06 closeout awaits the development dependency audit fix. M07 wine highlights and a paginated full gallery are implemented; verification is recorded in the [wine moments checkpoint](wine-moments-checkpoint.md). M08a retirement fencing and M08b write tracking, physical deletion retries and logical quota recovery are implemented. M08c1 adds the preview-first recurring runner and aggregate diagnostics; legacy-hold resolution, deployment supervision and audit closeout remain. See the [cleanup checkpoint](media-cleanup-checkpoint.md). The [roadmap](plan.md#phased-roadmap) explains milestones, [verification protocol](plan.md#verification-protocol) applies to each task, and [story coverage](story-coverage.md) accounts for all 65 stories.
 
 One checkbox represents completion of a task's outcome, acceptance criteria and verification. S = a narrow decision/content/configuration change; M = one bounded behavior or technical enabler, normally one or two focused work blocks. These are relative scope estimates, not calendar promises or literal file counts. Primary change areas are code-navigation hints, not instructions to generate every listed file in advance.
@@ -1102,7 +1106,7 @@ count are unchanged.
 <a id="l01"></a>
 ### L01: Offer beginner tasting prompts
 
-- [ ] **Outcome:** Help users describe wine without requiring expert input.
+- [x] **Outcome:** Help users describe wine without requiring expert input.
 
 **Acceptance:**
 
@@ -1110,6 +1114,11 @@ count are unchanged.
 - Only explicit user choices enter personal notes; producer tasting claims are labeled and never inserted as personal observations.
 
 **Verify:** Review copy against existing tasting research and verify keyboard/screen-reader use, skip-all save and editing existing notes.
+
+**Delivered (October 23):** [Tasting guidance checkpoint](tasting-guidance-checkpoint.md)
+records optional prompts and term explanations across capture, entry editing and
+occasion wine composition. Native disclosure semantics, keyboard behavior and axe
+checks are verified; a real screen-reader/device walkthrough remains part of E07.
 
 **Dependencies:** [J06](#j06). **Size:** S.
 

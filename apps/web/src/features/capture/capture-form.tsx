@@ -7,6 +7,7 @@ import { RequestFailure } from "@/lib/session/http";
 import { clearPrivateDrafts } from "@/lib/session/private-drafts";
 import { CaptureFields } from "./capture-fields";
 import { CaptureOccasion } from "./capture-occasion";
+import { TastingHelp } from "./tasting-help";
 import { CoverEditor } from "@/features/media/cover-editor";
 import { PhotoWorkspace } from "@/features/media/photo-workspace";
 import type { components } from "@/lib/api/schema";
@@ -335,6 +336,7 @@ export function CaptureForm({
                       onChange={(event) => change({ notes: event.target.value })}
                       placeholder="A first impression, or something to remember later"
                     />
+                    <TastingHelp />
                   </div>
                   <CaptureOccasion
                     key={draft.ownerId ?? "guest"}

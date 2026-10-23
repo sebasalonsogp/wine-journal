@@ -1,0 +1,42 @@
+.help {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  min-width: 0;
+}
+
+.help summary {
+  color: var(--color-primary);
+  cursor: pointer;
+  min-height: 2.75rem;
+  align-content: center;
+}
+
+.content {
+  border-inline-start: 2px solid var(--color-border);
+  padding-inline-start: 1rem;
+  max-width: 60ch;
+}
+
+.help dt {
+  color: var(--color-secondary);
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.help dd {
+  margin: 0;
+}
+
+.prompts {
+  margin-block: 0.75rem;
+}
+
+.terms dl {
+  margin-bottom: 0.75rem;
+}
+
+.footnote {
+  color: var(--color-muted-foreground);
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
